@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#17120e">
+  <meta name="description" content="Cybernetics Core is a home for interactive public research tools.">
+  <title>Cybernetics Core</title>
+  <style>
+    :root {
+      --surface-0: #17120e;
+      --surface-1: #1c1611;
+      --surface-2: #241c16;
+      --ink: #f2e6cf;
+      --muted: #b09c80;
+      --faint: #9b8974;
+      --accent: #e2bd3f;
+      --accent-hover: #f1d66e;
+      --border: rgba(242, 230, 207, 0.14);
+      --border-strong: rgba(226, 189, 63, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: dark;
+    }
+
+    body {
+      min-width: 300px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 82% 8%, rgba(226, 189, 63, 0.12), transparent 32rem),
+        radial-gradient(circle at 8% 92%, rgba(176, 156, 128, 0.07), transparent 28rem),
+        linear-gradient(145deg, var(--surface-1), var(--surface-0) 62%);
+      font-family: "Aptos", "Segoe UI Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      display: flex;
+      width: min(100% - 40px, 1040px);
+      min-height: 100vh;
+      margin-inline: auto;
+      padding: clamp(48px, 9vw, 108px) 0 32px;
+      flex-direction: column;
+    }
+
+    .intro {
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      font-size: clamp(3.25rem, 9vw, 6.5rem);
+      font-weight: 500;
+      letter-spacing: -0.062em;
+      line-height: 0.94;
+    }
+
+    .lede {
+      max-width: 630px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.16rem);
+    }
+
+    .catalog {
+      margin-top: clamp(48px, 8vw, 84px);
+    }
+
+    .catalog__label {
+      display: flex;
+      align-items: center;
+      margin: 0 0 12px;
+      color: var(--faint);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      gap: 12px;
+      text-transform: uppercase;
+    }
+
+    .catalog__label::after {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      content: "";
+    }
+
+    .tool-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      overflow: hidden;
+      padding: clamp(24px, 5vw, 38px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: inherit;
+      background:
+        linear-gradient(115deg, rgba(226, 189, 63, 0.08), transparent 38%),
+        rgba(36, 28, 22, 0.82);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.22);
+      gap: 24px;
+      text-decoration: none;
+      transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
+    }
+
+    .tool-card::before {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: linear-gradient(var(--accent), rgba(226, 189, 63, 0.18));
+      content: "";
+    }
+
+    .tool-card:hover {
+      border-color: var(--border-strong);
+      background-color: var(--surface-2);
+      transform: translateY(-2px);
+    }
+
+    .tool-card:hover h2,
+    .tool-card:focus-visible h2 {
+      color: var(--accent-hover);
+    }
+
+    .tool-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+      font-size: clamp(1.6rem, 4vw, 2.25rem);
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      transition: color 150ms ease;
+    }
+
+    .tool-card p {
+      max-width: 620px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .attribution {
+      margin: 18px 0 0;
+      color: var(--faint);
+      font-size: 0.75rem;
+    }
+
+    .arrow {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--accent);
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .page-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 48px;
+      color: var(--faint);
+      font-size: 0.72rem;
+      gap: 20px;
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 24px, 1040px);
+        padding-top: 52px;
+      }
+
+      .tool-card {
+        grid-template-columns: minmax(0, 1fr) 38px;
+        gap: 16px;
+      }
+
+      .arrow {
+        width: 38px;
+        height: 38px;
+      }
+
+      .page-footer {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .tool-card:hover {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main>
+      <header class="intro">
+        <p class="eyebrow">Public research tools</p>
+        <h1>Cybernetics Core</h1>
+        <p class="lede">A home for interactive views that make technical evidence easier to compare and explore.</p>
+      </header>
+
+      <section class="catalog" aria-labelledby="tools-heading">
+        <p class="catalog__label" id="tools-heading">Available now</p>
+        <a class="tool-card" href="llm-frontiers/" aria-describedby="llm-frontiers-description">
+          <div>
+            <h2>LLM frontiers</h2>
+            <p id="llm-frontiers-description">Explore interactive comparisons of model ability, task cost, and response time.</p>
+            <p class="attribution">Model measurements attributed to Artificial Analysis</p>
+          </div>
+          <span class="arrow" aria-hidden="true">&#8599;</span>
+        </a>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>Cybernetics Core</span>
+      <span>More tools can live here as they are ready.</span>
+    </footer>
+  </div>
+</body>
+</html>
