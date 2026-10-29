@@ -1,0 +1,148 @@
+{
+  "anchor": {
+    "base_slug": "gpt-6-1-sol",
+    "cell_id": "openai/gpt-6-1-sol/2026-09-29/medium",
+    "creator": "OpenAI",
+    "effort": "medium",
+    "release_date": "2026-09-29"
+  },
+  "cells": [
+    {
+      "aa_model_id": "2f3c4dc9-a450-4303-8697-0237257cf08f",
+      "assumption_code": "none",
+      "base_slug": "claude-opus-5-5",
+      "cell_id": "anthropic/claude-opus-5-5/2026-09-22/max",
+      "creator": "Anthropic",
+      "effort": "max",
+      "mean_usd_per_response": 0.136754273741,
+      "raw_index": 5.678229852,
+      "release_date": "2026-09-22",
+      "responses": 8378,
+      "roots": 12,
+      "utc_dates": 17,
+      "valuation_basis": "historical_api_equivalent"
+    },
+    {
+      "aa_model_id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
+      "assumption_code": "none",
+      "base_slug": "claude-opus-5-5",
+      "cell_id": "anthropic/claude-opus-5-5/2026-09-22/medium",
+      "creator": "Anthropic",
+      "effort": "medium",
+      "mean_usd_per_response": 0.10318275675,
+      "raw_index": 4.284293233,
+      "release_date": "2026-09-22",
+      "responses": 9697,
+      "roots": 122,
+      "utc_dates": 16,
+      "valuation_basis": "historical_api_equivalent"
+    },
+    {
+      "aa_model_id": "3b84fee3-b70a-41bc-819e-5fbdef9a0042",
+      "assumption_code": "none",
+      "base_slug": "gpt-6-1-sol",
+      "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+      "creator": "OpenAI",
+      "effort": "high",
+      "mean_usd_per_response": 0.02669439865,
+      "raw_index": 1.10838899,
+      "release_date": "2026-09-29",
+      "responses": 10963,
+      "roots": 51,
+      "utc_dates": 26,
+      "valuation_basis": "historical_api_equivalent"
+    },
+    {
+      "aa_model_id": "e76e0fe5-93ca-4272-9359-2eb1740467d1",
+      "assumption_code": "none",
+      "base_slug": "gpt-6-1-sol",
+      "cell_id": "openai/gpt-6-1-sol/2026-09-29/low",
+      "creator": "OpenAI",
+      "effort": "low",
+      "mean_usd_per_response": 0.027561578157,
+      "raw_index": 1.144395503,
+      "release_date": "2026-09-29",
+      "responses": 586,
+      "roots": 16,
+      "utc_dates": 19,
+      "valuation_basis": "historical_api_equivalent"
+    },
+    {
+      "aa_model_id": "b25ac058-1e33-4c31-bbc9-a20c3ad0717a",
+      "assumption_code": "none",
+      "base_slug": "gpt-6-1-sol",
+      "cell_id": "openai/gpt-6-1-sol/2026-09-29/max",
+      "creator": "OpenAI",
+      "effort": "max",
+      "mean_usd_per_response": 0.040686424525,
+      "raw_index": 1.68935759,
+      "release_date": "2026-09-29",
+      "responses": 1158,
+      "roots": 51,
+      "utc_dates": 18,
+      "valuation_basis": "historical_api_equivalent"
+    },
+    {
+      "aa_model_id": "a2e51d62-ea4e-4f15-8be0-be9dc1fb489d",
+      "assumption_code": "none",
+      "base_slug": "gpt-6-1-sol",
+      "cell_id": "openai/gpt-6-1-sol/2026-09-29/medium",
+      "creator": "OpenAI",
+      "effort": "medium",
+      "mean_usd_per_response": 0.02408396231,
+      "raw_index": 1.0,
+      "release_date": "2026-09-29",
+      "responses": 5869,
+      "roots": 67,
+      "utc_dates": 25,
+      "valuation_basis": "historical_api_equivalent"
+    },
+    {
+      "aa_model_id": "092a3b0e-c5c8-45dc-bf1b-53673c8ff352",
+      "assumption_code": "none",
+      "base_slug": "gpt-6-1-sol",
+      "cell_id": "openai/gpt-6-1-sol/2026-09-29/xhigh",
+      "creator": "OpenAI",
+      "effort": "xhigh",
+      "mean_usd_per_response": 0.030286839212,
+      "raw_index": 1.257552176,
+      "release_date": "2026-09-29",
+      "responses": 13343,
+      "roots": 168,
+      "utc_dates": 28,
+      "valuation_basis": "historical_api_equivalent"
+    }
+  ],
+  "coverage": {
+    "included_cells": 7,
+    "pricing_basis_counts": {
+      "deepseek_reference_schedule": 0,
+      "historical_api_equivalent": 49994
+    },
+    "responses": 49994,
+    "roots": 463,
+    "scenario_counts": {
+      "deepseek_tier_absent": 0,
+      "deepseek_tier_auto": 0,
+      "deepseek_tier_default": 0,
+      "deepseek_tier_standard": 0
+    },
+    "unsupported_identity_counts": {
+      "deepseek_checkpoint_identity_unresolved": 342
+    },
+    "utc_dates": 31
+  },
+  "cutoff_utc": "2026-10-29T16:38:00Z",
+  "method_version": "observed-response-cost-1",
+  "schema_version": 1,
+  "thresholds": {
+    "responses": 100,
+    "roots": 8,
+    "utc_dates": 8
+  },
+  "window": {
+    "cutoff_utc": "2026-10-29T16:38:00Z",
+    "days": 30,
+    "start_utc": "2026-09-29T16:38:00Z"
+  }
+}
