@@ -121,7 +121,7 @@ summary:hover { color: var(--ink); }
 .reading-direction { color: var(--faint); font: 10px var(--mono); }
 .reading-direction span { color: var(--accent); padding-left: 4px; }
 .charts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
-.chart-card { min-width: 0; display: grid; grid-template-rows: 57px 37px auto auto; padding: 20px 17px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-1); }
+.chart-card { min-width: 0; display: grid; grid-template-rows: minmax(57px, auto) 37px auto auto; padding: 20px 17px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-1); }
 .chart-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .section-kicker { margin-bottom: 6px; font-size: 9px; color: var(--rust); }
 .chart-header h2 { font-size: clamp(15px, 1.35vw, 19px); }
@@ -247,7 +247,7 @@ summary:hover { color: var(--ink); }
   .reading-key { font-size: 9px; gap: 7px 12px; }
   .key-line { width: 17px; }
   .chart-toolbar { padding: 14px 0 11px; }
-  .chart-card { padding: 17px 6px 11px; grid-template-rows: 58px 40px auto auto; }
+  .chart-card { padding: 17px 6px 11px; grid-template-rows: minmax(58px, auto) 40px auto auto; }
   .chart-header, .chart-subtitle, .chart-note { margin-inline: 8px; }
   .chart-header h2 { font-size: 17px; }
   .chart-subtitle { font-size: 10px; }
@@ -786,6 +786,48 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
  .inclusion-group-toggle { padding-inline:4px;font-size:11px;gap:4px; }
 }
 
+/* Observed response cost is a runtime dataset; these controls and the local
+   raw-index editor never alter the embedded AA snapshot. */
+.cost-action-stack { display:flex;flex:0 1 auto;flex-direction:column;align-items:flex-end;gap:4px;min-width:0;max-width:100%; }
+.cost-controls { display:flex;flex:0 1 auto;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px 5px;min-width:0; }
+#response-cost-toggle,#subscription-toggle { flex:0 0 auto;border:1px solid var(--faint);border-radius:20px;padding:6px 10px;background:transparent;color:var(--ink);font-size:11px;white-space:nowrap;cursor:pointer; }
+#response-cost-toggle[aria-pressed="true"],#subscription-toggle[aria-pressed="true"] { background:var(--accent);color:var(--surface-0);border-color:var(--accent); }
+#response-cost-toggle:focus-visible,#subscription-toggle:focus-visible,#response-cost-edit:focus-visible { outline:2px solid var(--accent);outline-offset:3px; }
+#response-cost-toggle:disabled { opacity:.42;cursor:not-allowed;border-style:dashed; }
+#response-cost-edit { min-height:31px;padding-inline:3px; }
+.response-cost-availability { max-width:330px;margin:0;color:var(--muted);font:10px/1.4 var(--sans);text-align:right; }
+.response-cost-availability.is-error { color:var(--danger); }
+.response-cost-note { border-top-style:dashed; }
+.response-cost-editor { margin:10px 1px 3px;padding:10px 12px;border:1px solid var(--border-strong);border-radius:3px;background:var(--surface-0);color:var(--muted);font-size:11px; }
+.response-cost-editor > summary { color:var(--ink);font-weight:600;cursor:pointer; }
+.response-cost-editor[open] > summary { margin-bottom:9px; }
+.response-cost-editor p { margin:0 0 9px;line-height:1.5; }
+.response-cost-rows { display:grid;gap:6px;margin:9px 0; }
+.response-cost-row { display:grid;grid-template-columns:minmax(0,1fr) 104px;align-items:center;gap:12px;margin:0;padding:7px 0;border-top:1px solid var(--border); }
+.response-cost-row:first-child { border-top:0; }
+.response-cost-row span { min-width:0; }
+.response-cost-row strong { display:block;color:var(--ink);font-size:11px;font-weight:500;overflow-wrap:anywhere; }
+.response-cost-row small { display:block;margin-top:2px;color:var(--faint);font:9px/1.4 var(--mono); }
+.response-cost-row input { width:104px;min-height:38px;padding:7px 8px;border:1px solid var(--border-strong);border-radius:3px;background:var(--surface-1);color:var(--ink);font:12px var(--mono);text-align:right; }
+.response-cost-row input:disabled { color:var(--faint);opacity:.72;cursor:not-allowed; }
+.response-cost-actions { display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;border-top:1px solid var(--border);padding-top:9px; }
+.response-cost-actions .text-button { min-height:32px; }
+.response-cost-import { display:inline-flex;align-items:center;min-height:32px;margin:0;color:var(--accent);font-size:11px;cursor:pointer; }
+.response-cost-import input { position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%); }
+.response-cost-import:focus-within { outline:2px solid var(--accent);outline-offset:3px; }
+.response-cost-status { margin-top:9px!important;color:var(--faint);font:10px/1.5 var(--sans); }
+@media(max-width:520px){
+ .chart-header { flex-wrap:wrap; }
+ .cost-action-stack { width:100%;align-items:stretch; }
+ .cost-controls { width:100%;justify-content:flex-start; }
+ #response-cost-toggle,#subscription-toggle { flex:1 1 auto;min-height:36px; }
+ #response-cost-edit { flex:0 0 auto;min-height:36px; }
+ .response-cost-editor,.response-cost-note { margin-inline:8px; }
+ .response-cost-availability { max-width:none;text-align:left; }
+ .response-cost-row { grid-template-columns:minmax(0,1fr) 92px; }
+ .response-cost-row input { width:92px; }
+}
+
 
 /* Pointer guides do not participate in hit testing, focus or family fades. */
 .chart-guides, .chart-guides * { pointer-events:none; }
@@ -829,7 +871,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <button id="compare-clear" class="text-button" type="button" aria-label="Clear comparison" disabled>Clear</button>
         </div>
       </div>
-      <span id="subscription-help" class="sr-only">Subscription superpowers: estimate OpenAI & Claude task costs through your plans. Assumes full quota use. See Subscription cost estimate under Chart definitions.</span>
+      <span id="response-cost-help" class="sr-only">Our costs uses a runtime-fetched observed response-cost index for exact model, release and effort cells. Sol 6.1 Medium is fixed at 1. Observed workloads differ from Artificial Analysis task workloads.</span>
+      <p id="response-cost-summary" class="sr-only" hidden>Observed response-cost index enabled. Covered settings use arithmetic mean historical API-equivalent cost per recorded response, normalized to Sol 6.1 Medium = 1. Missing mappings are not imputed.</p>
+      <span id="subscription-help" class="sr-only">Plan costs estimate OpenAI and Claude costs through the existing subscription calibration. It assumes full quota use and can be combined with Our costs. See the cost method under Chart definitions.</span>
       <p id="subscription-summary" class="sr-only" hidden>Full-quota estimate · Sol 6.1 ÷9.85 · Astra 6 ÷14.12 · other OpenAI ÷10.82 (pooled fallback) · Claude ÷50.30 · other providers use API prices. Frozen calibration: Oct 28, 2026.</p>
         <div class="inclusion-group-row">
           <span id="group-filter-label">Show</span>
@@ -878,11 +922,30 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       <article class="chart-card" aria-labelledby="cost-title">
         <header class="chart-header">
           <div><p class="section-kicker">01 / Cost</p><h2 id="cost-title">Cost / task</h2></div>
-          <button id="subscription-toggle" type="button" aria-pressed="false" aria-describedby="subscription-help" title="Subscription superpowers · Sol 6.1 ÷9.85 · Astra 6 ÷14.12 · other OpenAI ÷10.82 · Claude ÷50.30 at full quota use · Oct 28 calibration">Plan superpowers</button>
+          <div class="cost-action-stack">
+            <div class="cost-controls" role="group" aria-label="Cost basis controls">
+              <button id="response-cost-toggle" type="button" aria-pressed="false" aria-describedby="response-cost-help response-cost-availability" title="Observed response-cost index · exact settings only · Sol 6.1 Medium = 1" disabled>Our costs</button>
+              <button id="subscription-toggle" type="button" aria-pressed="false" aria-describedby="subscription-help" title="Plan superpowers: full-quota plan costs · Sol 6.1 ÷9.85 · Astra 6 ÷14.12 · other OpenAI ÷10.82 · Claude ÷50.30 · Oct 28 calibration">Plan superpowers</button>
+              <button id="response-cost-edit" class="text-button" type="button" aria-controls="response-cost-editor" aria-expanded="false" aria-describedby="response-cost-availability" disabled>Adjust</button>
+            </div>
+            <p id="response-cost-availability" class="response-cost-availability" role="status" aria-live="polite" aria-atomic="true">Loading response costs…</p>
+          </div>
         </header>
-        <p class="chart-subtitle">Overall Intelligence Index workload.</p>
+        <p id="cost-subtitle" class="chart-subtitle">Overall Intelligence Index workload.</p>
         <div id="cost-chart" class="plot-scroll"></div>
         <p id="cost-note" class="chart-note"></p>
+        <p id="response-cost-note" class="chart-note response-cost-note" hidden></p>
+        <details id="response-cost-editor" class="response-cost-editor" hidden>
+          <summary>Local raw-index replacements</summary>
+          <p>Each field starts at the fetched raw observed index for that exact setting. A different positive finite value replaces that cell's raw index; entering its published value restores the fetch. Sol 6.1 Medium stays fixed at 1. Values remain in this browser and Plan costs converts them afterward.</p>
+          <div id="response-cost-rows" class="response-cost-rows"></div>
+          <div class="response-cost-actions">
+            <button id="response-cost-reset" class="text-button" type="button">Reset all</button>
+            <button id="response-cost-export" class="text-button" type="button">Export JSON</button>
+            <label class="response-cost-import" for="response-cost-import">Import JSON<input id="response-cost-import" type="file" accept="application/json,.json"></label>
+          </div>
+          <p id="response-cost-status" class="response-cost-status" aria-live="polite">Loading response-cost data…</p>
+        </details>
       </article>
       <article class="chart-card" aria-labelledby="time-title">
         <header class="chart-header">
@@ -901,8 +964,14 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     <section class="method" aria-labelledby="method-title">
       <div><h2 id="method-title">Chart definitions</h2></div>
       <div class="method__copy">
-        <details id="subscription-method"><summary>Subscription cost estimate</summary>
-          <p>Task cost × monthly plan price ÷ (calibrated API-equivalent dollars per weekly limit × 4.348 weeks/month). Weeks/month uses the average Gregorian year: 365.2425 ÷ 12 ÷ 7. Assumes full weekly quota use; this is an allocated subscription estimate, not a per-task charge or guaranteed savings.</p>
+        <details id="response-cost-method"><summary>Observed response cost</summary>
+          <p><b>Our costs</b> is the arithmetic mean of complete historical API-equivalent cost per recorded main-agent response for an exact AA model, release and effort. Each published cell needs at least 100 responses, 8 roots and 8 UTC observation dates in the rolling 30-day window. Sol 6.1 Medium is fixed at 1. Missing cells are not imputed.</p>
+          <p>Covered settings show only this index when Our costs is on. The AA ability score still comes from its separate benchmark workload. This is observed response expense, not matched-task cost or a causal effort effect. Standalone headless provenance may be incomplete; a main label does not prove human initiation.</p>
+          <p id="response-cost-method-coverage">Loading the runtime aggregate…</p>
+        </details>
+        <details id="subscription-method"><summary>Plan cost estimate</summary>
+          <p><b>Plan costs</b> applies the frozen full-quota conversion to the displayed AA task cost or, when combined with Our costs, to the observed response-cost index. For AA task cost: cost × monthly plan price ÷ (calibrated API-equivalent dollars per weekly limit × 4.348 weeks/month). For the index: raw index × anchor plan divisor ÷ model plan divisor, then renormalized to Sol 6.1 Medium. Weeks/month uses 365.2425 ÷ 12 ÷ 7.</p>
+          <p>This is an allocated subscription-equivalent estimate, not a charge or guaranteed saving. The two toggles compose: Our costs chooses the response measurement and coverage; Plan costs applies the existing plan conversion to that result. The controls are order independent.</p>
           <p>Frozen usage-dashboard calibration: OpenAI Pro Lite $100/month, $248.86/full weekly limit through 2026-10-28 13:52 UTC (16 observed weekly windows); Claude Max 20x $200/month, $2,313.68/full weekly limit through 2026-10-28 10:37 UTC (5 observed weekly windows). Pooled divisors are OpenAI ÷10.82 and Claude ÷50.30.</p>
           <p>GPT-6.1 Sol and GPT-6 Astra use fitted model-specific weekly values of $226.44 and $324.72: divide API task costs by 9.85 and 14.12, respectively. Their approximate 95% bootstrap divisor intervals are 9.38–10.53 and 13.28–14.40. These rates cover the September 29 Sol release and September 3 Astra release and their reasoning efforts; a reused slug with another or missing release date uses the pooled fallback. Other OpenAI models, including GPT-6.1 Terra, use the pooled fallback; Terra has too little separate evidence for its own rate. All Claude models retain the pooled scenario. Our observed workload may differ from the Intelligence Index tasks; model-specific quota rates, speed modes and plan availability can differ. Lower utilization increases effective cost. Other providers retain API prices.</p>
           <p>Both calibrations are qualified estimates. Codex has unpriced usage, an unknown provider and outlier windows; some cache costs are lower bounds. Claude has outlier windows, session reconciliation warnings, incomplete usage and partially bounded missing cost, stale headless rate events, telemetry coverage gaps and mismatches. Its uncertainty band covers rounding only, not week-to-week variation. This frozen snapshot does not refresh from your usage dashboard automatically.</p>
@@ -921,8 +990,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       </div>
     </section>
   </main>
-  <footer class="page-footer"><span>Static page · charts render in your browser</span><span id="index-version">Index version —</span></footer>
-  <script id="aa-data" type="application/json">{"abilities":[{"description":"Artificial Analysis Intelligence Index composite.","id":"intelligence","label":"Intelligence","primary":true},{"description":"Artificial Analysis Coding Index.","id":"coding","label":"Coding","primary":true},{"description":"Artificial Analysis Agentic Index.","id":"agentic","label":"Agentic","primary":true},{"description":"Artificial Analysis Economics Index.","id":"economics","label":"Economics","primary":true},{"description":"Artificial Analysis Finance and Accounting Index.","id":"finance_and_accounting","label":"Finance and accounting","primary":false},{"description":"Artificial Analysis Strategy and Operations Index.","id":"strategy_and_ops","label":"Strategy and operations","primary":false},{"description":"Artificial Analysis Legal Index.","id":"legal","label":"Legal","primary":false},{"description":"Artificial Analysis Healthcare and Medical Index.","id":"healthcare_and_medical","label":"Healthcare and medical","primary":false},{"description":"Artificial Analysis Engineering Index.","id":"engineering","label":"Engineering","primary":false}],"diagnostics":{"metric_coverage":{"agentic":{"count":0,"missing":47,"zero":0},"coding":{"count":0,"missing":47,"zero":0},"cost_per_task":{"chart_eligible":46,"count":47,"missing":0,"nonpositive":1},"economics":{"count":47,"missing":0,"zero":0},"engineering":{"count":47,"missing":0,"zero":0},"finance_and_accounting":{"count":47,"missing":0,"zero":0},"healthcare_and_medical":{"count":41,"missing":6,"zero":0},"intelligence":{"count":47,"missing":0,"zero":0},"legal":{"count":47,"missing":0,"zero":0},"output_tokens_per_second":{"chart_eligible":46,"count":46,"missing":1,"nonpositive":0},"response_time_seconds":{"chart_eligible":46,"count":46,"missing":1,"nonpositive":0},"strategy_and_ops":{"count":47,"missing":0,"zero":0},"time_per_task_seconds":{"available":false,"chart_eligible":0,"count":0,"missing":47,"nonpositive":0,"note":"Task token counts are absent from the free endpoint; no time-per-task value is inferred."},"ttfa_seconds":{"chart_eligible":46,"count":46,"missing":1,"nonpositive":0},"ttft_seconds":{"chart_eligible":46,"count":46,"missing":1,"nonpositive":0}},"selection_warnings":[]},"families":[{"color":"#e2bd3f","default_hidden":false,"enabled":true,"id":"openai-sol","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c441e158-a87d-4116-911b-93325e4b4f1c"],"metric":"response_time_seconds","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"e76e0fe5-93ca-4272-9359-2eb1740467d1"},{"dominator_model_ids":["e05a4828-0536-4876-870d-a235023f992b"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352"},{"dominator_model_ids":["e97a4ef5-e817-480e-9595-12f81dc4974f"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"e76e0fe5-93ca-4272-9359-2eb1740467d1"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"}],"retained":false},"label":"Sol","model_base":"GPT-6.1 Sol","selected_release_date":"2026-09-29","shape":"diamond"},{"color":"#dd7395","default_hidden":false,"enabled":true,"id":"openai-terra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"b0c462cf-f2d0-4126-9434-28db9502219f"},{"dominator_model_ids":["a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c441e158-a87d-4116-911b-93325e4b4f1c"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c955b262-a17f-4f1a-b097-6860b866295b"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"0d3c777f-6817-42d7-9bb9-223314bc5a57"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"c441e158-a87d-4116-911b-93325e4b4f1c"}],"retained":false},"label":"Terra","model_base":"GPT-6.1 Terra","selected_release_date":"2026-10-26","shape":"plus"},{"color":"#5aa8e6","default_hidden":false,"enabled":true,"id":"openai-astra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352","b25ac058-1e33-4c31-bbc9-a20c3ad0717a"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e97a4ef5-e817-480e-9595-12f81dc4974f"},{"dominator_model_ids":["df5bf99d-d228-4715-b41b-19ca86118777"],"metric":"cost_per_task","removed_family_id":"anthropic-opus","type":"without_family","witness_model_id":"2f339a97-9a0d-499a-9cb5-e0db665bfa25"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"e05a4828-0536-4876-870d-a235023f992b"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"a3f8100d-e38f-408b-b0fa-0085dae18dc1"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"e05a4828-0536-4876-870d-a235023f992b"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"e97a4ef5-e817-480e-9595-12f81dc4974f"}],"retained":false},"label":"Astra","model_base":"GPT-6 Astra","selected_release_date":"2026-09-03","shape":"circle"},{"color":"#a48ce8","default_hidden":false,"enabled":true,"id":"openai-luna","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["bb3d7e75-8e22-4082-b9d6-1db0803e042f"],"metric":"response_time_seconds","removed_family_id":"aa-30d069911007dc8c372a3f60","type":"without_family","witness_model_id":"63cb48ea-0b0c-4e07-8ded-6d28dec4fa28"},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"6fb13851-40ce-4bda-ad3f-6b38e0c5daa7"},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"7d1229bc-deea-4717-ba5b-f59a35d991e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"36667da0-9222-4967-adbb-f7efa15ad213"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"bf9708d8-933d-44f6-affa-b696a7a650c9"}],"retained":false},"label":"Luna","model_base":"GPT-6 Luna","selected_release_date":"2026-09-22","shape":"triangle"},{"color":"#e0663c","default_hidden":false,"enabled":true,"id":"anthropic-opus","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"cost_per_task","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"2f3c4dc9-a450-4303-8697-0237257cf08f"},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"response_time_seconds","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"2f3c4dc9-a450-4303-8697-0237257cf08f"},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"response_time_seconds","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"df5bf99d-d228-4715-b41b-19ca86118777"},{"dominator_model_ids":["e97a4ef5-e817-480e-9595-12f81dc4974f"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"ea9e0da6-169f-43c6-92f5-730a10d6ff8d"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"df5bf99d-d228-4715-b41b-19ca86118777"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"f314eade-2232-44bf-a3ab-9b326bc67de6"}],"retained":false},"label":"Opus","model_base":"Claude Opus 5.5","selected_release_date":"2026-09-22","shape":"square"},{"color":"#3fb59a","default_hidden":false,"enabled":true,"id":"anthropic-sonnet","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["0d3c777f-6817-42d7-9bb9-223314bc5a57"],"metric":"response_time_seconds","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"042e8a37-fcd0-40f4-8f41-99215fb68eda"},{"dominator_model_ids":["e97a4ef5-e817-480e-9595-12f81dc4974f"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"975aeaef-50bd-4a65-9c73-f1015adcd4d4"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"bbc2ffea-cf6b-43be-8c41-1769347e234d"}],"retained":false},"label":"Sonnet","model_base":"Claude Sonnet 5.5","selected_release_date":"2026-09-28","shape":"cross"},{"color":"#d9669c","default_hidden":false,"enabled":true,"id":"anthropic-fable","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["a3f8100d-e38f-408b-b0fa-0085dae18dc1"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"05776db7-f5c0-40f7-b824-079160f8cfa8"},{"dominator_model_ids":["a3f8100d-e38f-408b-b0fa-0085dae18dc1"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"3b7de71c-e034-4591-8ca6-6b6be2fa471f"},{"dominator_model_ids":["e97a4ef5-e817-480e-9595-12f81dc4974f"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"9d7d72cd-d95d-45a0-b109-4ad292c9aabd"}],"retained":false},"label":"Fable","model_base":"Claude Fable 5.1","selected_release_date":"2026-09-01","shape":"hex"},{"color":"#8fcf4a","default_hidden":false,"enabled":true,"id":"anthropic-haiku","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"af26fff4-8120-41be-a5f0-86aaea023f20"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"20829974-af06-497e-9f42-77fb958d43b9"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"42908ae3-d3bd-4934-be19-fbff93d3fde8"}],"retained":false},"label":"Haiku","model_base":"Claude Haiku 5.5","selected_release_date":"2026-10-07","shape":"plus"},{"color":"#e85a4f","default_hidden":false,"enabled":true,"id":"deepseek-flash","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null}],"retained":false},"label":"DeepSeek Flash","model_base":"DeepSeek V4.1 Flash 1017","selected_release_date":"2026-10-17","shape":"ring"},{"color":"#73ddd8","default_hidden":false,"enabled":true,"id":"aa-7e07ff3daf35381fea519659","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"}],"retained":false},"label":"Gemini 4 Carbon","model_base":"Gemini 4 Carbon","selected_release_date":"2026-10-28","shape":"ring"},{"color":"#cedd73","default_hidden":false,"enabled":true,"id":"aa-30d069911007dc8c372a3f60","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"bb3d7e75-8e22-4082-b9d6-1db0803e042f"}],"retained":false},"label":"K2 Horizon 375B A23B","model_base":"K2 Horizon 375B A23B","selected_release_date":"2026-09-03","shape":"diamond"},{"color":"#cddd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-flash","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"127de816-57d3-4037-8484-480a613cd413"}],"retained":true},"label":"MiMo Flash","model_base":"MiMo-V2.6-Flash","selected_release_date":"2026-09-21","shape":"hex"},{"color":"#84dd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-pro","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null}],"retained":true},"label":"MiMo Pro","model_base":"MiMo-V2.6-Pro","selected_release_date":"2026-09-21","shape":"triangle"}],"metadata":{"fetched_at_utc":"2026-10-29T16:09:34.342Z","index_version":5,"metric_notes":["Cost per task is AA's overall Intelligence Index workload, even when another ability is selected.","The middle chart is estimated 500-answer-token end-to-end response time; it is not measured time per task.","Task-time values are unavailable because the free endpoint does not return task token counts.","TTFT is the first token; first-answer time is kept separately as TTFA.","Prices are USD per million tokens; a zero is preserved as source data and is not proof of free access."],"selected_count":47,"selection":{"ability_id":"intelligence","automatic_family_count":3,"grouping_version":1,"metrics":["cost_per_task","response_time_seconds"],"pinned_family_count":9,"retained_family_count":1,"universe_family_count":518,"universe_model_count":718},"selection_as_of":"2026-10-29","source_url":"https://artificialanalysis.ai/api/v2/language/models/free","tier":"free","total_catalog_count":718},"models":[{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-sol","id":"e76e0fe5-93ca-4272-9359-2eb1740467d1","metrics":{"cost_per_task":0.1615,"output_tokens_per_second":66.43,"response_time_seconds":9.43,"time_per_task_seconds":null,"ttfa_seconds":1.91,"ttft_seconds":1.91},"name":"GPT-6.1 Sol (Low)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":43.4,"engineering":42.3,"finance_and_accounting":44.3,"healthcare_and_medical":39.7,"intelligence":34.5,"legal":42.9,"strategy_and_ops":45.6},"slug":"gpt-6-1-sol-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-sol","id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d","metrics":{"cost_per_task":0.3594,"output_tokens_per_second":65.33,"response_time_seconds":11.09,"time_per_task_seconds":null,"ttfa_seconds":3.44,"ttft_seconds":3.44},"name":"GPT-6.1 Sol (Medium)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":50.3,"engineering":51.9,"finance_and_accounting":50.6,"healthcare_and_medical":45.8,"intelligence":46.1,"legal":49,"strategy_and_ops":53.3},"slug":"gpt-6-1-sol-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-sol","id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042","metrics":{"cost_per_task":0.591,"output_tokens_per_second":68.2,"response_time_seconds":35.14,"time_per_task_seconds":null,"ttfa_seconds":27.81,"ttft_seconds":27.81},"name":"GPT-6.1 Sol (High)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":53.7,"engineering":55.3,"finance_and_accounting":53.2,"healthcare_and_medical":48.8,"intelligence":50.2,"legal":51.8,"strategy_and_ops":55.4},"slug":"gpt-6-1-sol-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-sol","id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352","metrics":{"cost_per_task":0.764,"output_tokens_per_second":68.26,"response_time_seconds":104.22,"time_per_task_seconds":null,"ttfa_seconds":96.89,"ttft_seconds":96.89},"name":"GPT-6.1 Sol (Xhigh)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":55.7,"engineering":57.3,"finance_and_accounting":55.2,"healthcare_and_medical":50.8,"intelligence":52.3,"legal":53.7,"strategy_and_ops":57.2},"slug":"gpt-6-1-sol-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-sol","id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a","metrics":{"cost_per_task":1.2721,"output_tokens_per_second":79.07,"response_time_seconds":255.8,"time_per_task_seconds":null,"ttfa_seconds":249.48,"ttft_seconds":249.48},"name":"GPT-6.1 Sol (Max)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":57.4,"engineering":59.3,"finance_and_accounting":56.2,"healthcare_and_medical":52,"intelligence":54.5,"legal":53.7,"strategy_and_ops":57.6},"slug":"gpt-6-1-sol"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-terra","id":"0d3c777f-6817-42d7-9bb9-223314bc5a57","metrics":{"cost_per_task":0.2259,"output_tokens_per_second":91,"response_time_seconds":6.52,"time_per_task_seconds":null,"ttfa_seconds":1.02,"ttft_seconds":1.02},"name":"GPT-6.1 Terra (Non-reasoning)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":32.5,"engineering":32.7,"finance_and_accounting":33.5,"healthcare_and_medical":null,"intelligence":30.4,"legal":28.2,"strategy_and_ops":40},"slug":"gpt-6-1-terra-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-terra","id":"c955b262-a17f-4f1a-b097-6860b866295b","metrics":{"cost_per_task":0.0713,"output_tokens_per_second":90.95,"response_time_seconds":6.78,"time_per_task_seconds":null,"ttfa_seconds":1.28,"ttft_seconds":1.28},"name":"GPT-6.1 Terra (Low)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":36,"engineering":35,"finance_and_accounting":37.9,"healthcare_and_medical":null,"intelligence":29.2,"legal":37.3,"strategy_and_ops":42.2},"slug":"gpt-6-1-terra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-terra","id":"c441e158-a87d-4116-911b-93325e4b4f1c","metrics":{"cost_per_task":0.1688,"output_tokens_per_second":90.92,"response_time_seconds":7.61,"time_per_task_seconds":null,"ttfa_seconds":2.11,"ttft_seconds":2.11},"name":"GPT-6.1 Terra (Medium)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":41.1,"engineering":42.6,"finance_and_accounting":42.5,"healthcare_and_medical":null,"intelligence":38.1,"legal":40.5,"strategy_and_ops":45.4},"slug":"gpt-6-1-terra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-terra","id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37","metrics":{"cost_per_task":0.2593,"output_tokens_per_second":90.96,"response_time_seconds":12.08,"time_per_task_seconds":null,"ttfa_seconds":6.58,"ttft_seconds":6.58},"name":"GPT-6.1 Terra (High)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":43.6,"engineering":46.3,"finance_and_accounting":44.2,"healthcare_and_medical":null,"intelligence":42.3,"legal":42.5,"strategy_and_ops":47.4},"slug":"gpt-6-1-terra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-terra","id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe","metrics":{"cost_per_task":0.4007,"output_tokens_per_second":90.93,"response_time_seconds":32.61,"time_per_task_seconds":null,"ttfa_seconds":27.11,"ttft_seconds":27.11},"name":"GPT-6.1 Terra (Xhigh)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":46.7,"engineering":49.1,"finance_and_accounting":47.6,"healthcare_and_medical":null,"intelligence":45,"legal":43.8,"strategy_and_ops":48.7},"slug":"gpt-6-1-terra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-terra","id":"b0c462cf-f2d0-4126-9434-28db9502219f","metrics":{"cost_per_task":0.9611,"output_tokens_per_second":90.93,"response_time_seconds":211.11,"time_per_task_seconds":null,"ttfa_seconds":205.61,"ttft_seconds":205.61},"name":"GPT-6.1 Terra (Max)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":49.3,"engineering":54.4,"finance_and_accounting":49,"healthcare_and_medical":44.7,"intelligence":51,"legal":46.4,"strategy_and_ops":50},"slug":"gpt-6-1-terra"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-astra","id":"a3f8100d-e38f-408b-b0fa-0085dae18dc1","metrics":{"cost_per_task":1.4237,"output_tokens_per_second":60.27,"response_time_seconds":10.29,"time_per_task_seconds":null,"ttfa_seconds":2,"ttft_seconds":2},"name":"GPT-6 Astra (Low)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":47.8,"engineering":49.5,"finance_and_accounting":48.1,"healthcare_and_medical":45,"intelligence":43,"legal":47.7,"strategy_and_ops":49.9},"slug":"gpt-6-astra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-astra","id":"e97a4ef5-e817-480e-9595-12f81dc4974f","metrics":{"cost_per_task":2.7324,"output_tokens_per_second":61.81,"response_time_seconds":11.85,"time_per_task_seconds":null,"ttfa_seconds":3.76,"ttft_seconds":3.76},"name":"GPT-6 Astra (Medium)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":53.9,"engineering":56.7,"finance_and_accounting":53.7,"healthcare_and_medical":49.6,"intelligence":51.5,"legal":51.8,"strategy_and_ops":55.7},"slug":"gpt-6-astra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-astra","id":"e05a4828-0536-4876-870d-a235023f992b","metrics":{"cost_per_task":3.2386,"output_tokens_per_second":62.28,"response_time_seconds":40.87,"time_per_task_seconds":null,"ttfa_seconds":32.85,"ttft_seconds":32.85},"name":"GPT-6 Astra (High)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":56.6,"engineering":60,"finance_and_accounting":56.1,"healthcare_and_medical":51.6,"intelligence":54.8,"legal":55.1,"strategy_and_ops":57.2},"slug":"gpt-6-astra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-astra","id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3","metrics":{"cost_per_task":3.6589,"output_tokens_per_second":66.05,"response_time_seconds":132.56,"time_per_task_seconds":null,"ttfa_seconds":124.99,"ttft_seconds":124.99},"name":"GPT-6 Astra (Xhigh)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":57.8,"engineering":60.3,"finance_and_accounting":56.8,"healthcare_and_medical":52.7,"intelligence":55.3,"legal":55.7,"strategy_and_ops":57.9},"slug":"gpt-6-astra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-astra","id":"2f339a97-9a0d-499a-9cb5-e0db665bfa25","metrics":{"cost_per_task":6.2447,"output_tokens_per_second":77.62,"response_time_seconds":238.46,"time_per_task_seconds":null,"ttfa_seconds":232.02,"ttft_seconds":232.02},"name":"GPT-6 Astra (Max)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":58.3,"engineering":61.8,"finance_and_accounting":57.4,"healthcare_and_medical":53.7,"intelligence":56.9,"legal":55.6,"strategy_and_ops":58},"slug":"gpt-6-astra"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-luna","id":"63cb48ea-0b0c-4e07-8ded-6d28dec4fa28","metrics":{"cost_per_task":0.0714,"output_tokens_per_second":114.45,"response_time_seconds":5.25,"time_per_task_seconds":null,"ttfa_seconds":0.88,"ttft_seconds":0.88},"name":"GPT-6 Luna (Non-reasoning)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":20,"engineering":16.5,"finance_and_accounting":19,"healthcare_and_medical":15.7,"intelligence":9.4,"legal":16.6,"strategy_and_ops":17},"slug":"gpt-6-luna-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-luna","id":"bf9708d8-933d-44f6-affa-b696a7a650c9","metrics":{"cost_per_task":0.0051,"output_tokens_per_second":108.51,"response_time_seconds":6.74,"time_per_task_seconds":null,"ttfa_seconds":2.14,"ttft_seconds":2.14},"name":"GPT-6 Luna (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":18.7,"engineering":18.7,"finance_and_accounting":17.2,"healthcare_and_medical":16.2,"intelligence":9.7,"legal":16.3,"strategy_and_ops":16.8},"slug":"gpt-6-luna-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-luna","id":"36667da0-9222-4967-adbb-f7efa15ad213","metrics":{"cost_per_task":0.0422,"output_tokens_per_second":null,"response_time_seconds":null,"time_per_task_seconds":null,"ttfa_seconds":null,"ttft_seconds":null},"name":"GPT-6 Luna (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":27.5,"engineering":24.8,"finance_and_accounting":26.3,"healthcare_and_medical":27.4,"intelligence":18.3,"legal":24.5,"strategy_and_ops":33.8},"slug":"gpt-6-luna-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-luna","id":"7d1229bc-deea-4717-ba5b-f59a35d991e3","metrics":{"cost_per_task":0.0729,"output_tokens_per_second":116.83,"response_time_seconds":14.76,"time_per_task_seconds":null,"ttfa_seconds":10.48,"ttft_seconds":10.48},"name":"GPT-6 Luna (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":29.8,"engineering":27.2,"finance_and_accounting":29.3,"healthcare_and_medical":29.2,"intelligence":21.4,"legal":26.7,"strategy_and_ops":37.8},"slug":"gpt-6-luna-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-luna","id":"19813eb2-460a-475c-af65-810bb8660fec","metrics":{"cost_per_task":0.1041,"output_tokens_per_second":121.68,"response_time_seconds":21.01,"time_per_task_seconds":null,"ttfa_seconds":16.9,"ttft_seconds":16.9},"name":"GPT-6 Luna (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":32.1,"engineering":28.8,"finance_and_accounting":30.6,"healthcare_and_medical":30.5,"intelligence":23.3,"legal":28.4,"strategy_and_ops":39.4},"slug":"gpt-6-luna-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-luna","id":"6fb13851-40ce-4bda-ad3f-6b38e0c5daa7","metrics":{"cost_per_task":0.152,"output_tokens_per_second":121.64,"response_time_seconds":80.71,"time_per_task_seconds":null,"ttfa_seconds":76.6,"ttft_seconds":76.6},"name":"GPT-6 Luna (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":35.5,"engineering":33.2,"finance_and_accounting":33.9,"healthcare_and_medical":34.8,"intelligence":27.8,"legal":32.2,"strategy_and_ops":43.2},"slug":"gpt-6-luna"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-opus","id":"4416ca93-fde6-4b7b-abbc-3a6be109cc3d","metrics":{"cost_per_task":0.9755,"output_tokens_per_second":83.36,"response_time_seconds":10.21,"time_per_task_seconds":null,"ttfa_seconds":4.21,"ttft_seconds":4.21},"name":"Claude Opus 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":45.2,"engineering":43,"finance_and_accounting":42.2,"healthcare_and_medical":45.1,"intelligence":34.5,"legal":43.5,"strategy_and_ops":47.5},"slug":"claude-opus-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-opus","id":"ea9e0da6-169f-43c6-92f5-730a10d6ff8d","metrics":{"cost_per_task":2.4511,"output_tokens_per_second":81.99,"response_time_seconds":17.22,"time_per_task_seconds":null,"ttfa_seconds":11.12,"ttft_seconds":11.12},"name":"Claude Opus 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":54.3,"engineering":53.6,"finance_and_accounting":50.7,"healthcare_and_medical":51.4,"intelligence":48.1,"legal":49.7,"strategy_and_ops":56},"slug":"claude-opus-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-opus","id":"f314eade-2232-44bf-a3ab-9b326bc67de6","metrics":{"cost_per_task":3.4647,"output_tokens_per_second":80.37,"response_time_seconds":39.96,"time_per_task_seconds":null,"ttfa_seconds":33.74,"ttft_seconds":33.74},"name":"Claude Opus 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":56.9,"engineering":57.7,"finance_and_accounting":53.3,"healthcare_and_medical":52.5,"intelligence":51.7,"legal":52,"strategy_and_ops":57.6},"slug":"claude-opus-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-opus","id":"df5bf99d-d228-4715-b41b-19ca86118777","metrics":{"cost_per_task":6.0472,"output_tokens_per_second":85.05,"response_time_seconds":112.91,"time_per_task_seconds":null,"ttfa_seconds":107.03,"ttft_seconds":107.03},"name":"Claude Opus 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":60,"engineering":62.5,"finance_and_accounting":55.7,"healthcare_and_medical":55.5,"intelligence":57,"legal":54.7,"strategy_and_ops":59},"slug":"claude-opus-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-opus","id":"2f3c4dc9-a450-4303-8697-0237257cf08f","metrics":{"cost_per_task":10.0364,"output_tokens_per_second":97.91,"response_time_seconds":653.31,"time_per_task_seconds":null,"ttfa_seconds":648.21,"ttft_seconds":648.21},"name":"Claude Opus 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":62.3,"engineering":64.6,"finance_and_accounting":59.4,"healthcare_and_medical":57.9,"intelligence":58.4,"legal":58,"strategy_and_ops":61.4},"slug":"claude-opus-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-sonnet","id":"bbc2ffea-cf6b-43be-8c41-1769347e234d","metrics":{"cost_per_task":0.5113,"output_tokens_per_second":107.85,"response_time_seconds":5.9,"time_per_task_seconds":null,"ttfa_seconds":1.26,"ttft_seconds":1.26},"name":"Claude Sonnet 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":35.8,"engineering":33,"finance_and_accounting":35.9,"healthcare_and_medical":37.3,"intelligence":25.3,"legal":36.9,"strategy_and_ops":41.7},"slug":"claude-sonnet-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-sonnet","id":"042e8a37-fcd0-40f4-8f41-99215fb68eda","metrics":{"cost_per_task":0.7807,"output_tokens_per_second":110.24,"response_time_seconds":7.06,"time_per_task_seconds":null,"ttfa_seconds":2.53,"ttft_seconds":2.53},"name":"Claude Sonnet 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":40.6,"engineering":36.8,"finance_and_accounting":40.7,"healthcare_and_medical":40.2,"intelligence":30.3,"legal":38.8,"strategy_and_ops":46.7},"slug":"claude-sonnet-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-sonnet","id":"268525e2-f873-4178-bc07-e6a0ee1f002d","metrics":{"cost_per_task":1.6361,"output_tokens_per_second":115.49,"response_time_seconds":14.27,"time_per_task_seconds":null,"ttfa_seconds":9.94,"ttft_seconds":9.94},"name":"Claude Sonnet 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":46.1,"engineering":45.8,"finance_and_accounting":44.5,"healthcare_and_medical":43.9,"intelligence":41.1,"legal":44.1,"strategy_and_ops":51.2},"slug":"claude-sonnet-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-sonnet","id":"975aeaef-50bd-4a65-9c73-f1015adcd4d4","metrics":{"cost_per_task":4.092,"output_tokens_per_second":112.76,"response_time_seconds":32.38,"time_per_task_seconds":null,"ttfa_seconds":27.94,"ttft_seconds":27.94},"name":"Claude Sonnet 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":50.2,"engineering":53.5,"finance_and_accounting":48.5,"healthcare_and_medical":47.4,"intelligence":49.6,"legal":47.4,"strategy_and_ops":54.1},"slug":"claude-sonnet-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-sonnet","id":"b171d979-5ec1-45de-b8b9-db1ee65e77ec","metrics":{"cost_per_task":10.0206,"output_tokens_per_second":136.87,"response_time_seconds":413.62,"time_per_task_seconds":null,"ttfa_seconds":409.96,"ttft_seconds":409.96},"name":"Claude Sonnet 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":56,"engineering":58.2,"finance_and_accounting":55.8,"healthcare_and_medical":54.2,"intelligence":54.2,"legal":52.2,"strategy_and_ops":58.1},"slug":"claude-sonnet-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-fable","id":"05776db7-f5c0-40f7-b824-079160f8cfa8","metrics":{"cost_per_task":4.4711,"output_tokens_per_second":58.29,"response_time_seconds":10.63,"time_per_task_seconds":null,"ttfa_seconds":2.05,"ttft_seconds":2.05},"name":"Claude Fable 5.1 (Low, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":49.2,"engineering":45.4,"finance_and_accounting":47.7,"healthcare_and_medical":44.1,"intelligence":38.5,"legal":46.7,"strategy_and_ops":51.1},"slug":"claude-fable-5-1-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-fable","id":"3b7de71c-e034-4591-8ca6-6b6be2fa471f","metrics":{"cost_per_task":5.5643,"output_tokens_per_second":61.24,"response_time_seconds":10.72,"time_per_task_seconds":null,"ttfa_seconds":2.55,"ttft_seconds":2.55},"name":"Claude Fable 5.1 (Medium, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":51,"engineering":50,"finance_and_accounting":47.5,"healthcare_and_medical":45.3,"intelligence":43,"legal":48.1,"strategy_and_ops":52.3},"slug":"claude-fable-5-1-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-fable","id":"9d7d72cd-d95d-45a0-b109-4ad292c9aabd","metrics":{"cost_per_task":7.54,"output_tokens_per_second":59.91,"response_time_seconds":16.3,"time_per_task_seconds":null,"ttfa_seconds":7.95,"ttft_seconds":7.95},"name":"Claude Fable 5.1 (High, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":53.7,"engineering":54.1,"finance_and_accounting":49.6,"healthcare_and_medical":47.9,"intelligence":47,"legal":49.8,"strategy_and_ops":53.8},"slug":"claude-fable-5-1-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-fable","id":"9b166bf3-42db-4f63-8338-1c4a1244ffe8","metrics":{"cost_per_task":10.8475,"output_tokens_per_second":64.19,"response_time_seconds":65.56,"time_per_task_seconds":null,"ttfa_seconds":57.77,"ttft_seconds":57.77},"name":"Claude Fable 5.1 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":57.9,"engineering":56.9,"finance_and_accounting":53.5,"healthcare_and_medical":50.5,"intelligence":49.7,"legal":53.7,"strategy_and_ops":56.4},"slug":"claude-fable-5-1-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-fable","id":"3e87c73e-a257-495e-9730-367a66229811","metrics":{"cost_per_task":12.994,"output_tokens_per_second":65.92,"response_time_seconds":187.15,"time_per_task_seconds":null,"ttfa_seconds":179.56,"ttft_seconds":179.56},"name":"Claude Fable 5.1 (Max, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":58.9,"engineering":56.6,"finance_and_accounting":53.8,"healthcare_and_medical":51.2,"intelligence":49,"legal":54.5,"strategy_and_ops":58},"slug":"claude-fable-5-1"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-haiku","id":"42908ae3-d3bd-4934-be19-fbff93d3fde8","metrics":{"cost_per_task":0.0438,"output_tokens_per_second":180.03,"response_time_seconds":10.5,"time_per_task_seconds":null,"ttfa_seconds":7.72,"ttft_seconds":7.72},"name":"Claude Haiku 5.5 (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":29.5,"engineering":26.8,"finance_and_accounting":28.5,"healthcare_and_medical":24.8,"intelligence":18.6,"legal":27.1,"strategy_and_ops":27.3},"slug":"claude-haiku-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-haiku","id":"af26fff4-8120-41be-a5f0-86aaea023f20","metrics":{"cost_per_task":0.0918,"output_tokens_per_second":180.08,"response_time_seconds":10.99,"time_per_task_seconds":null,"ttfa_seconds":8.21,"ttft_seconds":8.21},"name":"Claude Haiku 5.5 (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":35.6,"engineering":31.8,"finance_and_accounting":34.9,"healthcare_and_medical":30.7,"intelligence":24.6,"legal":32.6,"strategy_and_ops":33},"slug":"claude-haiku-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-haiku","id":"20829974-af06-497e-9f42-77fb958d43b9","metrics":{"cost_per_task":0.1586,"output_tokens_per_second":184.5,"response_time_seconds":17.36,"time_per_task_seconds":null,"ttfa_seconds":14.65,"ttft_seconds":14.65},"name":"Claude Haiku 5.5 (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":39.4,"engineering":36.3,"finance_and_accounting":37.8,"healthcare_and_medical":32.2,"intelligence":29.6,"legal":35,"strategy_and_ops":37.1},"slug":"claude-haiku-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-haiku","id":"41b5bf5e-daf6-42d9-b8d1-60e340a3028d","metrics":{"cost_per_task":0.2484,"output_tokens_per_second":191.42,"response_time_seconds":44.95,"time_per_task_seconds":null,"ttfa_seconds":42.34,"ttft_seconds":42.34},"name":"Claude Haiku 5.5 (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":42.6,"engineering":40.3,"finance_and_accounting":41.1,"healthcare_and_medical":34.1,"intelligence":34.3,"legal":37.1,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-haiku","id":"7d064a11-6e78-4030-b535-cdf940615041","metrics":{"cost_per_task":0.411,"output_tokens_per_second":239.96,"response_time_seconds":343.14,"time_per_task_seconds":null,"ttfa_seconds":341.05,"ttft_seconds":341.05},"name":"Claude Haiku 5.5 (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":44.3,"engineering":42.3,"finance_and_accounting":43.6,"healthcare_and_medical":37.5,"intelligence":36.2,"legal":38.7,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5"},{"creator":"DeepSeek","effort":"Max","effort_rank":5,"family_id":"deepseek-flash","id":"f151fd0b-2139-40cf-a3ec-995e8cedc592","metrics":{"cost_per_task":0.6021,"output_tokens_per_second":178.79,"response_time_seconds":15.18,"time_per_task_seconds":null,"ttfa_seconds":12.38,"ttft_seconds":1.19},"name":"DeepSeek V4.1 Flash 1017 (Max)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"agentic":null,"coding":null,"economics":40.3,"engineering":37.5,"finance_and_accounting":42.2,"healthcare_and_medical":41.3,"intelligence":32.5,"legal":37.7,"strategy_and_ops":49.2},"slug":"deepseek-v4-1-flash-1017"},{"creator":"Google","effort":"High","effort_rank":3,"family_id":"aa-7e07ff3daf35381fea519659","id":"909ed0ba-bcc5-4f38-8162-08a4e187a772","metrics":{"cost_per_task":7.7555,"output_tokens_per_second":97.99,"response_time_seconds":108.23,"time_per_task_seconds":null,"ttfa_seconds":103.13,"ttft_seconds":103.13},"name":"Gemini 4 Carbon (High)","pricing":{"cache_hit":0.2,"cache_write":4,"input":4,"output":20},"release_date":"2026-10-28","scores":{"agentic":null,"coding":null,"economics":61,"engineering":64.7,"finance_and_accounting":62.6,"healthcare_and_medical":null,"intelligence":59.4,"legal":62,"strategy_and_ops":60.9},"slug":"gemini-4-carbon"},{"creator":"Institute of Foundation Models","effort":"Default","effort_rank":null,"family_id":"aa-30d069911007dc8c372a3f60","id":"bb3d7e75-8e22-4082-b9d6-1db0803e042f","metrics":{"cost_per_task":0,"output_tokens_per_second":896.27,"response_time_seconds":5.06,"time_per_task_seconds":null,"ttfa_seconds":4.5,"ttft_seconds":2.27},"name":"K2 Horizon 375B A23B","pricing":{"cache_hit":null,"cache_write":null,"input":0,"output":0},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":31.8,"engineering":26.5,"finance_and_accounting":32.2,"healthcare_and_medical":29.5,"intelligence":17.8,"legal":28.9,"strategy_and_ops":32.9},"slug":"k2-horizon-375b-a23b"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-flash","id":"127de816-57d3-4037-8484-480a613cd413","metrics":{"cost_per_task":0.1285,"output_tokens_per_second":55.46,"response_time_seconds":48.13,"time_per_task_seconds":null,"ttfa_seconds":39.12,"ttft_seconds":3.05},"name":"MiMo-V2.6-Flash","pricing":{"cache_hit":0.0028,"cache_write":null,"input":0.14,"output":0.28},"release_date":"2026-09-21","scores":{"agentic":null,"coding":null,"economics":34.2,"engineering":31,"finance_and_accounting":36.9,"healthcare_and_medical":35.1,"intelligence":26.7,"legal":33.8,"strategy_and_ops":45.7},"slug":"mimo-v2-6-flash"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-pro","id":"24d8fdfe-6241-424e-b7b7-1b6efb06e4fb","metrics":{"cost_per_task":0.2572,"output_tokens_per_second":58.04,"response_time_seconds":46.35,"time_per_task_seconds":null,"ttfa_seconds":37.74,"ttft_seconds":3.28},"name":"MiMo-V2.6-Pro","pricing":{"cache_hit":0.0036,"cache_write":null,"input":0.435,"output":0.87},"release_date":"2026-09-21","scores":{"agentic":null,"coding":null,"economics":37.7,"engineering":34.3,"finance_and_accounting":38.9,"healthcare_and_medical":35.8,"intelligence":29.9,"legal":35,"strategy_and_ops":46.9},"slug":"mimo-v2-6-pro"}],"schema_version":1}</script>
+  <footer class="page-footer"><span>Static page · charts render in your browser · response index fetched separately</span><span id="index-version">Index version —</span></footer>
+  <script id="aa-data" type="application/json">{"abilities":[{"description":"Artificial Analysis Intelligence Index composite.","id":"intelligence","label":"Intelligence","primary":true},{"description":"Artificial Analysis Coding Index.","id":"coding","label":"Coding","primary":true},{"description":"Artificial Analysis Agentic Index.","id":"agentic","label":"Agentic","primary":true},{"description":"Artificial Analysis Economics Index.","id":"economics","label":"Economics","primary":true},{"description":"Artificial Analysis Finance and Accounting Index.","id":"finance_and_accounting","label":"Finance and accounting","primary":false},{"description":"Artificial Analysis Strategy and Operations Index.","id":"strategy_and_ops","label":"Strategy and operations","primary":false},{"description":"Artificial Analysis Legal Index.","id":"legal","label":"Legal","primary":false},{"description":"Artificial Analysis Healthcare and Medical Index.","id":"healthcare_and_medical","label":"Healthcare and medical","primary":false},{"description":"Artificial Analysis Engineering Index.","id":"engineering","label":"Engineering","primary":false}],"diagnostics":{"metric_coverage":{"agentic":{"count":0,"missing":49,"zero":0},"coding":{"count":0,"missing":49,"zero":0},"cost_per_task":{"chart_eligible":47,"count":48,"missing":1,"nonpositive":1},"economics":{"count":48,"missing":1,"zero":0},"engineering":{"count":48,"missing":1,"zero":0},"finance_and_accounting":{"count":48,"missing":1,"zero":0},"healthcare_and_medical":{"count":42,"missing":7,"zero":0},"intelligence":{"count":48,"missing":1,"zero":0},"legal":{"count":48,"missing":1,"zero":0},"output_tokens_per_second":{"chart_eligible":48,"count":48,"missing":1,"nonpositive":0},"response_time_seconds":{"chart_eligible":48,"count":48,"missing":1,"nonpositive":0},"strategy_and_ops":{"count":48,"missing":1,"zero":0},"time_per_task_seconds":{"available":false,"chart_eligible":0,"count":0,"missing":49,"nonpositive":0,"note":"Task token counts are absent from the free endpoint; no time-per-task value is inferred."},"ttfa_seconds":{"chart_eligible":48,"count":48,"missing":1,"nonpositive":0},"ttft_seconds":{"chart_eligible":48,"count":48,"missing":1,"nonpositive":0}},"selection_warnings":[]},"families":[{"color":"#e2bd3f","default_hidden":false,"enabled":true,"id":"openai-sol","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c441e158-a87d-4116-911b-93325e4b4f1c"],"metric":"response_time_seconds","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"e76e0fe5-93ca-4272-9359-2eb1740467d1"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"e76e0fe5-93ca-4272-9359-2eb1740467d1"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"}],"retained":false},"label":"Sol","model_base":"GPT-6.1 Sol","selected_release_date":"2026-09-29","shape":"diamond"},{"color":"#dd7395","default_hidden":false,"enabled":true,"id":"openai-terra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"b0c462cf-f2d0-4126-9434-28db9502219f"},{"dominator_model_ids":["a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c441e158-a87d-4116-911b-93325e4b4f1c"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c955b262-a17f-4f1a-b097-6860b866295b"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"0d3c777f-6817-42d7-9bb9-223314bc5a57"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"c441e158-a87d-4116-911b-93325e4b4f1c"}],"retained":false},"label":"Terra","model_base":"GPT-6.1 Terra","selected_release_date":"2026-10-26","shape":"plus"},{"color":"#5aa8e6","default_hidden":false,"enabled":true,"id":"openai-astra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352","b25ac058-1e33-4c31-bbc9-a20c3ad0717a"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e97a4ef5-e817-480e-9595-12f81dc4974f"},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"response_time_seconds","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3"},{"dominator_model_ids":["df5bf99d-d228-4715-b41b-19ca86118777"],"metric":"cost_per_task","removed_family_id":"anthropic-opus","type":"without_family","witness_model_id":"2f339a97-9a0d-499a-9cb5-e0db665bfa25"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"e05a4828-0536-4876-870d-a235023f992b"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"a3f8100d-e38f-408b-b0fa-0085dae18dc1"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"e05a4828-0536-4876-870d-a235023f992b"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"e97a4ef5-e817-480e-9595-12f81dc4974f"}],"retained":false},"label":"Astra","model_base":"GPT-6 Astra","selected_release_date":"2026-09-03","shape":"circle"},{"color":"#a48ce8","default_hidden":false,"enabled":true,"id":"openai-luna","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"6fb13851-40ce-4bda-ad3f-6b38e0c5daa7"},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"7d1229bc-deea-4717-ba5b-f59a35d991e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"36667da0-9222-4967-adbb-f7efa15ad213"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"bf9708d8-933d-44f6-affa-b696a7a650c9"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"63cb48ea-0b0c-4e07-8ded-6d28dec4fa28"}],"retained":false},"label":"Luna","model_base":"GPT-6 Luna","selected_release_date":"2026-09-22","shape":"triangle"},{"color":"#e0663c","default_hidden":false,"enabled":true,"id":"anthropic-opus","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"cost_per_task","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"2f3c4dc9-a450-4303-8697-0237257cf08f"},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"response_time_seconds","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"2f3c4dc9-a450-4303-8697-0237257cf08f"},{"dominator_model_ids":["909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"response_time_seconds","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"df5bf99d-d228-4715-b41b-19ca86118777"},{"dominator_model_ids":["e97a4ef5-e817-480e-9595-12f81dc4974f"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"ea9e0da6-169f-43c6-92f5-730a10d6ff8d"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"df5bf99d-d228-4715-b41b-19ca86118777"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"f314eade-2232-44bf-a3ab-9b326bc67de6"}],"retained":false},"label":"Opus","model_base":"Claude Opus 5.5","selected_release_date":"2026-09-22","shape":"square"},{"color":"#3fb59a","default_hidden":false,"enabled":true,"id":"anthropic-sonnet","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["0d3c777f-6817-42d7-9bb9-223314bc5a57"],"metric":"response_time_seconds","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"042e8a37-fcd0-40f4-8f41-99215fb68eda"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"bbc2ffea-cf6b-43be-8c41-1769347e234d"}],"retained":false},"label":"Sonnet","model_base":"Claude Sonnet 5.5","selected_release_date":"2026-09-28","shape":"cross"},{"color":"#d9669c","default_hidden":false,"enabled":true,"id":"anthropic-fable","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["a3f8100d-e38f-408b-b0fa-0085dae18dc1"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"3b7de71c-e034-4591-8ca6-6b6be2fa471f"},{"dominator_model_ids":["e97a4ef5-e817-480e-9595-12f81dc4974f"],"metric":"response_time_seconds","removed_family_id":"openai-astra","type":"without_family","witness_model_id":"9d7d72cd-d95d-45a0-b109-4ad292c9aabd"}],"retained":false},"label":"Fable","model_base":"Claude Fable 5.1","selected_release_date":"2026-09-01","shape":"hex"},{"color":"#8fcf4a","default_hidden":false,"enabled":true,"id":"anthropic-haiku","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"af26fff4-8120-41be-a5f0-86aaea023f20"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"20829974-af06-497e-9f42-77fb958d43b9"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"42908ae3-d3bd-4934-be19-fbff93d3fde8"}],"retained":false},"label":"Haiku","model_base":"Claude Haiku 5.5","selected_release_date":"2026-10-07","shape":"plus"},{"color":"#e85a4f","default_hidden":false,"enabled":true,"id":"deepseek-flash","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null}],"retained":false},"label":"DeepSeek Flash","model_base":"DeepSeek V4.1 Flash 1017","selected_release_date":"2026-10-17","shape":"ring"},{"color":"#73ddd8","default_hidden":false,"enabled":true,"id":"aa-7e07ff3daf35381fea519659","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"},{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"}],"retained":false},"label":"Gemini 4 Carbon","model_base":"Gemini 4 Carbon","selected_release_date":"2026-10-28","shape":"ring"},{"color":"#cedd73","default_hidden":false,"enabled":true,"id":"aa-30d069911007dc8c372a3f60","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"response_time_seconds","removed_family_id":null,"type":"frontier","witness_model_id":"bb3d7e75-8e22-4082-b9d6-1db0803e042f"}],"retained":false},"label":"K2 Horizon 375B A23B","model_base":"K2 Horizon 375B A23B","selected_release_date":"2026-09-03","shape":"diamond"},{"color":"#cddd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-flash","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"127de816-57d3-4037-8484-480a613cd413"}],"retained":true},"label":"MiMo Flash","model_base":"MiMo-V2.6-Flash","selected_release_date":"2026-09-21","shape":"hex"},{"color":"#84dd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-pro","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null}],"retained":true},"label":"MiMo Pro","model_base":"MiMo-V2.6-Pro","selected_release_date":"2026-09-21","shape":"triangle"},{"color":"#bbdd73","default_hidden":false,"enabled":true,"id":"aa-387b3b7bc83e6440246cc673","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["bf9708d8-933d-44f6-affa-b696a7a650c9"],"metric":"cost_per_task","removed_family_id":"openai-luna","type":"without_family","witness_model_id":"3fd96175-4ef1-434c-8795-f873aec2abc1"}],"retained":false},"label":"Mistral Small 4","model_base":"Mistral Small 4","selected_release_date":"2026-03-16","shape":"triangle"}],"metadata":{"fetched_at_utc":"2026-10-29T22:41:39.018Z","index_version":5,"metric_notes":["Cost per task is AA's overall Intelligence Index workload, even when another ability is selected.","The middle chart is estimated 500-answer-token end-to-end response time; it is not measured time per task.","Task-time values are unavailable because the free endpoint does not return task token counts.","TTFT is the first token; first-answer time is kept separately as TTFA.","Prices are USD per million tokens; a zero is preserved as source data and is not proof of free access."],"selected_count":49,"selection":{"ability_id":"intelligence","automatic_family_count":4,"grouping_version":1,"metrics":["cost_per_task","response_time_seconds"],"pinned_family_count":9,"retained_family_count":1,"universe_family_count":518,"universe_model_count":718},"selection_as_of":"2026-10-29","source_url":"https://artificialanalysis.ai/api/v2/language/models/free","tier":"free","total_catalog_count":718},"models":[{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-sol","id":"e76e0fe5-93ca-4272-9359-2eb1740467d1","metrics":{"cost_per_task":0.1615,"output_tokens_per_second":63.91,"response_time_seconds":9.66,"time_per_task_seconds":null,"ttfa_seconds":1.84,"ttft_seconds":1.84},"name":"GPT-6.1 Sol (Low)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":43.4,"engineering":42.3,"finance_and_accounting":44.3,"healthcare_and_medical":39.7,"intelligence":34.5,"legal":42.9,"strategy_and_ops":45.6},"slug":"gpt-6-1-sol-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-sol","id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d","metrics":{"cost_per_task":0.3594,"output_tokens_per_second":58.67,"response_time_seconds":11.96,"time_per_task_seconds":null,"ttfa_seconds":3.44,"ttft_seconds":3.44},"name":"GPT-6.1 Sol (Medium)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":50.3,"engineering":51.9,"finance_and_accounting":50.6,"healthcare_and_medical":45.8,"intelligence":46.1,"legal":49,"strategy_and_ops":53.3},"slug":"gpt-6-1-sol-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-sol","id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042","metrics":{"cost_per_task":0.591,"output_tokens_per_second":65.43,"response_time_seconds":33.4,"time_per_task_seconds":null,"ttfa_seconds":25.76,"ttft_seconds":25.76},"name":"GPT-6.1 Sol (High)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":53.7,"engineering":55.3,"finance_and_accounting":53.2,"healthcare_and_medical":48.8,"intelligence":50.2,"legal":51.8,"strategy_and_ops":55.4},"slug":"gpt-6-1-sol-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-sol","id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352","metrics":{"cost_per_task":0.764,"output_tokens_per_second":65.74,"response_time_seconds":104.5,"time_per_task_seconds":null,"ttfa_seconds":96.89,"ttft_seconds":96.89},"name":"GPT-6.1 Sol (Xhigh)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":55.7,"engineering":57.3,"finance_and_accounting":55.2,"healthcare_and_medical":50.8,"intelligence":52.3,"legal":53.7,"strategy_and_ops":57.2},"slug":"gpt-6-1-sol-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-sol","id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a","metrics":{"cost_per_task":1.2721,"output_tokens_per_second":78.84,"response_time_seconds":253.86,"time_per_task_seconds":null,"ttfa_seconds":247.52,"ttft_seconds":247.52},"name":"GPT-6.1 Sol (Max)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"agentic":null,"coding":null,"economics":57.4,"engineering":59.3,"finance_and_accounting":56.2,"healthcare_and_medical":52,"intelligence":54.5,"legal":53.7,"strategy_and_ops":57.6},"slug":"gpt-6-1-sol"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-terra","id":"0d3c777f-6817-42d7-9bb9-223314bc5a57","metrics":{"cost_per_task":0.2259,"output_tokens_per_second":90.95,"response_time_seconds":6.47,"time_per_task_seconds":null,"ttfa_seconds":0.97,"ttft_seconds":0.97},"name":"GPT-6.1 Terra (Non-reasoning)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":32.5,"engineering":32.7,"finance_and_accounting":33.5,"healthcare_and_medical":null,"intelligence":30.4,"legal":28.2,"strategy_and_ops":40},"slug":"gpt-6-1-terra-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-terra","id":"c955b262-a17f-4f1a-b097-6860b866295b","metrics":{"cost_per_task":0.0713,"output_tokens_per_second":90.93,"response_time_seconds":6.79,"time_per_task_seconds":null,"ttfa_seconds":1.29,"ttft_seconds":1.29},"name":"GPT-6.1 Terra (Low)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":36,"engineering":35,"finance_and_accounting":37.9,"healthcare_and_medical":null,"intelligence":29.2,"legal":37.3,"strategy_and_ops":42.2},"slug":"gpt-6-1-terra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-terra","id":"c441e158-a87d-4116-911b-93325e4b4f1c","metrics":{"cost_per_task":0.1688,"output_tokens_per_second":90.9,"response_time_seconds":7.65,"time_per_task_seconds":null,"ttfa_seconds":2.15,"ttft_seconds":2.15},"name":"GPT-6.1 Terra (Medium)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":41.1,"engineering":42.6,"finance_and_accounting":42.5,"healthcare_and_medical":null,"intelligence":38.1,"legal":40.5,"strategy_and_ops":45.4},"slug":"gpt-6-1-terra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-terra","id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37","metrics":{"cost_per_task":0.2593,"output_tokens_per_second":90.94,"response_time_seconds":13.74,"time_per_task_seconds":null,"ttfa_seconds":8.24,"ttft_seconds":8.24},"name":"GPT-6.1 Terra (High)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":43.6,"engineering":46.3,"finance_and_accounting":44.2,"healthcare_and_medical":null,"intelligence":42.3,"legal":42.5,"strategy_and_ops":47.4},"slug":"gpt-6-1-terra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-terra","id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe","metrics":{"cost_per_task":0.4007,"output_tokens_per_second":90.92,"response_time_seconds":35.66,"time_per_task_seconds":null,"ttfa_seconds":30.17,"ttft_seconds":30.17},"name":"GPT-6.1 Terra (Xhigh)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":46.7,"engineering":49.1,"finance_and_accounting":47.6,"healthcare_and_medical":null,"intelligence":45,"legal":43.8,"strategy_and_ops":48.7},"slug":"gpt-6-1-terra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-terra","id":"b0c462cf-f2d0-4126-9434-28db9502219f","metrics":{"cost_per_task":0.9611,"output_tokens_per_second":90.92,"response_time_seconds":216.78,"time_per_task_seconds":null,"ttfa_seconds":211.28,"ttft_seconds":211.28},"name":"GPT-6.1 Terra (Max)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"agentic":null,"coding":null,"economics":49.3,"engineering":54.4,"finance_and_accounting":49,"healthcare_and_medical":44.7,"intelligence":51,"legal":46.4,"strategy_and_ops":50},"slug":"gpt-6-1-terra"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-astra","id":"a3f8100d-e38f-408b-b0fa-0085dae18dc1","metrics":{"cost_per_task":1.4237,"output_tokens_per_second":59.41,"response_time_seconds":10.1,"time_per_task_seconds":null,"ttfa_seconds":1.69,"ttft_seconds":1.69},"name":"GPT-6 Astra (Low)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":47.8,"engineering":49.5,"finance_and_accounting":48.1,"healthcare_and_medical":45,"intelligence":43,"legal":47.7,"strategy_and_ops":49.9},"slug":"gpt-6-astra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-astra","id":"e97a4ef5-e817-480e-9595-12f81dc4974f","metrics":{"cost_per_task":2.7324,"output_tokens_per_second":57.21,"response_time_seconds":12.03,"time_per_task_seconds":null,"ttfa_seconds":3.29,"ttft_seconds":3.29},"name":"GPT-6 Astra (Medium)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":53.9,"engineering":56.7,"finance_and_accounting":53.7,"healthcare_and_medical":49.6,"intelligence":51.5,"legal":51.8,"strategy_and_ops":55.7},"slug":"gpt-6-astra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-astra","id":"e05a4828-0536-4876-870d-a235023f992b","metrics":{"cost_per_task":3.2386,"output_tokens_per_second":61.84,"response_time_seconds":39.65,"time_per_task_seconds":null,"ttfa_seconds":31.56,"ttft_seconds":31.56},"name":"GPT-6 Astra (High)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":56.6,"engineering":60,"finance_and_accounting":56.1,"healthcare_and_medical":51.6,"intelligence":54.8,"legal":55.1,"strategy_and_ops":57.2},"slug":"gpt-6-astra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-astra","id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3","metrics":{"cost_per_task":3.6589,"output_tokens_per_second":63.85,"response_time_seconds":105.25,"time_per_task_seconds":null,"ttfa_seconds":97.42,"ttft_seconds":97.42},"name":"GPT-6 Astra (Xhigh)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":57.8,"engineering":60.3,"finance_and_accounting":56.8,"healthcare_and_medical":52.7,"intelligence":55.3,"legal":55.7,"strategy_and_ops":57.9},"slug":"gpt-6-astra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-astra","id":"2f339a97-9a0d-499a-9cb5-e0db665bfa25","metrics":{"cost_per_task":6.2447,"output_tokens_per_second":76.49,"response_time_seconds":237.54,"time_per_task_seconds":null,"ttfa_seconds":231.01,"ttft_seconds":231.01},"name":"GPT-6 Astra (Max)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":58.3,"engineering":61.8,"finance_and_accounting":57.4,"healthcare_and_medical":53.7,"intelligence":56.9,"legal":55.6,"strategy_and_ops":58},"slug":"gpt-6-astra"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-luna","id":"63cb48ea-0b0c-4e07-8ded-6d28dec4fa28","metrics":{"cost_per_task":0.0714,"output_tokens_per_second":113.48,"response_time_seconds":5.25,"time_per_task_seconds":null,"ttfa_seconds":0.84,"ttft_seconds":0.84},"name":"GPT-6 Luna (Non-reasoning)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":20,"engineering":16.5,"finance_and_accounting":19,"healthcare_and_medical":15.7,"intelligence":9.4,"legal":16.6,"strategy_and_ops":17},"slug":"gpt-6-luna-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-luna","id":"bf9708d8-933d-44f6-affa-b696a7a650c9","metrics":{"cost_per_task":0.0051,"output_tokens_per_second":107.73,"response_time_seconds":6.5,"time_per_task_seconds":null,"ttfa_seconds":1.86,"ttft_seconds":1.86},"name":"GPT-6 Luna (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":18.7,"engineering":18.7,"finance_and_accounting":17.2,"healthcare_and_medical":16.2,"intelligence":9.7,"legal":16.3,"strategy_and_ops":16.8},"slug":"gpt-6-luna-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-luna","id":"36667da0-9222-4967-adbb-f7efa15ad213","metrics":{"cost_per_task":0.0422,"output_tokens_per_second":null,"response_time_seconds":null,"time_per_task_seconds":null,"ttfa_seconds":null,"ttft_seconds":null},"name":"GPT-6 Luna (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":27.5,"engineering":24.8,"finance_and_accounting":26.3,"healthcare_and_medical":27.4,"intelligence":18.3,"legal":24.5,"strategy_and_ops":33.8},"slug":"gpt-6-luna-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-luna","id":"7d1229bc-deea-4717-ba5b-f59a35d991e3","metrics":{"cost_per_task":0.0729,"output_tokens_per_second":116.83,"response_time_seconds":15.18,"time_per_task_seconds":null,"ttfa_seconds":10.9,"ttft_seconds":10.9},"name":"GPT-6 Luna (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":29.8,"engineering":27.2,"finance_and_accounting":29.3,"healthcare_and_medical":29.2,"intelligence":21.4,"legal":26.7,"strategy_and_ops":37.8},"slug":"gpt-6-luna-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-luna","id":"19813eb2-460a-475c-af65-810bb8660fec","metrics":{"cost_per_task":0.1041,"output_tokens_per_second":117.98,"response_time_seconds":21.74,"time_per_task_seconds":null,"ttfa_seconds":17.5,"ttft_seconds":17.5},"name":"GPT-6 Luna (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":32.1,"engineering":28.8,"finance_and_accounting":30.6,"healthcare_and_medical":30.5,"intelligence":23.3,"legal":28.4,"strategy_and_ops":39.4},"slug":"gpt-6-luna-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-luna","id":"6fb13851-40ce-4bda-ad3f-6b38e0c5daa7","metrics":{"cost_per_task":0.152,"output_tokens_per_second":118.27,"response_time_seconds":90.82,"time_per_task_seconds":null,"ttfa_seconds":86.59,"ttft_seconds":86.59},"name":"GPT-6 Luna (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":35.5,"engineering":33.2,"finance_and_accounting":33.9,"healthcare_and_medical":34.8,"intelligence":27.8,"legal":32.2,"strategy_and_ops":43.2},"slug":"gpt-6-luna"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-opus","id":"4416ca93-fde6-4b7b-abbc-3a6be109cc3d","metrics":{"cost_per_task":0.9755,"output_tokens_per_second":80.34,"response_time_seconds":10.23,"time_per_task_seconds":null,"ttfa_seconds":4.01,"ttft_seconds":4.01},"name":"Claude Opus 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":45.2,"engineering":43,"finance_and_accounting":42.2,"healthcare_and_medical":45.1,"intelligence":34.5,"legal":43.5,"strategy_and_ops":47.5},"slug":"claude-opus-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-opus","id":"ea9e0da6-169f-43c6-92f5-730a10d6ff8d","metrics":{"cost_per_task":2.4511,"output_tokens_per_second":79.41,"response_time_seconds":16.96,"time_per_task_seconds":null,"ttfa_seconds":10.66,"ttft_seconds":10.66},"name":"Claude Opus 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":54.3,"engineering":53.6,"finance_and_accounting":50.7,"healthcare_and_medical":51.4,"intelligence":48.1,"legal":49.7,"strategy_and_ops":56},"slug":"claude-opus-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-opus","id":"f314eade-2232-44bf-a3ab-9b326bc67de6","metrics":{"cost_per_task":3.4647,"output_tokens_per_second":79.98,"response_time_seconds":30.98,"time_per_task_seconds":null,"ttfa_seconds":24.73,"ttft_seconds":24.73},"name":"Claude Opus 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":56.9,"engineering":57.7,"finance_and_accounting":53.3,"healthcare_and_medical":52.5,"intelligence":51.7,"legal":52,"strategy_and_ops":57.6},"slug":"claude-opus-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-opus","id":"df5bf99d-d228-4715-b41b-19ca86118777","metrics":{"cost_per_task":6.0472,"output_tokens_per_second":84.69,"response_time_seconds":117.27,"time_per_task_seconds":null,"ttfa_seconds":111.36,"ttft_seconds":111.36},"name":"Claude Opus 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":60,"engineering":62.5,"finance_and_accounting":55.7,"healthcare_and_medical":55.5,"intelligence":57,"legal":54.7,"strategy_and_ops":59},"slug":"claude-opus-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-opus","id":"2f3c4dc9-a450-4303-8697-0237257cf08f","metrics":{"cost_per_task":10.0364,"output_tokens_per_second":96.57,"response_time_seconds":637.94,"time_per_task_seconds":null,"ttfa_seconds":632.76,"ttft_seconds":632.76},"name":"Claude Opus 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"agentic":null,"coding":null,"economics":62.3,"engineering":64.6,"finance_and_accounting":59.4,"healthcare_and_medical":57.9,"intelligence":58.4,"legal":58,"strategy_and_ops":61.4},"slug":"claude-opus-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-sonnet","id":"bbc2ffea-cf6b-43be-8c41-1769347e234d","metrics":{"cost_per_task":0.5113,"output_tokens_per_second":102.94,"response_time_seconds":6.12,"time_per_task_seconds":null,"ttfa_seconds":1.26,"ttft_seconds":1.26},"name":"Claude Sonnet 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":35.8,"engineering":33,"finance_and_accounting":35.9,"healthcare_and_medical":37.3,"intelligence":25.3,"legal":36.9,"strategy_and_ops":41.7},"slug":"claude-sonnet-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-sonnet","id":"042e8a37-fcd0-40f4-8f41-99215fb68eda","metrics":{"cost_per_task":0.7807,"output_tokens_per_second":104.73,"response_time_seconds":7.3,"time_per_task_seconds":null,"ttfa_seconds":2.53,"ttft_seconds":2.53},"name":"Claude Sonnet 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":40.6,"engineering":36.8,"finance_and_accounting":40.7,"healthcare_and_medical":40.2,"intelligence":30.3,"legal":38.8,"strategy_and_ops":46.7},"slug":"claude-sonnet-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-sonnet","id":"268525e2-f873-4178-bc07-e6a0ee1f002d","metrics":{"cost_per_task":1.6361,"output_tokens_per_second":112.08,"response_time_seconds":14.3,"time_per_task_seconds":null,"ttfa_seconds":9.84,"ttft_seconds":9.84},"name":"Claude Sonnet 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":46.1,"engineering":45.8,"finance_and_accounting":44.5,"healthcare_and_medical":43.9,"intelligence":41.1,"legal":44.1,"strategy_and_ops":51.2},"slug":"claude-sonnet-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-sonnet","id":"975aeaef-50bd-4a65-9c73-f1015adcd4d4","metrics":{"cost_per_task":4.092,"output_tokens_per_second":107.84,"response_time_seconds":31.31,"time_per_task_seconds":null,"ttfa_seconds":26.67,"ttft_seconds":26.67},"name":"Claude Sonnet 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":50.2,"engineering":53.5,"finance_and_accounting":48.5,"healthcare_and_medical":47.4,"intelligence":49.6,"legal":47.4,"strategy_and_ops":54.1},"slug":"claude-sonnet-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-sonnet","id":"b171d979-5ec1-45de-b8b9-db1ee65e77ec","metrics":{"cost_per_task":10.0206,"output_tokens_per_second":138.2,"response_time_seconds":405.62,"time_per_task_seconds":null,"ttfa_seconds":402.01,"ttft_seconds":402.01},"name":"Claude Sonnet 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"agentic":null,"coding":null,"economics":56,"engineering":58.2,"finance_and_accounting":55.8,"healthcare_and_medical":54.2,"intelligence":54.2,"legal":52.2,"strategy_and_ops":58.1},"slug":"claude-sonnet-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-fable","id":"05776db7-f5c0-40f7-b824-079160f8cfa8","metrics":{"cost_per_task":4.4711,"output_tokens_per_second":54.77,"response_time_seconds":11.17,"time_per_task_seconds":null,"ttfa_seconds":2.04,"ttft_seconds":2.04},"name":"Claude Fable 5.1 (Low, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":49.2,"engineering":45.4,"finance_and_accounting":47.7,"healthcare_and_medical":44.1,"intelligence":38.5,"legal":46.7,"strategy_and_ops":51.1},"slug":"claude-fable-5-1-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-fable","id":"3b7de71c-e034-4591-8ca6-6b6be2fa471f","metrics":{"cost_per_task":5.5643,"output_tokens_per_second":57.84,"response_time_seconds":11,"time_per_task_seconds":null,"ttfa_seconds":2.35,"ttft_seconds":2.35},"name":"Claude Fable 5.1 (Medium, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":51,"engineering":50,"finance_and_accounting":47.5,"healthcare_and_medical":45.3,"intelligence":43,"legal":48.1,"strategy_and_ops":52.3},"slug":"claude-fable-5-1-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-fable","id":"9d7d72cd-d95d-45a0-b109-4ad292c9aabd","metrics":{"cost_per_task":7.54,"output_tokens_per_second":58.37,"response_time_seconds":15.02,"time_per_task_seconds":null,"ttfa_seconds":6.45,"ttft_seconds":6.45},"name":"Claude Fable 5.1 (High, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":53.7,"engineering":54.1,"finance_and_accounting":49.6,"healthcare_and_medical":47.9,"intelligence":47,"legal":49.8,"strategy_and_ops":53.8},"slug":"claude-fable-5-1-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-fable","id":"9b166bf3-42db-4f63-8338-1c4a1244ffe8","metrics":{"cost_per_task":10.8475,"output_tokens_per_second":63.74,"response_time_seconds":63.07,"time_per_task_seconds":null,"ttfa_seconds":55.22,"ttft_seconds":55.22},"name":"Claude Fable 5.1 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":57.9,"engineering":56.9,"finance_and_accounting":53.5,"healthcare_and_medical":50.5,"intelligence":49.7,"legal":53.7,"strategy_and_ops":56.4},"slug":"claude-fable-5-1-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-fable","id":"3e87c73e-a257-495e-9730-367a66229811","metrics":{"cost_per_task":12.994,"output_tokens_per_second":66.42,"response_time_seconds":185.44,"time_per_task_seconds":null,"ttfa_seconds":177.91,"ttft_seconds":177.91},"name":"Claude Fable 5.1 (Max, Default Fallback)","pricing":{"cache_hit":0.25,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-01","scores":{"agentic":null,"coding":null,"economics":58.9,"engineering":56.6,"finance_and_accounting":53.8,"healthcare_and_medical":51.2,"intelligence":49,"legal":54.5,"strategy_and_ops":58},"slug":"claude-fable-5-1"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-haiku","id":"42908ae3-d3bd-4934-be19-fbff93d3fde8","metrics":{"cost_per_task":0.0438,"output_tokens_per_second":168.85,"response_time_seconds":9.81,"time_per_task_seconds":null,"ttfa_seconds":6.85,"ttft_seconds":6.85},"name":"Claude Haiku 5.5 (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":29.5,"engineering":26.8,"finance_and_accounting":28.5,"healthcare_and_medical":24.8,"intelligence":18.6,"legal":27.1,"strategy_and_ops":27.3},"slug":"claude-haiku-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-haiku","id":"af26fff4-8120-41be-a5f0-86aaea023f20","metrics":{"cost_per_task":0.0918,"output_tokens_per_second":174.6,"response_time_seconds":10.82,"time_per_task_seconds":null,"ttfa_seconds":7.96,"ttft_seconds":7.96},"name":"Claude Haiku 5.5 (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":35.6,"engineering":31.8,"finance_and_accounting":34.9,"healthcare_and_medical":30.7,"intelligence":24.6,"legal":32.6,"strategy_and_ops":33},"slug":"claude-haiku-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-haiku","id":"20829974-af06-497e-9f42-77fb958d43b9","metrics":{"cost_per_task":0.1586,"output_tokens_per_second":177.62,"response_time_seconds":15.96,"time_per_task_seconds":null,"ttfa_seconds":13.14,"ttft_seconds":13.14},"name":"Claude Haiku 5.5 (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":39.4,"engineering":36.3,"finance_and_accounting":37.8,"healthcare_and_medical":32.2,"intelligence":29.6,"legal":35,"strategy_and_ops":37.1},"slug":"claude-haiku-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-haiku","id":"41b5bf5e-daf6-42d9-b8d1-60e340a3028d","metrics":{"cost_per_task":0.2484,"output_tokens_per_second":191.21,"response_time_seconds":48.36,"time_per_task_seconds":null,"ttfa_seconds":45.74,"ttft_seconds":45.74},"name":"Claude Haiku 5.5 (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":42.6,"engineering":40.3,"finance_and_accounting":41.1,"healthcare_and_medical":34.1,"intelligence":34.3,"legal":37.1,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-haiku","id":"7d064a11-6e78-4030-b535-cdf940615041","metrics":{"cost_per_task":0.411,"output_tokens_per_second":236.06,"response_time_seconds":310.55,"time_per_task_seconds":null,"ttfa_seconds":308.43,"ttft_seconds":308.43},"name":"Claude Haiku 5.5 (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"agentic":null,"coding":null,"economics":44.3,"engineering":42.3,"finance_and_accounting":43.6,"healthcare_and_medical":37.5,"intelligence":36.2,"legal":38.7,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5"},{"creator":"DeepSeek","effort":"Max","effort_rank":5,"family_id":"deepseek-flash","id":"f151fd0b-2139-40cf-a3ec-995e8cedc592","metrics":{"cost_per_task":0.6021,"output_tokens_per_second":178.79,"response_time_seconds":15.19,"time_per_task_seconds":null,"ttfa_seconds":12.39,"ttft_seconds":1.2},"name":"DeepSeek V4.1 Flash 1017 (Max)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"agentic":null,"coding":null,"economics":40.3,"engineering":37.5,"finance_and_accounting":42.2,"healthcare_and_medical":41.3,"intelligence":32.5,"legal":37.7,"strategy_and_ops":49.2},"slug":"deepseek-v4-1-flash-1017"},{"creator":"Google","effort":"High","effort_rank":3,"family_id":"aa-7e07ff3daf35381fea519659","id":"909ed0ba-bcc5-4f38-8162-08a4e187a772","metrics":{"cost_per_task":7.7555,"output_tokens_per_second":84.94,"response_time_seconds":103.82,"time_per_task_seconds":null,"ttfa_seconds":97.94,"ttft_seconds":97.94},"name":"Gemini 4 Carbon (High)","pricing":{"cache_hit":0.2,"cache_write":4,"input":4,"output":20},"release_date":"2026-10-28","scores":{"agentic":null,"coding":null,"economics":61,"engineering":64.7,"finance_and_accounting":62.6,"healthcare_and_medical":null,"intelligence":59.4,"legal":62,"strategy_and_ops":60.9},"slug":"gemini-4-carbon"},{"creator":"Institute of Foundation Models","effort":"Default","effort_rank":null,"family_id":"aa-30d069911007dc8c372a3f60","id":"bb3d7e75-8e22-4082-b9d6-1db0803e042f","metrics":{"cost_per_task":0,"output_tokens_per_second":772.08,"response_time_seconds":5.56,"time_per_task_seconds":null,"ttfa_seconds":4.91,"ttft_seconds":2.32},"name":"K2 Horizon 375B A23B","pricing":{"cache_hit":null,"cache_write":null,"input":0,"output":0},"release_date":"2026-09-03","scores":{"agentic":null,"coding":null,"economics":31.8,"engineering":26.5,"finance_and_accounting":32.2,"healthcare_and_medical":29.5,"intelligence":17.8,"legal":28.9,"strategy_and_ops":32.9},"slug":"k2-horizon-375b-a23b"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-flash","id":"127de816-57d3-4037-8484-480a613cd413","metrics":{"cost_per_task":0.1285,"output_tokens_per_second":54.47,"response_time_seconds":48.95,"time_per_task_seconds":null,"ttfa_seconds":39.77,"ttft_seconds":3.05},"name":"MiMo-V2.6-Flash","pricing":{"cache_hit":0.0028,"cache_write":null,"input":0.14,"output":0.28},"release_date":"2026-09-21","scores":{"agentic":null,"coding":null,"economics":34.2,"engineering":31,"finance_and_accounting":36.9,"healthcare_and_medical":35.1,"intelligence":26.7,"legal":33.8,"strategy_and_ops":45.7},"slug":"mimo-v2-6-flash"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-pro","id":"24d8fdfe-6241-424e-b7b7-1b6efb06e4fb","metrics":{"cost_per_task":0.2572,"output_tokens_per_second":55.82,"response_time_seconds":48.06,"time_per_task_seconds":null,"ttfa_seconds":39.1,"ttft_seconds":3.28},"name":"MiMo-V2.6-Pro","pricing":{"cache_hit":0.0036,"cache_write":null,"input":0.435,"output":0.87},"release_date":"2026-09-21","scores":{"agentic":null,"coding":null,"economics":37.7,"engineering":34.3,"finance_and_accounting":38.9,"healthcare_and_medical":35.8,"intelligence":29.9,"legal":35,"strategy_and_ops":46.9},"slug":"mimo-v2-6-pro"},{"creator":"Mistral","effort":"Non-reasoning","effort_rank":0,"family_id":"aa-387b3b7bc83e6440246cc673","id":"12f6a061-0ab3-4c76-b225-49abee253651","metrics":{"cost_per_task":null,"output_tokens_per_second":169.53,"response_time_seconds":3.89,"time_per_task_seconds":null,"ttfa_seconds":0.94,"ttft_seconds":0.94},"name":"Mistral Small 4 (Non-reasoning)","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.15,"output":0.6},"release_date":"2026-03-16","scores":{"agentic":null,"coding":null,"economics":null,"engineering":null,"finance_and_accounting":null,"healthcare_and_medical":null,"intelligence":null,"legal":null,"strategy_and_ops":null},"slug":"mistral-small-4-non-reasoning"},{"creator":"Mistral","effort":"Reasoning","effort_rank":null,"family_id":"aa-387b3b7bc83e6440246cc673","id":"3fd96175-4ef1-434c-8795-f873aec2abc1","metrics":{"cost_per_task":0.0399,"output_tokens_per_second":177.23,"response_time_seconds":15.01,"time_per_task_seconds":null,"ttfa_seconds":12.19,"ttft_seconds":0.9},"name":"Mistral Small 4 (Reasoning)","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.15,"output":0.6},"release_date":"2026-03-16","scores":{"agentic":null,"coding":null,"economics":11.7,"engineering":13.3,"finance_and_accounting":11.6,"healthcare_and_medical":8.8,"intelligence":4.3,"legal":11.6,"strategy_and_ops":6.8},"slug":"mistral-small-4"}],"schema_version":1}</script>
   <script>(function (root, factory) {
   if (typeof module === "object" && module.exports) {
     module.exports = factory();
@@ -1692,6 +1761,18 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     Anthropic: { plan: "Max 20x", monthly: 200, weekly: 2313.68 }
   };
   var WEEKS_PER_MONTH = 365.2425 / 12 / 7;
+  var RESPONSE_COST_PATH = "response-cost-index.json";
+  var RESPONSE_COST_MAX_BYTES = 1024 * 1024;
+  var RESPONSE_COST_TIMEOUT_MS = 7000;
+  var RESPONSE_COST_STORAGE_KEY = "aafrontier.responseCostRawIndices.v1";
+  var RESPONSE_COST_METHOD = "observed-response-cost-1";
+  var RESPONSE_COST_INDEX_KEYS = ["schema_version", "method_version", "cutoff_utc", "window", "thresholds", "anchor", "coverage", "cells"];
+  var RESPONSE_COST_IDENTITY_KEYS = ["creator", "base_slug", "release_date", "effort"];
+  var RESPONSE_COST_CELL_KEYS = ["cell_id", "aa_model_id", "creator", "base_slug", "release_date", "effort", "responses", "roots", "utc_dates", "mean_usd_per_response", "raw_index", "valuation_basis", "assumption_code"];
+  var RESPONSE_COST_COVERAGE_KEYS = ["included_cells", "responses", "roots", "utc_dates", "pricing_basis_counts", "scenario_counts", "unsupported_identity_counts"];
+  var RESPONSE_COST_BASIS_KEYS = ["historical_api_equivalent", "deepseek_reference_schedule"];
+  var RESPONSE_COST_SCENARIO_KEYS = ["deepseek_tier_absent", "deepseek_tier_auto", "deepseek_tier_default", "deepseek_tier_standard"];
+  var RESPONSE_COST_UNSUPPORTED_KEYS = ["deepseek_checkpoint_identity_unresolved"];
 
   function subscriptionModels(models, enabled, plans) {
     if (!enabled) return models;
@@ -1712,6 +1793,162 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       return Object.assign({}, model, { metrics: Object.assign({}, model.metrics, {
         cost_per_task: cost * plan.monthly / (WEEKS_PER_MONTH * weekly)
       }) });
+    });
+  }
+
+  function exactKeys(value, keys) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    var actual = Object.keys(value).sort();
+    var expected = keys.slice().sort();
+    return actual.length === expected.length && actual.every(function (key, index) { return key === expected[index]; });
+  }
+
+  function validUtc(value) {
+    if (typeof value !== "string" || !/Z$/.test(value)) return null;
+    var date = new Date(value);
+    return Number.isFinite(date.getTime()) ? date : null;
+  }
+
+  function validateResponseCostIndex(data) {
+    function fail(message) { return { ok: false, error: message }; }
+    if (!exactKeys(data, RESPONSE_COST_INDEX_KEYS)) return fail("The response-cost index has an unexpected field set.");
+    if (data.schema_version !== 1 || data.method_version !== RESPONSE_COST_METHOD) return fail("The response-cost index version is unsupported.");
+    var cutoff = validUtc(data.cutoff_utc);
+    if (!cutoff) return fail("The response-cost cutoff is invalid.");
+    if (cutoff.getTime() > Date.now() + 5 * 60 * 1000) return fail("The response-cost cutoff is in the future.");
+    if (!exactKeys(data.window, ["start_utc", "cutoff_utc", "days"])) return fail("The response-cost window is malformed.");
+    var start = validUtc(data.window.start_utc);
+    var windowCutoff = validUtc(data.window.cutoff_utc);
+    if (!start || !windowCutoff || data.window.days !== 30 || windowCutoff.getTime() !== cutoff.getTime() || cutoff.getTime() - start.getTime() !== 30 * 86400000) return fail("The response-cost window is inconsistent.");
+    if (!exactKeys(data.thresholds, ["responses", "roots", "utc_dates"]) || data.thresholds.responses !== 100 || data.thresholds.roots !== 8 || data.thresholds.utc_dates !== 8) return fail("The response-cost thresholds are unsupported.");
+    if (!exactKeys(data.anchor, ["cell_id"].concat(RESPONSE_COST_IDENTITY_KEYS))) return fail("The response-cost anchor is malformed.");
+    if (!Array.isArray(data.cells) || !data.cells.length) return fail("The response-cost index has no cells.");
+    var ids = new Set(), aaIds = new Set(), identities = new Set(), byId = new Map();
+    for (var index = 0; index < data.cells.length; index += 1) {
+      var cell = data.cells[index];
+      if (!exactKeys(cell, RESPONSE_COST_CELL_KEYS)) return fail("A response-cost cell has an unexpected field set.");
+      for (var keyIndex = 0; keyIndex < RESPONSE_COST_CELL_KEYS.length; keyIndex += 1) {
+        var key = RESPONSE_COST_CELL_KEYS[keyIndex];
+        if (["responses", "roots", "utc_dates", "mean_usd_per_response", "raw_index"].includes(key)) continue;
+        if (typeof cell[key] !== "string" || !cell[key]) return fail("A response-cost cell identity is malformed.");
+      }
+      if (![100, 8, 8].every(function (minimum, i) { return Number.isInteger(cell[["responses", "roots", "utc_dates"][i]]) && cell[["responses", "roots", "utc_dates"][i]] >= minimum; })) return fail("A response-cost cell does not meet the reviewed thresholds.");
+      if (!(cell.mean_usd_per_response > 0) || !Number.isFinite(cell.mean_usd_per_response) || !(cell.raw_index > 0) || !Number.isFinite(cell.raw_index)) return fail("A response-cost value is invalid.");
+      if (RESPONSE_COST_BASIS_KEYS.indexOf(cell.valuation_basis) === -1 || ["none", "standard_reference_no_physical_provider_attribution"].indexOf(cell.assumption_code) === -1) return fail("A response-cost valuation label is unsupported.");
+      var identity = cell.creator + "|" + cell.base_slug + "|" + cell.release_date + "|" + cell.effort;
+      if (cell.cell_id !== [cell.creator.toLowerCase(), cell.base_slug, cell.release_date, cell.effort].join("/") || ["low", "medium", "high", "xhigh", "max"].indexOf(cell.effort) === -1) return fail("A response-cost cell identity is noncanonical.");
+      if (ids.has(cell.cell_id) || aaIds.has(cell.aa_model_id) || identities.has(identity)) return fail("The response-cost index has duplicate cells.");
+      ids.add(cell.cell_id); aaIds.add(cell.aa_model_id); identities.add(identity); byId.set(cell.cell_id, cell);
+    }
+    var anchor = byId.get(data.anchor.cell_id);
+    if (!anchor || !RESPONSE_COST_IDENTITY_KEYS.every(function (key) { return data.anchor[key] === anchor[key]; })) return fail("The response-cost anchor is absent or inconsistent.");
+    if (anchor.creator !== "OpenAI" || anchor.base_slug !== "gpt-6-1-sol" || anchor.effort !== "medium" || anchor.raw_index !== 1) return fail("The response-cost anchor is not Sol 6.1 Medium = 1.");
+    if (data.cells.some(function (cell) { return Math.abs(cell.raw_index - cell.mean_usd_per_response / anchor.mean_usd_per_response) > 1.1e-9; })) return fail("A response-cost index does not match the anchor mean.");
+    if (!exactKeys(data.coverage, RESPONSE_COST_COVERAGE_KEYS)) return fail("The response-cost coverage summary is malformed.");
+    if (data.coverage.included_cells !== data.cells.length) return fail("The response-cost cell count is inconsistent.");
+    if (data.coverage.responses !== data.cells.reduce(function (total, cell) { return total + cell.responses; }, 0)) return fail("The response-cost response count is inconsistent.");
+    if (![data.coverage.roots, data.coverage.utc_dates].every(function (value) { return Number.isInteger(value) && value > 0; })) return fail("The response-cost breadth counts are invalid.");
+    if (data.coverage.roots > data.coverage.responses || data.coverage.utc_dates > data.coverage.responses || data.coverage.roots < Math.max.apply(null, data.cells.map(function (cell) { return cell.roots; })) || data.coverage.utc_dates < Math.max.apply(null, data.cells.map(function (cell) { return cell.utc_dates; }))) return fail("The response-cost breadth counts are inconsistent.");
+    if (!exactKeys(data.coverage.pricing_basis_counts, RESPONSE_COST_BASIS_KEYS) || !exactKeys(data.coverage.scenario_counts, RESPONSE_COST_SCENARIO_KEYS) || !exactKeys(data.coverage.unsupported_identity_counts, RESPONSE_COST_UNSUPPORTED_KEYS)) return fail("The response-cost scenario summary is malformed.");
+    var basisValues = RESPONSE_COST_BASIS_KEYS.map(function (key) { return data.coverage.pricing_basis_counts[key]; });
+    var scenarioValues = RESPONSE_COST_SCENARIO_KEYS.map(function (key) { return data.coverage.scenario_counts[key]; });
+    var unsupportedValues = RESPONSE_COST_UNSUPPORTED_KEYS.map(function (key) { return data.coverage.unsupported_identity_counts[key]; });
+    if (!basisValues.concat(scenarioValues, unsupportedValues).every(function (value) { return Number.isInteger(value) && value >= 0; })) return fail("The response-cost scenario counts are invalid.");
+    if (basisValues.reduce(function (a, b) { return a + b; }, 0) !== data.coverage.responses || scenarioValues.reduce(function (a, b) { return a + b; }, 0) !== data.coverage.pricing_basis_counts.deepseek_reference_schedule) return fail("The response-cost scenario totals are inconsistent.");
+    return { ok: true, data: data };
+  }
+
+  function responseCostCellMap(data) {
+    var cells = new Map();
+    if (!data || !Array.isArray(data.cells)) return cells;
+    data.cells.forEach(function (cell) { cells.set(cell.aa_model_id, cell); });
+    return cells;
+  }
+
+  function responseCostCellFor(model, data) {
+    if (!model || !model.id || !data || !Array.isArray(data.cells)) return null;
+    var cell = data.cells.find(function (candidate) { return candidate.aa_model_id === model.id; });
+    if (!cell || cell.creator !== model.creator || cell.release_date !== model.release_date || String(model.effort || "").toLowerCase() !== cell.effort) return null;
+    var slug = String(model.slug || "").replace(/-(?:non-reasoning|low|medium|high|xhigh|max)$/, "");
+    return slug === cell.base_slug ? cell : null;
+  }
+
+  function responseCostModels(models, data, rawIndices) {
+    var anchorId = data && data.anchor ? data.anchor.cell_id : null;
+    return models.map(function (model) {
+      var cell = responseCostCellFor(model, data);
+      var replacement = cell && cell.cell_id !== anchorId && rawIndices && Object.prototype.hasOwnProperty.call(rawIndices, cell.cell_id) ? Number(rawIndices[cell.cell_id]) : cell && cell.raw_index;
+      var value = cell && Number.isFinite(replacement) && replacement > 0 ? replacement : null;
+      return Object.assign({}, model, { metrics: Object.assign({}, model.metrics || {}, { cost_per_task: value }) });
+    });
+  }
+
+  function modelPlanDivisor(model, plans) {
+    var plan = (plans || SUBSCRIPTION_PLANS)[model && model.creator];
+    if (!plan || !Number.isFinite(plan.monthly) || plan.monthly <= 0) return null;
+    var baseSlug = typeof model.slug === "string" ? model.slug.replace(/-(?:non-reasoning|low|medium|high|xhigh|max)$/, "") : "";
+    var overrides = plan.modelWeeklies;
+    var override = overrides && Object.prototype.hasOwnProperty.call(overrides, baseSlug) ? overrides[baseSlug] : null;
+    var weekly = override && override.releaseDate === model.release_date ? override.weekly : plan.weekly;
+    if (!Number.isFinite(weekly) || weekly <= 0) return null;
+    return WEEKS_PER_MONTH * weekly / plan.monthly;
+  }
+
+  function planResponseCostModels(models, data, rawIndices, plans) {
+    if (!data || !data.anchor) return models;
+    var anchor = Object.assign({}, data.anchor, {
+      slug: data.anchor.base_slug + (data.anchor.effort === "max" ? "" : "-" + data.anchor.effort)
+    });
+    var anchorDivisor = modelPlanDivisor(anchor, plans);
+    if (!Number.isFinite(anchorDivisor) || anchorDivisor <= 0) return models.map(function (model) {
+      return Object.assign({}, model, { metrics: Object.assign({}, model.metrics || {}, { cost_per_task: null }) });
+    });
+    return models.map(function (model) {
+      var cell = responseCostCellFor(model, data);
+      var raw = model.metrics && model.metrics.cost_per_task;
+      var divisor = modelPlanDivisor(model, plans);
+      if (divisor === null && model.creator !== "OpenAI" && model.creator !== "Anthropic") divisor = 1;
+      var value = cell && Number.isFinite(raw) && raw > 0 && Number.isFinite(divisor) && divisor > 0 ? raw * anchorDivisor / divisor : null;
+      return Object.assign({}, model, { metrics: Object.assign({}, model.metrics || {}, { cost_per_task: value }) });
+    });
+  }
+
+  function costModels(models, options) {
+    var settings = options || {};
+    var responseModels = settings.responseCosts ? responseCostModels(models, settings.responseIndex, settings.rawIndices || {}) : models;
+    if (!settings.planCosts) return responseModels;
+    return settings.responseCosts ? planResponseCostModels(responseModels, settings.responseIndex, settings.rawIndices || {}, settings.plans) : subscriptionModels(responseModels, true, settings.plans);
+  }
+
+  function costPresentation(responseCosts, planCosts) {
+    if (responseCosts) {
+      return planCosts ? {
+        key: "cost_per_task", container: "cost-chart", note: "cost-note", unit: "index", title: "Plan response cost", displayTitle: "Plan response cost",
+        shortAxis: "Plan-adjusted observed response cost", tooltipLabel: "Plan-adjusted response-cost index",
+        axisLabel: "Plan-adjusted response-cost index · Sol 6.1 Medium = 1",
+        detailLabel: "Plan response-cost index", comparisonLabel: "Plan-adjusted response-cost index", comparisonBasis: "plan-adjusted response-cost index",
+        subtitle: "Observed response cost after the existing full-quota plan conversion, renormalized to Sol 6.1 Medium."
+      } : {
+        key: "cost_per_task", container: "cost-chart", note: "cost-note", unit: "index", title: "Our response cost", displayTitle: "Our response cost",
+        shortAxis: "Observed response cost", tooltipLabel: "Observed response-cost index",
+        axisLabel: "Observed response-cost index · Sol 6.1 Medium = 1",
+        detailLabel: "Response-cost index", comparisonLabel: "Observed response-cost index", comparisonBasis: "observed response-cost index",
+        subtitle: "Arithmetic mean observed API-equivalent cost per response, normalized to Sol 6.1 Medium = 1."
+      };
+    }
+    if (planCosts) {
+      return Object.assign({}, METRICS[0], {
+        title: "Plan cost / task", displayTitle: "Plan cost / task",
+        shortAxis: "Subscription-equivalent cost per overall Intelligence Index task",
+        tooltipLabel: "Subscription-equivalent cost per task",
+        axisLabel: "Subscription-equivalent USD per Intelligence Index task",
+        detailLabel: "Subscription cost / task", comparisonLabel: "Subscription-equivalent cost per overall Intelligence Index task", comparisonBasis: "subscription-equivalent cost",
+        subtitle: null
+      });
+    }
+    return Object.assign({}, METRICS[0], {
+      title: "Cost / task", displayTitle: "Cost / task", detailLabel: "Cost / task",
+      comparisonLabel: "Cost per overall Intelligence Index task", comparisonBasis: "cost", subtitle: null,
     });
   }
   var METRICS = [
@@ -1737,7 +1974,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   var state = {
     data: null, abilityId: null, enabled: new Set(), hiddenInclusionGroups: new Set(), initiallyHidden: new Set(), yDomain: null, pinned: false, pinnedPoint: null,
     timeMetricId: "response_time_seconds",
-    subscriptionCosts: false, apiModels: null,
+    subscriptionCosts: false, responseCosts: false, responseCostIndex: null,
+    responseCostRawIndices: {}, responseCostStatus: "loading",
+    apiModels: null,
     compareMode: false, compareIds: [],
     hoveredPoint: null, focusedPoint: null, activeOwner: null, pointerFocus: false,
     selectorHoverFamilyId: null, selectorFocusFamilyId: null,
@@ -1859,9 +2098,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   }
 
   function pairMetricRows(a, b, abilityId, abilityLabel) {
+    var cost = costPresentation(state.responseCosts, state.subscriptionCosts);
     var definitions = [
       ["score", abilityLabel + " score", "Higher is better", function (model) { return model.scores && model.scores[abilityId]; }],
-      ["cost", state.subscriptionCosts ? "Subscription-equivalent cost per overall Intelligence Index task" : "Cost per overall Intelligence Index task", "Lower is better", function (model) { return model.metrics && model.metrics.cost_per_task; }],
+      [cost.unit, cost.comparisonLabel, "Lower is better", function (model) { return model.metrics && model.metrics.cost_per_task; }],
       ["seconds", "Estimated response · 500 answer tokens", "Lower is better", function (model) { return model.metrics && model.metrics.response_time_seconds; }],
       ["seconds", "Actual TTFT", "Lower is better", function (model) { return model.metrics && model.metrics.ttft_seconds; }],
       ["seconds", "First-answer time (TTFA)", "Lower is better", function (model) { return model.metrics && model.metrics.ttfa_seconds; }],
@@ -1908,11 +2148,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     var time = METRICS.find(function (metric) {
       return metric.key === timeMetricId && metric.unit === "seconds";
     }) || METRICS[1];
-    var cost = state.subscriptionCosts ? Object.assign({}, METRICS[0], {
-      shortAxis: "Subscription-equivalent cost per overall Intelligence Index task",
-      tooltipLabel: "Subscription-equivalent cost per task",
-      axisLabel: "Subscription-equivalent USD per Intelligence Index task"
-    }) : METRICS[0];
+    var cost = costPresentation(state.responseCosts, state.subscriptionCosts);
     return [cost, time];
   }
 
@@ -2496,6 +2732,14 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     return "$" + value.toPrecision(3);
   }
 
+  function formatIndex(value, compact) {
+    if (!core.isFiniteNumber(value)) return "Not reported";
+    if (value === 1) return compact ? "1.0×" : "1.00×";
+    if (value >= 10) return value.toFixed(compact ? 1 : 2).replace(/\.0+$/, "") + "×";
+    if (value >= 0.01) return value.toFixed(compact ? 2 : 3).replace(/0+$/, "").replace(/\.$/, "") + "×";
+    return Number(value.toPrecision(3)).toString() + "×";
+  }
+
   function formatSeconds(value, compact) {
     if (!core.isFiniteNumber(value)) return "Not reported";
     if (compact) {
@@ -2509,7 +2753,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   }
 
   function formatMetric(value, unit, compact) {
-    return unit === "cost" ? formatCost(value, compact) : formatSeconds(value, compact);
+    if (unit === "cost") return formatCost(value, compact);
+    if (unit === "index") return formatIndex(value, compact);
+    return formatSeconds(value, compact);
   }
 
   function formatPrice(value) {
@@ -2944,7 +3190,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       tip.hidden = true;
       return;
     }
-    var tooltipKey=state.abilityId+"|"+point.model.id+"|"+String(state.pinned)+"|"+String(state.subscriptionCosts);
+    var tooltipKey=state.abilityId+"|"+point.model.id+"|"+String(state.pinned)+"|"+String(state.responseCosts)+"|"+String(state.subscriptionCosts)+"|"+JSON.stringify(state.responseCostRawIndices);
     if(tip._contentKey!==tooltipKey){
       byId("tooltip-content").innerHTML=tooltipMarkup(point.model);
       tip._contentKey=tooltipKey;tip._dimensions=tip._dimensionCache&&tip._dimensionCache.get(tooltipKey);
@@ -3201,9 +3447,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     var ability = abilityById(state.abilityId);
     var metrics = model.metrics || {};
     var pricing = model.pricing || {};
+    var cost = costPresentation(state.responseCosts, state.subscriptionCosts);
     var items = [
       [ability.label, formatScore(core.scoreFor(model, ability.id))],
-      [state.subscriptionCosts ? "Subscription cost / task" : "Cost / task", formatMetric(metrics.cost_per_task, "cost")],
+      [cost.detailLabel, formatMetric(metrics.cost_per_task, cost.unit)],
       ["Response · 500 tokens", formatMetric(metrics.response_time_seconds, "seconds")],
       ["First token (TTFT)", formatMetric(metrics.ttft_seconds, "seconds")],
       ["First answer", formatMetric(metrics.ttfa_seconds, "seconds")]
@@ -3240,6 +3487,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     if (value === null) return unit === "score" ? "Not scored" : "Not reported";
     if (unit === "score") return formatScore(value);
     if (unit === "cost") return formatCost(value);
+    if (unit === "index") return formatIndex(value);
     if (unit === "seconds") return formatSeconds(value);
     return value.toFixed(1) + " tok/s";
   }
@@ -3286,7 +3534,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
   function prototypeTriangleMarkup(models, ability) {
     if (!models[0] || !models[1]) return '<p class="prototype-pending">Choose two exact settings from the charts to compare their trade-off.</p>';
-    var costBasis = state.subscriptionCosts ? 'subscription-equivalent cost' : 'cost';
+    var cost = costPresentation(state.responseCosts, state.subscriptionCosts);
+    var costBasis = cost.comparisonBasis;
     var timeKey = state.timeMetricId;
     var timeLabel = timeKey === 'ttft_seconds' ? 'Time to first token' : 'Estimated response';
     var costFrontier = core.computeFrontier(state.data.models, ability.id, 'cost_per_task').frontier;
@@ -3297,7 +3546,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     var vals = models.map(function(m){return [core.scoreFor(m,ability.id),core.metricFor(m,'cost_per_task'),core.metricFor(m,timeKey)];});
     var colors = models.map(function(m){return familyFor(m).color;});
     var okay = all.length && costFrontier.length && timeFrontier.length && vals.every(function(row){return row.every(function(v,i){return v !== null && Number.isFinite(v) && (i===0 || v>0) && v>=ranges[i][0] && v<=ranges[i][1] && ranges[i][1]>ranges[i][0];});});
-    function fmt(v,i){return v === null || !Number.isFinite(v) ? 'Not reported' : i===0?v.toFixed(1):i===1?'$'+v.toFixed(4):v.toFixed(2)+' s';}
+    function fmt(v,i){return v === null || !Number.isFinite(v) ? 'Not reported' : i===0?v.toFixed(1):i===1?formatMetric(v,cost.unit):v.toFixed(2)+' s';}
     function rad(v,i){var lo=ranges[i][0],hi=ranges[i][1];return i===0?(v-lo)/(hi-lo):(Math.log(hi)-Math.log(v))/(Math.log(hi)-Math.log(lo));}
     function svg(mobile){
       var W=mobile?350:620,H=mobile?370:390,cx=W/2,cy=mobile?205:235,R=mobile?121:146;
@@ -3310,18 +3559,18 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       function text(x,y,t,cls){return '<text x="'+x+'" y="'+y+'" text-anchor="middle" class="'+cls+'">'+escapeHtml(t)+'</text>';}
       var left=p(angles[1],1)[0],right=p(angles[2],1)[0];
       out+=text(cx,mobile?21:20,ability.label,'triangle-title');out+=text(cx,mobile?43:43,'A '+fmt(vals[0][0],0)+' / B '+fmt(vals[1][0],0),'triangle-value');out+=text(cx,mobile?63:64,ranges[0][0].toFixed(1)+' centre / '+ranges[0][1].toFixed(1)+' edge','triangle-range');
-      out+=text(left,mobile?288:329,state.subscriptionCosts?'Plan cost / task':'Cost / task','triangle-title');out+=text(right,mobile?288:329,mobile?(timeKey==='ttft_seconds'?'TTFT':'Response'):timeLabel,'triangle-title');
+      out+=text(left,mobile?288:329,cost.title,'triangle-title');out+=text(right,mobile?288:329,mobile?(timeKey==='ttft_seconds'?'TTFT':'Response'):timeLabel,'triangle-title');
       if(mobile){
-        [left,right].forEach(function(x,j){var i=j+1;out+=text(x,310,'A '+fmt(vals[0][i],i),'triangle-value');out+=text(x,330,'B '+fmt(vals[1][i],i),'triangle-value');out+=text(x,352,i===1?'$'+ranges[i][1].toFixed(4)+' / $'+ranges[i][0].toFixed(4):ranges[i][1].toFixed(2)+' / '+ranges[i][0].toFixed(2)+' s','triangle-range');});
+        [left,right].forEach(function(x,j){var i=j+1;out+=text(x,310,'A '+fmt(vals[0][i],i),'triangle-value');out+=text(x,330,'B '+fmt(vals[1][i],i),'triangle-value');out+=text(x,352,i===1?formatMetric(ranges[i][1],cost.unit)+' / '+formatMetric(ranges[i][0],cost.unit):ranges[i][1].toFixed(2)+' / '+ranges[i][0].toFixed(2)+' s','triangle-range');});
       }else{
-        [left,right].forEach(function(x,j){var i=j+1;out+=text(x,352,'A '+fmt(vals[0][i],i)+' / B '+fmt(vals[1][i],i),'triangle-value');out+=text(x,374,i===1?'$'+ranges[i][1].toFixed(4)+' centre / $'+ranges[i][0].toFixed(4)+' edge':ranges[i][1].toFixed(2)+' s centre / '+ranges[i][0].toFixed(2)+' s edge','triangle-range');});
+        [left,right].forEach(function(x,j){var i=j+1;out+=text(x,352,'A '+fmt(vals[0][i],i)+' / B '+fmt(vals[1][i],i),'triangle-value');out+=text(x,374,i===1?formatMetric(ranges[i][1],cost.unit)+' centre / '+formatMetric(ranges[i][0],cost.unit)+' edge':ranges[i][1].toFixed(2)+' s centre / '+ranges[i][0].toFixed(2)+' s edge','triangle-range');});
       }
       return out+'</svg>';
     }
     var identities=models.map(function(m,j){return '<div class="tradeoff-identity"><span class="tradeoff-slot" style="--slot-color:'+colors[j]+'">'+(j?'B':'A')+'</span><div><strong>'+escapeHtml(m.name.split(' (')[0])+'</strong><small>'+escapeHtml(m.effort || 'Default')+(m.name.indexOf('Default Fallback')!==-1?' · Default Fallback':'')+'</small></div></div>';}).join('');
     var deltas=vals[0].map(function(v,i){return v===null || vals[1][i]===null ? null : vals[1][i]-v;});
     function signed(v,suffix,dec){return v===null?'Not comparable':(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(dec)+suffix;}
-    var summary='<div class="tradeoff-summary"><p class="tradeoff-summary-label">B minus A</p><div class="tradeoff-delta"><span>'+escapeHtml(ability.label)+'</span><strong>'+signed(deltas[0],' points',1)+'</strong></div><div class="tradeoff-delta"><span>'+ (state.subscriptionCosts?'Subscription-equivalent cost per overall index task':'Cost per overall index task') +'</span><strong>'+ (deltas[1]===null?'Not comparable':(deltas[1]>=0?'+$':'−$')+Math.abs(deltas[1]).toFixed(4))+'</strong><small>'+ escapeHtml(prototypeCostRatio(vals[0][1], vals[1][1]))+'</small></div><div class="tradeoff-delta"><span>'+timeLabel+'</span><strong>'+ (deltas[2]===null?'Not comparable':Math.abs(deltas[2]).toFixed(2)+' s '+(deltas[2]<0?'sooner':deltas[2]>0?'longer':'difference'))+'</strong></div><p class="tradeoff-caption">Actual full-frontier ranges, fixed across A/B.<br>Cost and time: reversed log spacing. No area score.</p></div>';
+    var summary='<div class="tradeoff-summary"><p class="tradeoff-summary-label">B minus A</p><div class="tradeoff-delta"><span>'+escapeHtml(ability.label)+'</span><strong>'+signed(deltas[0],' points',1)+'</strong></div><div class="tradeoff-delta"><span>'+escapeHtml(cost.comparisonLabel)+'</span><strong>'+ (deltas[1]===null?'Not comparable':(deltas[1]>=0?'+':'−')+formatMetric(Math.abs(deltas[1]),cost.unit))+'</strong><small>'+ escapeHtml(prototypeCostRatio(vals[0][1], vals[1][1]))+'</small></div><div class="tradeoff-delta"><span>'+timeLabel+'</span><strong>'+ (deltas[2]===null?'Not comparable':Math.abs(deltas[2]).toFixed(2)+' s '+(deltas[2]<0?'sooner':deltas[2]>0?'longer':'difference'))+'</strong></div><p class="tradeoff-caption">Actual full-frontier ranges, fixed across A/B.<br>Cost and time: reversed log spacing. No area score.</p></div>';
     return '<div class="tradeoff-identities">'+identities+'</div><div class="tradeoff-layout"><figure class="tradeoff-figure"><div class="tradeoff-key">Outward is better <span>A solid · B dashed</span></div>'+(okay?svg(false)+svg(true):'<div class="tradeoff-unavailable">Profile unavailable for this pair’s missing or out-of-range measurements. Raw values remain below.</div>')+'<figcaption>'+(timeKey==='ttft_seconds'?'Actual first-token latency; separate from first-answer time.':'Estimated end-to-end response for 500 answer tokens.')+'<span class="mobile-range-key">Resource endpoints: centre / edge.</span></figcaption></figure>'+summary+'</div>';
   }
 
@@ -3400,9 +3649,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     var family = familyFor(model);
     var ability = abilityById(state.abilityId);
     var metrics = model.metrics || {};
+    var cost = costPresentation(state.responseCosts, state.subscriptionCosts);
     var rows = [
       [ability.label, formatScore(core.scoreFor(model, ability.id))],
-      [state.subscriptionCosts ? "Subscription cost / task" : "Cost / task", formatMetric(metrics.cost_per_task, "cost")],
+      [cost.detailLabel, formatMetric(metrics.cost_per_task, cost.unit)],
       ["Response · 500 tokens", formatMetric(metrics.response_time_seconds, "seconds")],
       ["First token (TTFT)", formatMetric(metrics.ttft_seconds, "seconds")],
       ["First answer", formatMetric(metrics.ttfa_seconds, "seconds")],
@@ -4042,18 +4292,284 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     resetDetails();
   }
 
+  function costModeText() {
+    if (state.responseCosts && state.subscriptionCosts) return "Plan response-cost index enabled. Frontier redrawn; selected model cohort unchanged.";
+    if (state.responseCosts) return "Observed response-cost index enabled. Frontier redrawn; selected model cohort unchanged.";
+    if (state.subscriptionCosts) return "Subscription-equivalent AA costs enabled. Frontier redrawn; selected model cohort unchanged.";
+    return "Artificial Analysis task costs restored. Frontier redrawn; selected model cohort unchanged.";
+  }
+
+  function applyCostModes() {
+    var presentation = costPresentation(state.responseCosts, state.subscriptionCosts);
+    state.data.models = costModels(state.apiModels, {
+      responseCosts: state.responseCosts,
+      responseIndex: state.responseCostIndex,
+      rawIndices: state.responseCostRawIndices,
+      planCosts: state.subscriptionCosts
+    });
+    byId("response-cost-toggle").setAttribute("aria-pressed", String(state.responseCosts));
+    byId("response-cost-toggle").setAttribute("aria-describedby", state.responseCosts ? "response-cost-help response-cost-summary" : "response-cost-help");
+    byId("subscription-toggle").setAttribute("aria-pressed", String(state.subscriptionCosts));
+    byId("subscription-toggle").setAttribute("aria-describedby", state.subscriptionCosts ? "subscription-help subscription-summary" : "subscription-help");
+    byId("response-cost-summary").hidden = !state.responseCosts;
+    byId("subscription-summary").hidden = !state.subscriptionCosts;
+    byId("response-cost-note").hidden = !state.responseCosts || !state.responseCostIndex;
+    byId("cost-title").textContent = presentation.title;
+    byId("cost-subtitle").textContent = presentation.subtitle || "Overall Intelligence Index workload.";
+    renderComparison();
+    byId("global-status").textContent = costModeText();
+  }
+
   function setSubscriptionCosts(enabled) {
     state.subscriptionCosts = Boolean(enabled);
-    state.data.models = subscriptionModels(state.apiModels, state.subscriptionCosts);
-    byId("subscription-toggle").setAttribute("aria-pressed", String(state.subscriptionCosts));
-    byId("subscription-toggle").setAttribute("aria-describedby", state.subscriptionCosts ?
-      "subscription-help subscription-summary" : "subscription-help");
-    byId("cost-title").textContent = state.subscriptionCosts ? "Plan cost / task" : "Cost / task";
-    byId("subscription-summary").hidden = !state.subscriptionCosts;
-    renderComparison();
-    byId("global-status").textContent = state.subscriptionCosts ?
-      "Subscription-equivalent costs enabled. Frontier redrawn; selected model cohort unchanged." :
-      "API costs restored. Frontier redrawn; selected model cohort unchanged.";
+    applyCostModes();
+  }
+
+  function setResponseCosts(enabled) {
+    if (enabled && !state.responseCostIndex) return;
+    state.responseCosts = Boolean(enabled);
+    applyCostModes();
+  }
+
+  function responseCostOverrideDocument(data, rawIndices) {
+    var out = {};
+    Object.keys(rawIndices || {}).sort().forEach(function (key) { out[key] = Number(rawIndices[key]); });
+    return {
+      schema_version: 1, method_version: RESPONSE_COST_METHOD, cutoff_utc: data.cutoff_utc,
+      basis: "raw_api_index_replacement", raw_indices: out,
+    };
+  }
+
+  function parseResponseCostOverrides(value, data) {
+    if (!data) return { ok: false, error: "Response-cost data is unavailable." };
+    if (!exactKeys(value, ["schema_version", "method_version", "cutoff_utc", "basis", "raw_indices"])) return { ok: false, error: "The raw-index file has an unexpected field set." };
+    if (value.schema_version !== 1 || value.method_version !== RESPONSE_COST_METHOD) return { ok: false, error: "The raw-index file version is unsupported." };
+    if (value.basis !== "raw_api_index_replacement") return { ok: false, error: "The raw-index file has an unsupported value basis." };
+    var cutoff = validUtc(value.cutoff_utc);
+    if (!cutoff) return { ok: false, error: "The raw-index file cutoff is invalid." };
+    if (!value.raw_indices || typeof value.raw_indices !== "object" || Array.isArray(value.raw_indices)) return { ok: false, error: "The raw-index map is malformed." };
+    var known = new Set(data.cells.map(function (cell) { return cell.cell_id; })), anchorId = data.anchor.cell_id;
+    var accepted = {}, stale = 0;
+    var keys = Object.keys(value.raw_indices);
+    for (var index = 0; index < keys.length; index += 1) {
+      var key = keys[index], replacement = value.raw_indices[key];
+      if (typeof replacement !== "number" || !Number.isFinite(replacement) || replacement <= 0) return { ok: false, error: "Every raw-index replacement must be a positive finite number." };
+      if (key === anchorId) {
+        if (replacement !== 1) return { ok: false, error: "The Sol 6.1 Medium anchor is fixed at 1." };
+        continue;
+      }
+      if (!known.has(key)) { stale += 1; continue; }
+      accepted[key] = replacement;
+    }
+    if (cutoff.getTime() !== validUtc(data.cutoff_utc).getTime()) {
+      stale += Object.keys(accepted).length;
+      accepted = {};
+    }
+    return { ok: true, rawIndices: accepted, stale: stale };
+  }
+
+  function persistResponseCostOverrides() {
+    var value = responseCostOverrideDocument(state.responseCostIndex, state.responseCostRawIndices);
+    try {
+      window.localStorage.setItem(RESPONSE_COST_STORAGE_KEY, JSON.stringify(value));
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: "Browser storage is unavailable; this session still uses the edits." };
+    }
+  }
+
+  function loadStoredResponseCostOverrides() {
+    state.responseCostRawIndices = {};
+    try {
+      var raw = window.localStorage.getItem(RESPONSE_COST_STORAGE_KEY);
+      if (!raw) return { ok: true, stale: 0 };
+      var parsed;
+      try { parsed = JSON.parse(raw); } catch (error) { return { ok: false, error: "Stored raw-index replacements are malformed and were ignored." }; }
+      var checked = parseResponseCostOverrides(parsed, state.responseCostIndex);
+      if (!checked.ok) return checked;
+      state.responseCostRawIndices = checked.rawIndices;
+      return checked;
+    } catch (error) {
+      return { ok: false, error: "Browser storage is unavailable; no local raw-index replacements were loaded." };
+    }
+  }
+
+  function responseCostCellLabel(cell) {
+    return cell.creator + " · " + cell.base_slug + " · " + cell.effort;
+  }
+
+  function renderResponseCostEditor() {
+    var container = byId("response-cost-rows");
+    if (!container) return;
+    var data = state.responseCostIndex;
+    if (!data) { container.replaceChildren(); return; }
+    var nodes = data.cells.slice().sort(function (a, b) { return a.cell_id.localeCompare(b.cell_id); }).map(function (cell) {
+      var row = document.createElement("label"); row.className = "response-cost-row";
+      var copy = document.createElement("span");
+      var title = document.createElement("strong"); title.textContent = responseCostCellLabel(cell);
+      var detail = document.createElement("small"); detail.textContent = cell.responses.toLocaleString() + " responses · published raw " + formatIndex(cell.raw_index);
+      copy.append(title, detail);
+      var input = document.createElement("input"); input.type = "number"; input.min = "0.000001"; input.step = "any";
+      input.value = String(Object.prototype.hasOwnProperty.call(state.responseCostRawIndices, cell.cell_id) ? state.responseCostRawIndices[cell.cell_id] : cell.raw_index);
+      input.dataset.cellId = cell.cell_id; input.setAttribute("aria-label", responseCostCellLabel(cell) + " raw index replacement");
+      if (cell.cell_id === data.anchor.cell_id) { input.value = "1"; input.disabled = true; input.setAttribute("aria-label", "Sol 6.1 Medium anchor raw index, fixed at 1"); }
+      input.addEventListener("change", function () {
+        var value = Number(input.value);
+        if (!Number.isFinite(value) || value <= 0) {
+          input.setCustomValidity("Enter a positive finite raw index."); input.reportValidity(); byId("response-cost-status").textContent = "Replacement not applied. Enter a positive finite raw index."; return;
+        }
+        input.setCustomValidity("");
+        if (value === cell.raw_index) delete state.responseCostRawIndices[cell.cell_id]; else state.responseCostRawIndices[cell.cell_id] = value;
+        var saved = persistResponseCostOverrides();
+        byId("response-cost-status").textContent = saved.ok ? "Local raw index saved for " + responseCostCellLabel(cell) + "." : saved.error;
+        if (state.responseCosts) applyCostModes();
+      });
+      row.append(copy, input); return row;
+    });
+    container.replaceChildren.apply(container, nodes);
+  }
+
+  function responseCostCoverageText(data) {
+    var coverage = data.coverage;
+    var unsupported = coverage.unsupported_identity_counts.deepseek_checkpoint_identity_unresolved;
+    var text = "Response-cost coverage through " + formatSnapshot(data.cutoff_utc) + ": " + coverage.included_cells + " exact settings, " + coverage.responses.toLocaleString() + " responses, " + coverage.roots + " roots and " + coverage.utc_dates + " UTC dates. Observed workloads differ from the AA ability workload; this is not matched-task efficiency or a causal effort estimate.";
+    var ageDays = Math.max(0, Math.floor((Date.now() - validUtc(data.cutoff_utc).getTime()) / 86400000));
+    text += ageDays <= 7 ? " Freshness: captured within seven days." : " Warning: this aggregate is " + ageDays + " days old; the weekly publication may be stale.";
+    if (unsupported) text += " " + unsupported.toLocaleString() + " main DeepSeek candidates are omitted because their V4.1 Flash 1017 checkpoint identity is unresolved; their rates are not missing.";
+    return text;
+  }
+
+  function updateResponseCostUi() {
+    var data = state.responseCostIndex;
+    var loaded = Boolean(data);
+    var availability = byId("response-cost-availability");
+    byId("response-cost-toggle").disabled = !loaded;
+    byId("response-cost-edit").disabled = !loaded;
+    byId("response-cost-note").hidden = !loaded || !state.responseCosts;
+    byId("response-cost-method-coverage").textContent = loaded ? responseCostCoverageText(data) : "The observed response-cost aggregate is unavailable; the AA view and Plan costs remain available.";
+    if (loaded) {
+      availability.hidden = true;
+      availability.textContent = "";
+      availability.classList.remove("is-error");
+      byId("response-cost-toggle").setAttribute("aria-describedby", state.responseCosts ? "response-cost-help response-cost-summary" : "response-cost-help");
+      byId("response-cost-edit").removeAttribute("aria-describedby");
+      byId("response-cost-note").textContent = responseCostCoverageText(data);
+      byId("response-cost-status").textContent = "Loaded " + data.cells.length + " exact settings. Multipliers stay in this browser.";
+      renderResponseCostEditor();
+    }
+  }
+
+  function responseCostError(code, message) {
+    var error = new Error(message);
+    error.code = code;
+    return error;
+  }
+
+  function responseCostFailureMessage(error) {
+    var code = error && error.code;
+    if (code === "schema") return "Response-cost data could not be validated. AA costs and Plan superpowers still work.";
+    if (code === "timeout") return "Loading response costs timed out. AA costs and Plan superpowers still work.";
+    if (code === "preview") return "Response costs are unavailable in this preview. AA costs and Plan superpowers still work.";
+    if (code === "safety") return "Response-cost data failed its safety check. AA costs and Plan superpowers still work.";
+    return "Response costs are unavailable right now. AA costs and Plan superpowers still work.";
+  }
+
+  function showResponseCostFailure(error) {
+    var message = responseCostFailureMessage(error);
+    var availability = byId("response-cost-availability");
+    availability.hidden = false;
+    availability.textContent = message;
+    availability.classList.add("is-error");
+    byId("response-cost-toggle").disabled = true;
+    byId("response-cost-toggle").setAttribute("aria-describedby", "response-cost-help response-cost-availability");
+    byId("response-cost-edit").disabled = true;
+    byId("response-cost-edit").setAttribute("aria-describedby", "response-cost-availability");
+    byId("response-cost-note").hidden = true;
+    byId("response-cost-status").textContent = message;
+    byId("response-cost-method-coverage").textContent = "The observed response-cost aggregate is unavailable; AA and Plan superpowers remain available.";
+  }
+
+  function fetchResponseCostIndex(fetchImpl, locationLike) {
+    var locationValue = locationLike || window.location;
+    if (!locationValue || typeof locationValue.protocol !== "string" || typeof locationValue.href !== "string") return Promise.reject(responseCostError("fetch", "Response-cost data is unavailable without a page location."));
+    if (locationValue.protocol === "file:") return Promise.reject(responseCostError("preview", "Response-cost data is unavailable from a local file preview."));
+    if (typeof fetchImpl !== "function" || typeof AbortController === "undefined") return Promise.reject(responseCostError("fetch", "This browser cannot load the response-cost index."));
+    var controller = new AbortController();
+    var timer = window.setTimeout(function () { controller.abort(); }, RESPONSE_COST_TIMEOUT_MS);
+    var url = new URL(RESPONSE_COST_PATH, locationValue.href).toString();
+    return fetchImpl(url, { cache: "no-store", credentials: "same-origin", signal: controller.signal }).then(function (response) {
+      if (!response || !response.ok) throw responseCostError("fetch", "Response-cost fetch returned HTTP " + (response && response.status || "error") + ".");
+      var length = response.headers && response.headers.get ? Number(response.headers.get("content-length")) : NaN;
+      if (Number.isFinite(length) && length > RESPONSE_COST_MAX_BYTES) throw responseCostError("safety", "Response-cost data exceeds the size bound.");
+      return response.text();
+    }).then(function (text) {
+      window.clearTimeout(timer);
+      var bytes = typeof TextEncoder !== "undefined" ? new TextEncoder().encode(text).length : text.length;
+      if (bytes > RESPONSE_COST_MAX_BYTES) throw responseCostError("safety", "Response-cost data exceeds the size bound.");
+      var parsed;
+      try { parsed = JSON.parse(text); } catch (error) { throw responseCostError("schema", "Response-cost data is not valid JSON."); }
+      var checked = validateResponseCostIndex(parsed);
+      if (!checked.ok) throw responseCostError("schema", checked.error);
+      return checked.data;
+    }).catch(function (error) {
+      window.clearTimeout(timer);
+      if (error && error.name === "AbortError") throw responseCostError("timeout", "Response-cost loading timed out.");
+      throw error;
+    });
+  }
+
+  function initialiseResponseCostData(fetchImpl, locationLike) {
+    return fetchResponseCostIndex(fetchImpl || window.fetch, locationLike || window.location).then(function (data) {
+      state.responseCostIndex = data;
+      state.responseCostStatus = "loaded";
+      var stored = loadStoredResponseCostOverrides();
+      updateResponseCostUi();
+      if (!stored.ok) byId("response-cost-status").textContent = stored.error;
+      else if (stored.stale) byId("response-cost-status").textContent = "Ignored " + stored.stale + " stale or unknown stored raw-index replacement" + (stored.stale === 1 ? "." : "s.");
+    }).catch(function (error) {
+      state.responseCostIndex = null;
+      state.responseCostStatus = "unavailable";
+      showResponseCostFailure(error);
+    });
+  }
+
+  function resetResponseCostOverrides() {
+    var previous = state.responseCostRawIndices;
+    state.responseCostRawIndices = {};
+    try { window.localStorage.removeItem(RESPONSE_COST_STORAGE_KEY); }
+    catch (error) { state.responseCostRawIndices = previous; byId("response-cost-status").textContent = "Browser storage is unavailable; reset was not applied."; return; }
+    renderResponseCostEditor();
+    byId("response-cost-status").textContent = "All local response-cost raw values restored to the fetched index.";
+    if (state.responseCosts) applyCostModes();
+  }
+
+  function exportResponseCostOverrides() {
+    if (!state.responseCostIndex) return;
+    var documentValue = responseCostOverrideDocument(state.responseCostIndex, state.responseCostRawIndices);
+    var blob = new Blob([JSON.stringify(documentValue, null, 2) + "\n"], { type: "application/json" });
+    var url = URL.createObjectURL(blob), link = document.createElement("a");
+    link.href = url; link.download = "llm-frontiers-response-cost-raw-indices.json";
+    document.body.append(link); link.click(); link.remove();
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+    byId("response-cost-status").textContent = "Exported " + Object.keys(state.responseCostRawIndices).length + " local raw-index replacement" + (Object.keys(state.responseCostRawIndices).length === 1 ? "." : "s.");
+  }
+
+  function importResponseCostOverrides(file) {
+    if (!file || !state.responseCostIndex) return;
+    return file.text().then(function (text) {
+      var parsed;
+      try { parsed = JSON.parse(text); } catch (error) { throw new Error("The raw-index file is not valid JSON."); }
+      var checked = parseResponseCostOverrides(parsed, state.responseCostIndex);
+      if (!checked.ok) throw new Error(checked.error);
+      state.responseCostRawIndices = checked.rawIndices;
+      var saved = persistResponseCostOverrides();
+      renderResponseCostEditor();
+      if (state.responseCosts) applyCostModes();
+      var count = Object.keys(checked.rawIndices).length;
+      byId("response-cost-status").textContent = "Imported " + count + " raw-index replacement" + (count === 1 ? "" : "s") + (checked.stale ? "; ignored " + checked.stale + " stale or unknown key" + (checked.stale === 1 ? "." : "s.") : ".") + (saved.ok ? "" : " " + saved.error);
+    }).catch(function (error) {
+      byId("response-cost-status").textContent = "Import rejected; current raw-index replacements are unchanged. " + (error.message || "");
+    });
   }
 
   function renderAll() {
@@ -4122,8 +4638,29 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     state.initiallyHidden = new Set(state.data.families.filter(function(f){return f.default_hidden;}).map(function(f){return f.id;}));
     initialiseHeader();
     initialiseAbilityOptions();
+    byId("response-cost-toggle").addEventListener("click", function () {
+      setResponseCosts(!state.responseCosts);
+    });
     byId("subscription-toggle").addEventListener("click", function () {
       setSubscriptionCosts(!state.subscriptionCosts);
+    });
+    byId("response-cost-edit").addEventListener("click", function () {
+      var editor = byId("response-cost-editor");
+      var opening = editor.hidden || !editor.open;
+      editor.hidden = !opening;
+      editor.open = opening;
+      byId("response-cost-edit").setAttribute("aria-expanded", String(opening));
+      if (opening) byId("response-cost-rows").querySelector("input:not(:disabled)")?.focus();
+    });
+    byId("response-cost-editor").addEventListener("toggle", function () {
+      byId("response-cost-edit").setAttribute("aria-expanded", String(!byId("response-cost-editor").hidden && byId("response-cost-editor").open));
+    });
+    byId("response-cost-reset").addEventListener("click", resetResponseCostOverrides);
+    byId("response-cost-export").addEventListener("click", exportResponseCostOverrides);
+    byId("response-cost-import").addEventListener("change", function (event) {
+      var file = event.target.files && event.target.files[0];
+      importResponseCostOverrides(file);
+      event.target.value = "";
     });
     bindTimeMetricButtons(byId("time-metric-buttons"), function (key) {
       state.timeMetricId = key;
@@ -4171,6 +4708,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () { measureLabelText.cache=null;measureLabelText.font=null;measureLabelText.fonts=null;comparisonAnnotations.cache=null;northwestAnnotations.cache=null;state.fontRevision=(state.fontRevision||0)+1;renderComparison(); });
     }
+    return initialiseResponseCostData();
   }
 
   if (typeof document === "undefined") {
@@ -4179,6 +4717,25 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         subscriptionModels: subscriptionModels,
         subscriptionPlans: SUBSCRIPTION_PLANS,
         weeksPerMonth: WEEKS_PER_MONTH,
+        responseCostModels: responseCostModels,
+        planResponseCostModels: planResponseCostModels,
+        costModels: costModels,
+        setResponseCosts: setResponseCosts,
+        setSubscriptionCosts: setSubscriptionCosts,
+        applyCostModes: applyCostModes,
+        updateResponseCostUi: updateResponseCostUi,
+        renderResponseCostEditor: renderResponseCostEditor,
+        responseCostOverrideDocument: responseCostOverrideDocument,
+        resetResponseCostOverrides: resetResponseCostOverrides,
+        importResponseCostOverrides: importResponseCostOverrides,
+        persistResponseCostOverrides: persistResponseCostOverrides,
+        costPresentation: costPresentation,
+        validateResponseCostIndex: validateResponseCostIndex,
+        parseResponseCostOverrides: parseResponseCostOverrides,
+        fetchResponseCostIndex: fetchResponseCostIndex,
+        initialiseResponseCostData: initialiseResponseCostData,
+        formatMetric: formatMetric,
+        formatIndex: formatIndex,
         annotationShortlist: annotationShortlist,
         annotationQuality: annotationQuality,
         measuredLabelInputs: measuredLabelInputs,
