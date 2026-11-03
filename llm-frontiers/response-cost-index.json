@@ -1,208 +1,320 @@
 {
-  "anchor": {
-    "base_slug": "gpt-6-1-sol",
-    "cell_id": "openai/gpt-6-1-sol/2026-09-29/medium",
-    "creator": "OpenAI",
-    "effort": "medium",
-    "release_date": "2026-09-29"
-  },
-  "cells": [
-    {
-      "aa_model_id": "3e87c73e-a257-495e-9730-367a66229811",
-      "assumption_code": "none",
-      "base_slug": "claude-fable-5-1",
-      "cell_id": "anthropic/claude-fable-5-1/2026-09-01/max",
-      "creator": "Anthropic",
-      "effort": "max",
-      "mean_usd_per_response": 0.704970390152,
-      "raw_index": 28.480042871,
-      "release_date": "2026-09-01",
-      "responses": 132,
-      "roots": 16,
-      "utc_dates": 10,
-      "valuation_basis": "historical_api_equivalent"
+  "cohorts": {
+    "main": {
+      "anchor": {
+        "base_slug": "gpt-6-1-sol",
+        "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+        "creator": "OpenAI",
+        "effort": "high",
+        "release_date": "2026-09-29"
+      },
+      "cells": [
+        {
+          "aa_model_id": "3e87c73e-a257-495e-9730-367a66229811",
+          "assumption_code": "none",
+          "base_slug": "claude-fable-5-1",
+          "cell_id": "anthropic/claude-fable-5-1/2026-09-01/max",
+          "creator": "Anthropic",
+          "effort": "max",
+          "mean_usd_per_response": 0.704970390152,
+          "raw_index": 25.142074578,
+          "release_date": "2026-09-01",
+          "responses": 132,
+          "roots": 16,
+          "utc_dates": 10,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "af26fff4-8120-41be-a5f0-86aaea023f20",
+          "assumption_code": "none",
+          "base_slug": "claude-haiku-5-5",
+          "cell_id": "anthropic/claude-haiku-5-5/2026-10-07/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "mean_usd_per_response": 0.020413419982,
+          "raw_index": 0.728024517,
+          "release_date": "2026-10-07",
+          "responses": 1138,
+          "roots": 16,
+          "utc_dates": 13,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "f314eade-2232-44bf-a3ab-9b326bc67de6",
+          "assumption_code": "none",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/high",
+          "creator": "Anthropic",
+          "effort": "high",
+          "mean_usd_per_response": 0.100776849008,
+          "raw_index": 3.594107056,
+          "release_date": "2026-09-22",
+          "responses": 1310,
+          "roots": 17,
+          "utc_dates": 13,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "2f3c4dc9-a450-4303-8697-0237257cf08f",
+          "assumption_code": "none",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/max",
+          "creator": "Anthropic",
+          "effort": "max",
+          "mean_usd_per_response": 0.13888726909,
+          "raw_index": 4.95327765,
+          "release_date": "2026-09-22",
+          "responses": 12517,
+          "roots": 18,
+          "utc_dates": 22,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
+          "assumption_code": "none",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "mean_usd_per_response": 0.106565134436,
+          "raw_index": 3.800540554,
+          "release_date": "2026-09-22",
+          "responses": 10945,
+          "roots": 144,
+          "utc_dates": 21,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "042e8a37-fcd0-40f4-8f41-99215fb68eda",
+          "assumption_code": "none",
+          "base_slug": "claude-sonnet-5-5",
+          "cell_id": "anthropic/claude-sonnet-5-5/2026-09-28/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "mean_usd_per_response": 0.08767719823,
+          "raw_index": 3.126920914,
+          "release_date": "2026-09-28",
+          "responses": 226,
+          "roots": 15,
+          "utc_dates": 12,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "3b84fee3-b70a-41bc-819e-5fbdef9a0042",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+          "creator": "OpenAI",
+          "effort": "high",
+          "mean_usd_per_response": 0.028039467784,
+          "raw_index": 1.0,
+          "release_date": "2026-09-29",
+          "responses": 10855,
+          "roots": 51,
+          "utc_dates": 27,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "e76e0fe5-93ca-4272-9359-2eb1740467d1",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/low",
+          "creator": "OpenAI",
+          "effort": "low",
+          "mean_usd_per_response": 0.027074930872,
+          "raw_index": 0.965600741,
+          "release_date": "2026-09-29",
+          "responses": 596,
+          "roots": 29,
+          "utc_dates": 20,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "b25ac058-1e33-4c31-bbc9-a20c3ad0717a",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/max",
+          "creator": "OpenAI",
+          "effort": "max",
+          "mean_usd_per_response": 0.041932672946,
+          "raw_index": 1.495487477,
+          "release_date": "2026-09-29",
+          "responses": 1083,
+          "roots": 53,
+          "utc_dates": 19,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "a2e51d62-ea4e-4f15-8be0-be9dc1fb489d",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/medium",
+          "creator": "OpenAI",
+          "effort": "medium",
+          "mean_usd_per_response": 0.02475313655,
+          "raw_index": 0.882796234,
+          "release_date": "2026-09-29",
+          "responses": 5699,
+          "roots": 54,
+          "utc_dates": 25,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "092a3b0e-c5c8-45dc-bf1b-53673c8ff352",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/xhigh",
+          "creator": "OpenAI",
+          "effort": "xhigh",
+          "mean_usd_per_response": 0.032263213069,
+          "raw_index": 1.150635715,
+          "release_date": "2026-09-29",
+          "responses": 16742,
+          "roots": 173,
+          "utc_dates": 29,
+          "valuation_basis": "historical_api_equivalent"
+        }
+      ],
+      "coverage": {
+        "included_cells": 11,
+        "pricing_basis_counts": {
+          "deepseek_reference_schedule": 0,
+          "historical_api_equivalent": 61243
+        },
+        "responses": 61243,
+        "roots": 561,
+        "scenario_counts": {
+          "deepseek_tier_absent": 0,
+          "deepseek_tier_auto": 0,
+          "deepseek_tier_default": 0,
+          "deepseek_tier_standard": 0
+        },
+        "unsupported_identity_counts": {
+          "deepseek_checkpoint_identity_unresolved": 1
+        },
+        "utc_dates": 31
+      },
+      "status": "available"
     },
-    {
-      "aa_model_id": "af26fff4-8120-41be-a5f0-86aaea023f20",
-      "assumption_code": "none",
-      "base_slug": "claude-haiku-5-5",
-      "cell_id": "anthropic/claude-haiku-5-5/2026-10-07/medium",
-      "creator": "Anthropic",
-      "effort": "medium",
-      "mean_usd_per_response": 0.020413419982,
-      "raw_index": 0.824680135,
-      "release_date": "2026-10-07",
-      "responses": 1138,
-      "roots": 16,
-      "utc_dates": 13,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "f314eade-2232-44bf-a3ab-9b326bc67de6",
-      "assumption_code": "none",
-      "base_slug": "claude-opus-5-5",
-      "cell_id": "anthropic/claude-opus-5-5/2026-09-22/high",
-      "creator": "Anthropic",
-      "effort": "high",
-      "mean_usd_per_response": 0.100959123349,
-      "raw_index": 4.078639616,
-      "release_date": "2026-09-22",
-      "responses": 1302,
-      "roots": 17,
-      "utc_dates": 13,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "2f3c4dc9-a450-4303-8697-0237257cf08f",
-      "assumption_code": "none",
-      "base_slug": "claude-opus-5-5",
-      "cell_id": "anthropic/claude-opus-5-5/2026-09-22/max",
-      "creator": "Anthropic",
-      "effort": "max",
-      "mean_usd_per_response": 0.13888726909,
-      "raw_index": 5.610895767,
-      "release_date": "2026-09-22",
-      "responses": 12517,
-      "roots": 18,
-      "utc_dates": 22,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
-      "assumption_code": "none",
-      "base_slug": "claude-opus-5-5",
-      "cell_id": "anthropic/claude-opus-5-5/2026-09-22/medium",
-      "creator": "Anthropic",
-      "effort": "medium",
-      "mean_usd_per_response": 0.106389139099,
-      "raw_index": 4.298006391,
-      "release_date": "2026-09-22",
-      "responses": 10939,
-      "roots": 144,
-      "utc_dates": 21,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "042e8a37-fcd0-40f4-8f41-99215fb68eda",
-      "assumption_code": "none",
-      "base_slug": "claude-sonnet-5-5",
-      "cell_id": "anthropic/claude-sonnet-5-5/2026-09-28/medium",
-      "creator": "Anthropic",
-      "effort": "medium",
-      "mean_usd_per_response": 0.08767719823,
-      "raw_index": 3.542064176,
-      "release_date": "2026-09-28",
-      "responses": 226,
-      "roots": 15,
-      "utc_dates": 12,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "3b84fee3-b70a-41bc-819e-5fbdef9a0042",
-      "assumption_code": "none",
-      "base_slug": "gpt-6-1-sol",
-      "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
-      "creator": "OpenAI",
-      "effort": "high",
-      "mean_usd_per_response": 0.028041513147,
-      "raw_index": 1.132846865,
-      "release_date": "2026-09-29",
-      "responses": 10869,
-      "roots": 51,
-      "utc_dates": 27,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "e76e0fe5-93ca-4272-9359-2eb1740467d1",
-      "assumption_code": "none",
-      "base_slug": "gpt-6-1-sol",
-      "cell_id": "openai/gpt-6-1-sol/2026-09-29/low",
-      "creator": "OpenAI",
-      "effort": "low",
-      "mean_usd_per_response": 0.027074930872,
-      "raw_index": 1.093797985,
-      "release_date": "2026-09-29",
-      "responses": 596,
-      "roots": 29,
-      "utc_dates": 20,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "b25ac058-1e33-4c31-bbc9-a20c3ad0717a",
-      "assumption_code": "none",
-      "base_slug": "gpt-6-1-sol",
-      "cell_id": "openai/gpt-6-1-sol/2026-09-29/max",
-      "creator": "OpenAI",
-      "effort": "max",
-      "mean_usd_per_response": 0.041932672946,
-      "raw_index": 1.694034728,
-      "release_date": "2026-09-29",
-      "responses": 1083,
-      "roots": 53,
-      "utc_dates": 19,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "a2e51d62-ea4e-4f15-8be0-be9dc1fb489d",
-      "assumption_code": "none",
-      "base_slug": "gpt-6-1-sol",
-      "cell_id": "openai/gpt-6-1-sol/2026-09-29/medium",
-      "creator": "OpenAI",
-      "effort": "medium",
-      "mean_usd_per_response": 0.02475313655,
-      "raw_index": 1.0,
-      "release_date": "2026-09-29",
-      "responses": 5699,
-      "roots": 54,
-      "utc_dates": 25,
-      "valuation_basis": "historical_api_equivalent"
-    },
-    {
-      "aa_model_id": "092a3b0e-c5c8-45dc-bf1b-53673c8ff352",
-      "assumption_code": "none",
-      "base_slug": "gpt-6-1-sol",
-      "cell_id": "openai/gpt-6-1-sol/2026-09-29/xhigh",
-      "creator": "OpenAI",
-      "effort": "xhigh",
-      "mean_usd_per_response": 0.032263213069,
-      "raw_index": 1.303398986,
-      "release_date": "2026-09-29",
-      "responses": 16742,
-      "roots": 173,
-      "utc_dates": 29,
-      "valuation_basis": "historical_api_equivalent"
+    "subagent": {
+      "anchor": {
+        "base_slug": "gpt-6-1-sol",
+        "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+        "creator": "OpenAI",
+        "effort": "high",
+        "release_date": "2026-09-29"
+      },
+      "cells": [
+        {
+          "aa_model_id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
+          "assumption_code": "none",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "mean_usd_per_response": 0.086950014134,
+          "raw_index": 2.310914183,
+          "release_date": "2026-09-22",
+          "responses": 5929,
+          "roots": 64,
+          "utc_dates": 22,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "268525e2-f873-4178-bc07-e6a0ee1f002d",
+          "assumption_code": "none",
+          "base_slug": "claude-sonnet-5-5",
+          "cell_id": "anthropic/claude-sonnet-5-5/2026-09-28/high",
+          "creator": "Anthropic",
+          "effort": "high",
+          "mean_usd_per_response": 0.126959271823,
+          "raw_index": 3.374260313,
+          "release_date": "2026-09-28",
+          "responses": 5792,
+          "roots": 29,
+          "utc_dates": 16,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "3b84fee3-b70a-41bc-819e-5fbdef9a0042",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+          "creator": "OpenAI",
+          "effort": "high",
+          "mean_usd_per_response": 0.037625808337,
+          "raw_index": 1.0,
+          "release_date": "2026-09-29",
+          "responses": 4222,
+          "roots": 24,
+          "utc_dates": 14,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "b25ac058-1e33-4c31-bbc9-a20c3ad0717a",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/max",
+          "creator": "OpenAI",
+          "effort": "max",
+          "mean_usd_per_response": 0.035000087189,
+          "raw_index": 0.930214891,
+          "release_date": "2026-09-29",
+          "responses": 523,
+          "roots": 31,
+          "utc_dates": 17,
+          "valuation_basis": "historical_api_equivalent"
+        },
+        {
+          "aa_model_id": "092a3b0e-c5c8-45dc-bf1b-53673c8ff352",
+          "assumption_code": "none",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/xhigh",
+          "creator": "OpenAI",
+          "effort": "xhigh",
+          "mean_usd_per_response": 0.040530213068,
+          "raw_index": 1.077191823,
+          "release_date": "2026-09-29",
+          "responses": 4530,
+          "roots": 27,
+          "utc_dates": 14,
+          "valuation_basis": "historical_api_equivalent"
+        }
+      ],
+      "coverage": {
+        "included_cells": 5,
+        "pricing_basis_counts": {
+          "deepseek_reference_schedule": 0,
+          "historical_api_equivalent": 20996
+        },
+        "responses": 20996,
+        "roots": 112,
+        "scenario_counts": {
+          "deepseek_tier_absent": 0,
+          "deepseek_tier_auto": 0,
+          "deepseek_tier_default": 0,
+          "deepseek_tier_standard": 0
+        },
+        "unsupported_identity_counts": {
+          "deepseek_checkpoint_identity_unresolved": 18113
+        },
+        "utc_dates": 28
+      },
+      "status": "available"
     }
-  ],
-  "coverage": {
-    "included_cells": 11,
-    "pricing_basis_counts": {
-      "deepseek_reference_schedule": 0,
-      "historical_api_equivalent": 61243
-    },
-    "responses": 61243,
-    "roots": 561,
-    "scenario_counts": {
-      "deepseek_tier_absent": 0,
-      "deepseek_tier_auto": 0,
-      "deepseek_tier_default": 0,
-      "deepseek_tier_standard": 0
-    },
-    "unsupported_identity_counts": {
-      "deepseek_checkpoint_identity_unresolved": 1
-    },
-    "utc_dates": 31
   },
-  "cutoff_utc": "2026-11-03T16:55:54.616000Z",
-  "method_version": "observed-response-cost-1",
-  "schema_version": 1,
+  "cutoff_utc": "2026-11-03T17:10:00Z",
+  "dataset_id": "7f1dba54604d87478e90aa48f007fb1d876cad2f52b2b52df4f34a2e586217ce",
+  "method_version": "observed-response-cost-2",
+  "schema_version": 2,
   "thresholds": {
     "responses": 100,
     "roots": 8,
     "utc_dates": 8
   },
   "window": {
-    "cutoff_utc": "2026-11-03T16:55:54.616000Z",
+    "cutoff_utc": "2026-11-03T17:10:00Z",
     "days": 30,
-    "start_utc": "2026-10-04T16:55:54.616000Z"
+    "start_utc": "2026-10-04T17:10:00Z"
   }
 }
