@@ -1,0 +1,218 @@
+{
+  "cohorts": {
+    "main": {
+      "cells": [
+        {
+          "aa_model_id": "f314eade-2232-44bf-a3ab-9b326bc67de6",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/high",
+          "creator": "Anthropic",
+          "effort": "high",
+          "median_output_tokens_per_second": 85.564328165318,
+          "release_date": "2026-09-22",
+          "responses": 3344,
+          "roots": 42,
+          "utc_dates": 21
+        },
+        {
+          "aa_model_id": "2f3c4dc9-a450-4303-8697-0237257cf08f",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/max",
+          "creator": "Anthropic",
+          "effort": "max",
+          "median_output_tokens_per_second": 94.119709052668,
+          "release_date": "2026-09-22",
+          "responses": 13707,
+          "roots": 21,
+          "utc_dates": 27
+        },
+        {
+          "aa_model_id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "median_output_tokens_per_second": 78.973204866088,
+          "release_date": "2026-09-22",
+          "responses": 8614,
+          "roots": 91,
+          "utc_dates": 22
+        },
+        {
+          "aa_model_id": "df5bf99d-d228-4715-b41b-19ca86118777",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/xhigh",
+          "creator": "Anthropic",
+          "effort": "xhigh",
+          "median_output_tokens_per_second": 84.143571104044,
+          "release_date": "2026-09-22",
+          "responses": 2099,
+          "roots": 12,
+          "utc_dates": 11
+        },
+        {
+          "aa_model_id": "042e8a37-fcd0-40f4-8f41-99215fb68eda",
+          "base_slug": "claude-sonnet-5-5",
+          "cell_id": "anthropic/claude-sonnet-5-5/2026-09-28/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "median_output_tokens_per_second": 89.740932642487,
+          "release_date": "2026-09-28",
+          "responses": 335,
+          "roots": 21,
+          "utc_dates": 21
+        },
+        {
+          "aa_model_id": "3b84fee3-b70a-41bc-819e-5fbdef9a0042",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+          "creator": "OpenAI",
+          "effort": "high",
+          "median_output_tokens_per_second": 28.556319407721,
+          "release_date": "2026-09-29",
+          "responses": 7319,
+          "roots": 50,
+          "utc_dates": 21
+        },
+        {
+          "aa_model_id": "e76e0fe5-93ca-4272-9359-2eb1740467d1",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/low",
+          "creator": "OpenAI",
+          "effort": "low",
+          "median_output_tokens_per_second": 22.713321055862,
+          "release_date": "2026-09-29",
+          "responses": 289,
+          "roots": 16,
+          "utc_dates": 13
+        },
+        {
+          "aa_model_id": "b25ac058-1e33-4c31-bbc9-a20c3ad0717a",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/max",
+          "creator": "OpenAI",
+          "effort": "max",
+          "median_output_tokens_per_second": 33.434780523228,
+          "release_date": "2026-09-29",
+          "responses": 868,
+          "roots": 35,
+          "utc_dates": 11
+        },
+        {
+          "aa_model_id": "a2e51d62-ea4e-4f15-8be0-be9dc1fb489d",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/medium",
+          "creator": "OpenAI",
+          "effort": "medium",
+          "median_output_tokens_per_second": 26.153907745413,
+          "release_date": "2026-09-29",
+          "responses": 3372,
+          "roots": 36,
+          "utc_dates": 16
+        },
+        {
+          "aa_model_id": "092a3b0e-c5c8-45dc-bf1b-53673c8ff352",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/xhigh",
+          "creator": "OpenAI",
+          "effort": "xhigh",
+          "median_output_tokens_per_second": 30.374517507316,
+          "release_date": "2026-09-29",
+          "responses": 10664,
+          "roots": 53,
+          "utc_dates": 22
+        },
+        {
+          "aa_model_id": "ea3e1f50-f62d-41d2-849a-9af0413e4d37",
+          "base_slug": "gpt-6-1-terra",
+          "cell_id": "openai/gpt-6-1-terra/2026-10-26/high",
+          "creator": "OpenAI",
+          "effort": "high",
+          "median_output_tokens_per_second": 27.899576598274,
+          "release_date": "2026-10-26",
+          "responses": 506,
+          "roots": 8,
+          "utc_dates": 16
+        }
+      ]
+    },
+    "subagent": {
+      "cells": [
+        {
+          "aa_model_id": "ea9e0da6-169f-43c6-92f5-730a10d6ff8d",
+          "base_slug": "claude-opus-5-5",
+          "cell_id": "anthropic/claude-opus-5-5/2026-09-22/medium",
+          "creator": "Anthropic",
+          "effort": "medium",
+          "median_output_tokens_per_second": 80.111731843575,
+          "release_date": "2026-09-22",
+          "responses": 6099,
+          "roots": 61,
+          "utc_dates": 25
+        },
+        {
+          "aa_model_id": "268525e2-f873-4178-bc07-e6a0ee1f002d",
+          "base_slug": "claude-sonnet-5-5",
+          "cell_id": "anthropic/claude-sonnet-5-5/2026-09-28/high",
+          "creator": "Anthropic",
+          "effort": "high",
+          "median_output_tokens_per_second": 90.44385673003,
+          "release_date": "2026-09-28",
+          "responses": 8054,
+          "roots": 30,
+          "utc_dates": 20
+        },
+        {
+          "aa_model_id": "3b84fee3-b70a-41bc-819e-5fbdef9a0042",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/high",
+          "creator": "OpenAI",
+          "effort": "high",
+          "median_output_tokens_per_second": 37.150782643154,
+          "release_date": "2026-09-29",
+          "responses": 4641,
+          "roots": 30,
+          "utc_dates": 14
+        },
+        {
+          "aa_model_id": "b25ac058-1e33-4c31-bbc9-a20c3ad0717a",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/max",
+          "creator": "OpenAI",
+          "effort": "max",
+          "median_output_tokens_per_second": 36.538977943863,
+          "release_date": "2026-09-29",
+          "responses": 482,
+          "roots": 32,
+          "utc_dates": 15
+        },
+        {
+          "aa_model_id": "092a3b0e-c5c8-45dc-bf1b-53673c8ff352",
+          "base_slug": "gpt-6-1-sol",
+          "cell_id": "openai/gpt-6-1-sol/2026-09-29/xhigh",
+          "creator": "OpenAI",
+          "effort": "xhigh",
+          "median_output_tokens_per_second": 36.080569789516,
+          "release_date": "2026-09-29",
+          "responses": 5256,
+          "roots": 29,
+          "utc_dates": 15
+        }
+      ]
+    }
+  },
+  "cutoff_utc": "2026-11-15T21:28:50.466000Z",
+  "dataset_id": "7dce3851f2ae56265c977f8aa9853461d8e4d249bdf6c07c3e8326a9e1a4985c",
+  "method_version": "observed-output-speed-1",
+  "schema_version": 1,
+  "thresholds": {
+    "responses": 100,
+    "roots": 8,
+    "utc_dates": 8
+  },
+  "window": {
+    "cutoff_utc": "2026-11-15T21:28:50.466000Z",
+    "days": 30,
+    "start_utc": "2026-10-16T21:28:50.466000Z"
+  }
+}
