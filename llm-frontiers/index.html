@@ -160,6 +160,10 @@ summary:hover { color: var(--ink); }
 .label-dot { stroke: none; }
 .empty-plot { fill: var(--muted); font: 11px var(--sans); text-anchor: middle; }
 .empty-plot--title { fill: var(--ink); font-size: 17px; }
+/* Long observed-coverage explanations wrap within a narrow plot instead of
+   extending beyond the SVG viewport. */
+.empty-plot:not(.empty-plot--title) { font-size: 10px; }
+@media(max-width:520px){ .empty-plot:not(.empty-plot--title) { font-size: 9px; } }
 .chart-note { min-height: 26px; margin: 0; padding: 9px 1px 0; border-top: 1px solid var(--border); color: var(--faint); font: 10px/1.5 var(--sans); }
 .plot-tooltip { position: fixed; z-index: 80; width: min(330px, calc(100vw - 28px)); padding: 14px; border: 1px solid var(--border-strong); border-radius: 2px; color: var(--ink); background: #211810; box-shadow: 0 12px 36px #0008; pointer-events: none; }
 .tooltip-family { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; color: var(--muted); font: 9px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
@@ -843,8 +847,32 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .chart-guides.is-active-chart .chart-guide-line { stroke-opacity:.32; }
 .chart-guide-reticle { fill:none;stroke:#f2dcc0;stroke-width:1;stroke-opacity:.6;vector-effect:non-scaling-stroke; }
 
+/* Output-speed source occupies its own controls row, never the Speed button slot. */
+.speed-source-row { display:grid;grid-column:1/-1;gap:4px;min-width:0; }
+.speed-source-control { display:flex;align-items:center;gap:8px 12px;min-width:0;margin:7px 0 0;padding:0;border:0; }
+.speed-source-control legend { padding:0;color:var(--faint);font:9px var(--mono);text-transform:uppercase;letter-spacing:.06em; }
+.speed-source-options { display:flex;flex:1 1 auto;flex-wrap:wrap;gap:5px;min-width:0; }
+.speed-source-options label { display:inline-flex;align-items:center;gap:5px;min-height:32px;margin:0;padding:5px 8px;border:1px solid var(--border);border-radius:16px;color:var(--muted);font-size:10px;line-height:1.25;cursor:pointer; }
+.speed-source-options label:has(input:checked) { border-color:var(--accent);color:var(--ink);background:var(--accent-soft); }
+.speed-source-options label:has(input:disabled) { cursor:wait;opacity:.58; }
+.speed-source-options input { width:13px;height:13px;margin:0;accent-color:var(--accent); }
+.speed-source-retry { flex:0 0 auto;min-height:32px;padding:5px 8px;border:1px solid var(--accent);border-radius:16px;color:var(--accent);font-size:10px; }
+.speed-source-retry:hover { color:var(--ink);background:var(--accent);text-decoration:none; }
+.speed-source-help { flex:1 1 240px;min-width:0;margin:0;color:var(--faint);font:9px/1.45 var(--sans); }
+.speed-source-status { flex-basis:100%;margin:0; }
+.speed-source-context { margin:0 0 7px;padding:6px 8px;border-left:2px solid var(--accent);background:var(--accent-soft);color:var(--muted);font:9px/1.5 var(--sans); }
+.speed-source-context.is-error { color:var(--danger);border-left-color:var(--danger); }
 /* AZ-66: the time chart is off by default, so the cost chart takes the whole row at every width. */
 .charts[data-time-panel="off"] { grid-template-columns:minmax(0,1fr); }
+@media(max-width:520px){
+ .speed-source-row { grid-column:1/-1; }
+ .speed-source-control { display:grid;gap:6px;margin-top:5px; }
+ .speed-source-options { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%; }
+ .speed-source-options label { justify-content:center;min-width:0;min-height:36px;padding:5px 3px;text-align:center;white-space:normal; }
+ .speed-source-retry { width:100%;min-height:36px; }
+ .speed-source-help { min-width:0;font-size:9px; }
+ .speed-source-context { margin-inline:8px; }
+}
 /* Each legend key hides only its own layer; points, rings, labels and the other layers stay. */
 .charts.is-frontier-line-hidden .frontier-line,
 .charts.is-frontier-line-hidden .frontier-line-halo { display:none; }
@@ -892,6 +920,19 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <div class="pair-actions" aria-label="Compare two model settings">
           <button id="compare-toggle" type="button" aria-pressed="false" aria-describedby="compare-help">Compare two</button>
           <button id="compare-clear" class="text-button" type="button" aria-label="Clear comparison" disabled>Clear</button>
+        </div>
+        <div id="speed-source-row" class="speed-source-row" hidden>
+          <fieldset id="speed-source-control" class="speed-source-control" aria-describedby="speed-source-help">
+            <legend>Output-speed source</legend>
+            <div id="speed-source-options" class="speed-source-options">
+            <label><input type="radio" name="speed-source" value="aa" checked> AA benchmark</label>
+            <label><input type="radio" name="speed-source" value="main"> Our Main agent</label>
+            <label><input type="radio" name="speed-source" value="subagent"> Our Subagent</label>
+            </div>
+          </fieldset>
+          <button id="speed-source-retry" class="speed-source-retry text-button" type="button" hidden>Retry observed speed</button>
+          <p id="speed-source-help" class="speed-source-help">AA benchmark uses Artificial Analysis Performance v3. Selecting Our Main agent or Our Subagent loads a separate exact-setting aggregate. Observed workloads differ from AA workloads.</p>
+          <p id="speed-source-status" class="speed-source-status sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
         </div>
       </div>
       <span id="response-cost-help" class="sr-only">Main agent and Subagent each enable an observed-cost view. Only one can be active; click the active button again to restore AA costs. Both start off. Each view uses a runtime-fetched observed response-cost index for exact model, release and effort cells. Sol 6.1 High is fixed at 1 independently within each population. Observed workloads differ from Artificial Analysis task workloads.</span>
@@ -982,6 +1023,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <span id="time-axis-badge" class="axis-badge">Seconds · log scale</span>
         </header>
         <p id="time-subtitle" class="chart-subtitle">AA Performance v3 mean over single-request and agentic workloads, trailing 5 days. Reasoning models think first, so TTFA can exceed TTFT.</p>
+        <p id="speed-source-context" class="speed-source-context" hidden></p>
         <div id="time-chart" class="plot-scroll"></div>
         <p id="time-note" class="chart-note"></p>
       </article>
@@ -993,6 +1035,11 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     <section class="method" aria-labelledby="method-title">
       <div><h2 id="method-title">Chart definitions</h2></div>
       <div class="method__copy">
+        <details id="observed-speed-method"><summary>Our observed output speed</summary>
+          <p><b>Our Main agent</b> and <b>Our Subagent</b> plot the median measured output rate of qualifying recorded responses for an exact AA model release and effort. A response contributes <code>1000 × output_tokens ÷ measured_duration_ms</code> only when it has more than 50 output tokens and a finite positive measured request duration. Counts must reach 100 responses, 8 roots and 8 UTC dates in a rolling 30-day window ending at the published cutoff. The rate includes emitted reasoning tokens and the first-token wait; it is a typical response rate, not a task mean.</p>
+          <p>Artificial Analysis Performance v3 uses five-day workload means and a different workload clock. These values are not an AA reconstruction or an equivalence claim. Missing exact settings are omitted rather than inferred from similar names, dates or efforts. The chart frontier, domain and plot availability notices use the selected local aggregate; pair comparisons, the comparison profile, model details and AA mode retain the labelled AA Performance v3 output speed.</p>
+          <p id="observed-speed-method-coverage">Our observed output speed is loaded only when selected.</p>
+        </details>
         <details id="response-cost-method"><summary>Observed response cost</summary>
           <p><b>Our costs</b> is the arithmetic mean of complete historical API-equivalent cost per recorded response in the selected Main agent or Subagent population for an exact AA model, release and effort. Each published cell needs at least 100 responses, 8 roots and 8 UTC observation dates in the rolling 30-day window. Sol 6.1 High is fixed at 1 independently within each population. Missing cells are not imputed.</p>
           <p>Covered settings show only this index when Main agent or Subagent is active. The AA ability score still comes from its separate benchmark workload. This is observed response expense, not matched-task cost or a causal effort effect. Standalone headless provenance may be incomplete; a main label does not prove human initiation.</p>
@@ -1023,7 +1070,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     </section>
   </main>
   <footer class="page-footer"><span>Static page · charts render in your browser · response index fetched separately</span><span id="index-version">Index version —</span></footer>
-  <script id="aa-data" type="application/json">{"abilities":[{"description":"Artificial Analysis Intelligence Index composite.","id":"intelligence","label":"Intelligence","primary":true},{"description":"Artificial Analysis Economics Index.","id":"economics","label":"Economics","primary":false},{"description":"Artificial Analysis Finance and Accounting Index.","id":"finance_and_accounting","label":"Finance and accounting","primary":false},{"description":"Artificial Analysis Strategy and Operations Index.","id":"strategy_and_ops","label":"Strategy and operations","primary":false},{"description":"Artificial Analysis Legal Index.","id":"legal","label":"Legal","primary":false},{"description":"Artificial Analysis Healthcare and Medical Index.","id":"healthcare_and_medical","label":"Healthcare and medical","primary":false},{"description":"Artificial Analysis Engineering Index.","id":"engineering","label":"Engineering","primary":false}],"diagnostics":{"metric_coverage":{"cost_per_task":{"chart_eligible":60,"count":60,"missing":1,"nonpositive":0},"economics":{"count":60,"missing":1,"zero":0},"engineering":{"count":60,"missing":1,"zero":0},"finance_and_accounting":{"count":60,"missing":1,"zero":0},"healthcare_and_medical":{"count":42,"missing":19,"zero":0},"intelligence":{"count":60,"missing":1,"zero":0},"legal":{"count":60,"missing":1,"zero":0},"output_tokens_per_second":{"chart_eligible":61,"count":61,"missing":0,"nonpositive":0},"strategy_and_ops":{"count":60,"missing":1,"zero":0},"time_per_task_seconds":{"available":false,"chart_eligible":0,"count":0,"missing":61,"nonpositive":0,"note":"Task token counts are absent from the free endpoint; no time-per-task value is inferred."},"ttfa_seconds":{"chart_eligible":61,"count":61,"missing":0,"nonpositive":0},"ttft_seconds":{"chart_eligible":61,"count":61,"missing":0,"nonpositive":0}},"selection_warnings":[]},"families":[{"color":"#e2bd3f","default_hidden":false,"enabled":true,"id":"openai-sol","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"cost_per_task","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"e76e0fe5-93ca-4272-9359-2eb1740467d1"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a"}],"retained":false},"label":"Sol","model_base":"GPT-6.1 Sol","selected_release_date":"2026-09-29","shape":"diamond"},{"color":"#dd7395","default_hidden":false,"enabled":true,"id":"openai-terra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"b0c462cf-f2d0-4126-9434-28db9502219f"},{"dominator_model_ids":["a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c441e158-a87d-4116-911b-93325e4b4f1c"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c955b262-a17f-4f1a-b097-6860b866295b"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37"}],"retained":false},"label":"Terra","model_base":"GPT-6.1 Terra","selected_release_date":"2026-10-26","shape":"plus"},{"color":"#5aa8e6","default_hidden":false,"enabled":true,"id":"openai-astra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352","b25ac058-1e33-4c31-bbc9-a20c3ad0717a"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e97a4ef5-e817-480e-9595-12f81dc4974f"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"e05a4828-0536-4876-870d-a235023f992b"}],"retained":false},"label":"Astra","model_base":"GPT-6 Astra","selected_release_date":"2026-09-03","shape":"circle"},{"color":"#a48ce8","default_hidden":false,"enabled":true,"id":"openai-luna","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"7d1229bc-deea-4717-ba5b-f59a35d991e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"36667da0-9222-4967-adbb-f7efa15ad213"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"bf9708d8-933d-44f6-affa-b696a7a650c9"}],"retained":false},"label":"Luna","model_base":"GPT-6 Luna","selected_release_date":"2026-09-22","shape":"triangle"},{"color":"#e0663c","default_hidden":false,"enabled":true,"id":"anthropic-opus","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["0d3eaafd-54ed-4f78-bdd7-05a2db883986","909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"cost_per_task","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"df5bf99d-d228-4715-b41b-19ca86118777"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"2f3c4dc9-a450-4303-8697-0237257cf08f"}],"retained":false},"label":"Opus","model_base":"Claude Opus 5.5","selected_release_date":"2026-09-22","shape":"square"},{"color":"#3fb59a","default_hidden":false,"enabled":true,"id":"anthropic-sonnet","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"b171d979-5ec1-45de-b8b9-db1ee65e77ec"}],"retained":false},"label":"Sonnet","model_base":"Claude Sonnet 5.5","selected_release_date":"2026-09-28","shape":"cross"},{"color":"#d9669c","default_hidden":false,"enabled":true,"id":"anthropic-fable","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["b25ac058-1e33-4c31-bbc9-a20c3ad0717a"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"cfc7acb1-d903-4858-9b6c-6c7776caf8f9"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"0c9b4e05-9259-42cc-b40e-d6acbbeaa7e8"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"593f2d23-247b-41c9-a679-cebd225f0a9a"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"76942526-cc96-46b0-bc27-29561c53ed70"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"fdc1913b-9497-45ef-83f7-17dae756f37e"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"593f2d23-247b-41c9-a679-cebd225f0a9a"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"fdc1913b-9497-45ef-83f7-17dae756f37e"}],"retained":false},"label":"Fable","model_base":"Claude Fable 5.2","selected_release_date":"2026-11-09","shape":"hex"},{"color":"#8fcf4a","default_hidden":false,"enabled":true,"id":"anthropic-haiku","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["7a64ffc4-36c3-4369-981e-73abdd6ff5e2","dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"cost_per_task","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"20829974-af06-497e-9f42-77fb958d43b9"},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"af26fff4-8120-41be-a5f0-86aaea023f20"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"42908ae3-d3bd-4934-be19-fbff93d3fde8"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"7d064a11-6e78-4030-b535-cdf940615041"}],"retained":false},"label":"Haiku","model_base":"Claude Haiku 5.5","selected_release_date":"2026-10-07","shape":"plus"},{"color":"#e85a4f","default_hidden":false,"enabled":true,"id":"deepseek-flash","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null}],"retained":false},"label":"DeepSeek Flash","model_base":"DeepSeek V4.1 Flash 1017","selected_release_date":"2026-10-17","shape":"ring"},{"color":"#76dd73","default_hidden":false,"enabled":true,"id":"aa-542e715c1898a8c6bf6ce18b","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["7a64ffc4-36c3-4369-981e-73abdd6ff5e2","dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"output_tokens_per_second","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"69468cce-7b5c-414a-b498-41df4c34df85"}],"retained":false},"label":"Beam 1.0","model_base":"Beam 1.0","selected_release_date":"2026-10-16","shape":"diamond"},{"color":"#ddca73","default_hidden":false,"enabled":true,"id":"aa-22cf3c042cb26a6b740507ce","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["7a64ffc4-36c3-4369-981e-73abdd6ff5e2","dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"output_tokens_per_second","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"093b9df2-ebee-4309-943f-5a7e88360adf"}],"retained":false},"label":"Gemini 3.5 Flash-Lite","model_base":"Gemini 3.5 Flash-Lite","selected_release_date":"2026-07-21","shape":"hex"},{"color":"#73ddd8","default_hidden":false,"enabled":true,"id":"aa-7e07ff3daf35381fea519659","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["593f2d23-247b-41c9-a679-cebd225f0a9a","76942526-cc96-46b0-bc27-29561c53ed70","fdc1913b-9497-45ef-83f7-17dae756f37e"],"metric":"output_tokens_per_second","removed_family_id":"anthropic-fable","type":"without_family","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"0d3eaafd-54ed-4f78-bdd7-05a2db883986"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"}],"retained":false},"label":"Gemini 4 Carbon","model_base":"Gemini 4 Carbon","selected_release_date":"2026-10-28","shape":"ring"},{"color":"#73ddd1","default_hidden":false,"enabled":true,"id":"aa-7b1e720687ae65bf7ff832c9","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"dad0e3b1-e3e7-477a-99f9-c14457a91114"}],"retained":false},"label":"Gemini 4 Hydrogen","model_base":"Gemini 4 Hydrogen","selected_release_date":"2026-11-12","shape":"square"},{"color":"#ddc573","default_hidden":false,"enabled":true,"id":"aa-210a09036e2331a562064d32","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["bf9708d8-933d-44f6-affa-b696a7a650c9"],"metric":"cost_per_task","removed_family_id":"openai-luna","type":"without_family","witness_model_id":"adfae555-f489-4f3e-9064-c6b7fcdd0783"}],"retained":false},"label":"Granite 4.2 8B","model_base":"Granite 4.2 8B","selected_release_date":"2026-08-25","shape":"diamond"},{"color":"#cddd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-flash","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null}],"retained":true},"label":"MiMo Flash","model_base":"MiMo-V2.6-Flash","selected_release_date":"2026-09-21","shape":"hex"},{"color":"#84dd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-pro","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null}],"retained":true},"label":"MiMo Pro","model_base":"MiMo-V2.6-Pro","selected_release_date":"2026-09-21","shape":"triangle"},{"color":"#bbdd73","default_hidden":false,"enabled":true,"id":"aa-387b3b7bc83e6440246cc673","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["bf9708d8-933d-44f6-affa-b696a7a650c9"],"metric":"cost_per_task","removed_family_id":"openai-luna","type":"without_family","witness_model_id":"3fd96175-4ef1-434c-8795-f873aec2abc1"}],"retained":false},"label":"Mistral Small 4","model_base":"Mistral Small 4","selected_release_date":"2026-03-16","shape":"triangle"},{"color":"#da73dd","default_hidden":false,"enabled":true,"id":"aa-d3ef5c943420021a818dda15","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"7a64ffc4-36c3-4369-981e-73abdd6ff5e2"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"dbf63365-127f-41ee-9e51-81173adb3502"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"dbf63365-127f-41ee-9e51-81173adb3502"}],"retained":false},"label":"Muse Ember","model_base":"Muse Ember","selected_release_date":"2026-11-09","shape":"hex"}],"metadata":{"fetched_at_utc":"2026-11-15T22:28:30.593Z","index_version":5,"metric_notes":["Cost per task is AA's overall Intelligence Index workload, even when another ability is selected.","TTFT, TTFA and output speed are AA Performance v3 means over single-request and multi-turn agentic workloads in a trailing 5-day window; they are not measured time per task.","Task-time values are unavailable because the free endpoint does not return task token counts.","TTFT is the first token; first-answer time is kept separately as TTFA. Output speed is higher-is-better.","Prices are USD per million tokens; a zero is preserved as source data and is not proof of free access."],"selected_count":61,"selection":{"ability_id":"intelligence","automatic_family_count":7,"grouping_version":1,"metrics":["cost_per_task","output_tokens_per_second"],"pinned_family_count":9,"retained_family_count":2,"universe_family_count":526,"universe_model_count":741},"selection_as_of":"2026-11-15","source_url":"https://artificialanalysis.ai/api/v2/language/models/free","tier":"free","total_catalog_count":741},"models":[{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-sol","id":"e76e0fe5-93ca-4272-9359-2eb1740467d1","metrics":{"cost_per_task":0.1615,"output_tokens_per_second":51.2,"time_per_task_seconds":null,"ttfa_seconds":3.13,"ttft_seconds":3.13},"name":"GPT-6.1 Sol (Low)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":43.2,"engineering":42.6,"finance_and_accounting":44.3,"healthcare_and_medical":39.7,"intelligence":34.8,"legal":42.9,"strategy_and_ops":45.6},"slug":"gpt-6-1-sol-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-sol","id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d","metrics":{"cost_per_task":0.3594,"output_tokens_per_second":51.47,"time_per_task_seconds":null,"ttfa_seconds":4.92,"ttft_seconds":4.92},"name":"GPT-6.1 Sol (Medium)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":49.6,"engineering":52.1,"finance_and_accounting":50.6,"healthcare_and_medical":45.8,"intelligence":46.3,"legal":49,"strategy_and_ops":53.3},"slug":"gpt-6-1-sol-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-sol","id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042","metrics":{"cost_per_task":0.591,"output_tokens_per_second":49.15,"time_per_task_seconds":null,"ttfa_seconds":34.33,"ttft_seconds":34.33},"name":"GPT-6.1 Sol (High)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":52.8,"engineering":55.4,"finance_and_accounting":53.2,"healthcare_and_medical":48.8,"intelligence":50.3,"legal":51.8,"strategy_and_ops":55.4},"slug":"gpt-6-1-sol-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-sol","id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352","metrics":{"cost_per_task":0.764,"output_tokens_per_second":50.73,"time_per_task_seconds":null,"ttfa_seconds":74.2,"ttft_seconds":74.2},"name":"GPT-6.1 Sol (Xhigh)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":54.8,"engineering":57.5,"finance_and_accounting":55.2,"healthcare_and_medical":50.8,"intelligence":52.5,"legal":53.7,"strategy_and_ops":57.2},"slug":"gpt-6-1-sol-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-sol","id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a","metrics":{"cost_per_task":1.2721,"output_tokens_per_second":49.55,"time_per_task_seconds":null,"ttfa_seconds":175.9,"ttft_seconds":175.9},"name":"GPT-6.1 Sol (Max)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":56.3,"engineering":59.4,"finance_and_accounting":56.2,"healthcare_and_medical":52,"intelligence":54.6,"legal":53.7,"strategy_and_ops":57.6},"slug":"gpt-6-1-sol"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-terra","id":"0d3c777f-6817-42d7-9bb9-223314bc5a57","metrics":{"cost_per_task":0.2259,"output_tokens_per_second":65.88,"time_per_task_seconds":null,"ttfa_seconds":2.27,"ttft_seconds":2.27},"name":"GPT-6.1 Terra (Non-reasoning)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":31.9,"engineering":32.8,"finance_and_accounting":33.5,"healthcare_and_medical":null,"intelligence":30.5,"legal":28.2,"strategy_and_ops":40},"slug":"gpt-6-1-terra-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-terra","id":"c955b262-a17f-4f1a-b097-6860b866295b","metrics":{"cost_per_task":0.0713,"output_tokens_per_second":63.31,"time_per_task_seconds":null,"ttfa_seconds":2.75,"ttft_seconds":2.75},"name":"GPT-6.1 Terra (Low)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":36,"engineering":35.2,"finance_and_accounting":37.9,"healthcare_and_medical":null,"intelligence":29.4,"legal":37.3,"strategy_and_ops":42.2},"slug":"gpt-6-1-terra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-terra","id":"c441e158-a87d-4116-911b-93325e4b4f1c","metrics":{"cost_per_task":0.1688,"output_tokens_per_second":64.37,"time_per_task_seconds":null,"ttfa_seconds":4.96,"ttft_seconds":4.96},"name":"GPT-6.1 Terra (Medium)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":40.8,"engineering":42.6,"finance_and_accounting":42.5,"healthcare_and_medical":null,"intelligence":38.2,"legal":40.5,"strategy_and_ops":45.4},"slug":"gpt-6-1-terra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-terra","id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37","metrics":{"cost_per_task":0.2593,"output_tokens_per_second":66.66,"time_per_task_seconds":null,"ttfa_seconds":11.82,"ttft_seconds":11.82},"name":"GPT-6.1 Terra (High)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":43.1,"engineering":46.4,"finance_and_accounting":44.2,"healthcare_and_medical":null,"intelligence":42.4,"legal":42.5,"strategy_and_ops":47.4},"slug":"gpt-6-1-terra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-terra","id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe","metrics":{"cost_per_task":0.4007,"output_tokens_per_second":68.74,"time_per_task_seconds":null,"ttfa_seconds":31.64,"ttft_seconds":31.64},"name":"GPT-6.1 Terra (Xhigh)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":46,"engineering":49.4,"finance_and_accounting":47.6,"healthcare_and_medical":null,"intelligence":45.3,"legal":43.8,"strategy_and_ops":48.7},"slug":"gpt-6-1-terra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-terra","id":"b0c462cf-f2d0-4126-9434-28db9502219f","metrics":{"cost_per_task":0.9611,"output_tokens_per_second":71.51,"time_per_task_seconds":null,"ttfa_seconds":159.74,"ttft_seconds":159.74},"name":"GPT-6.1 Terra (Max)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":48.5,"engineering":54.7,"finance_and_accounting":49,"healthcare_and_medical":44.7,"intelligence":51.3,"legal":46.4,"strategy_and_ops":50},"slug":"gpt-6-1-terra"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-astra","id":"a3f8100d-e38f-408b-b0fa-0085dae18dc1","metrics":{"cost_per_task":1.4237,"output_tokens_per_second":43.84,"time_per_task_seconds":null,"ttfa_seconds":3.68,"ttft_seconds":3.68},"name":"GPT-6 Astra (Low)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":47.4,"engineering":49.8,"finance_and_accounting":48.1,"healthcare_and_medical":45,"intelligence":43.3,"legal":47.7,"strategy_and_ops":49.9},"slug":"gpt-6-astra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-astra","id":"e97a4ef5-e817-480e-9595-12f81dc4974f","metrics":{"cost_per_task":2.7324,"output_tokens_per_second":42.49,"time_per_task_seconds":null,"ttfa_seconds":6.98,"ttft_seconds":6.98},"name":"GPT-6 Astra (Medium)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":53,"engineering":56.8,"finance_and_accounting":53.7,"healthcare_and_medical":49.6,"intelligence":51.6,"legal":51.8,"strategy_and_ops":55.7},"slug":"gpt-6-astra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-astra","id":"e05a4828-0536-4876-870d-a235023f992b","metrics":{"cost_per_task":3.2386,"output_tokens_per_second":42.13,"time_per_task_seconds":null,"ttfa_seconds":55.25,"ttft_seconds":55.25},"name":"GPT-6 Astra (High)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":55.7,"engineering":60,"finance_and_accounting":56.1,"healthcare_and_medical":51.6,"intelligence":54.8,"legal":55.1,"strategy_and_ops":57.2},"slug":"gpt-6-astra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-astra","id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3","metrics":{"cost_per_task":3.6589,"output_tokens_per_second":39.6,"time_per_task_seconds":null,"ttfa_seconds":92.37,"ttft_seconds":92.37},"name":"GPT-6 Astra (Xhigh)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":56.8,"engineering":60.4,"finance_and_accounting":56.8,"healthcare_and_medical":52.7,"intelligence":55.3,"legal":55.7,"strategy_and_ops":57.9},"slug":"gpt-6-astra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-astra","id":"2f339a97-9a0d-499a-9cb5-e0db665bfa25","metrics":{"cost_per_task":6.2447,"output_tokens_per_second":39.98,"time_per_task_seconds":null,"ttfa_seconds":211.78,"ttft_seconds":211.78},"name":"GPT-6 Astra (Max)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":57.2,"engineering":61.8,"finance_and_accounting":57.4,"healthcare_and_medical":53.7,"intelligence":56.9,"legal":55.6,"strategy_and_ops":58},"slug":"gpt-6-astra"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-luna","id":"63cb48ea-0b0c-4e07-8ded-6d28dec4fa28","metrics":{"cost_per_task":0.0714,"output_tokens_per_second":90.57,"time_per_task_seconds":null,"ttfa_seconds":1.56,"ttft_seconds":1.56},"name":"GPT-6 Luna (Non-reasoning)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":19.3,"engineering":16.6,"finance_and_accounting":19,"healthcare_and_medical":15.7,"intelligence":9.4,"legal":16.6,"strategy_and_ops":17},"slug":"gpt-6-luna-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-luna","id":"bf9708d8-933d-44f6-affa-b696a7a650c9","metrics":{"cost_per_task":0.0051,"output_tokens_per_second":90.02,"time_per_task_seconds":null,"ttfa_seconds":3.16,"ttft_seconds":3.16},"name":"GPT-6 Luna (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":18.6,"engineering":18.7,"finance_and_accounting":17.2,"healthcare_and_medical":16.2,"intelligence":9.7,"legal":16.3,"strategy_and_ops":16.8},"slug":"gpt-6-luna-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-luna","id":"36667da0-9222-4967-adbb-f7efa15ad213","metrics":{"cost_per_task":0.0422,"output_tokens_per_second":93.45,"time_per_task_seconds":null,"ttfa_seconds":6.16,"ttft_seconds":6.16},"name":"GPT-6 Luna (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":26.7,"engineering":24.9,"finance_and_accounting":26.3,"healthcare_and_medical":27.4,"intelligence":18.5,"legal":24.5,"strategy_and_ops":33.8},"slug":"gpt-6-luna-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-luna","id":"7d1229bc-deea-4717-ba5b-f59a35d991e3","metrics":{"cost_per_task":0.0729,"output_tokens_per_second":95.33,"time_per_task_seconds":null,"ttfa_seconds":11.91,"ttft_seconds":11.91},"name":"GPT-6 Luna (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":29,"engineering":27.3,"finance_and_accounting":29.3,"healthcare_and_medical":29.2,"intelligence":21.4,"legal":26.7,"strategy_and_ops":37.8},"slug":"gpt-6-luna-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-luna","id":"19813eb2-460a-475c-af65-810bb8660fec","metrics":{"cost_per_task":0.1041,"output_tokens_per_second":99.86,"time_per_task_seconds":null,"ttfa_seconds":18.99,"ttft_seconds":18.99},"name":"GPT-6 Luna (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":31.2,"engineering":29,"finance_and_accounting":30.6,"healthcare_and_medical":30.5,"intelligence":23.5,"legal":28.4,"strategy_and_ops":39.4},"slug":"gpt-6-luna-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-luna","id":"6fb13851-40ce-4bda-ad3f-6b38e0c5daa7","metrics":{"cost_per_task":0.152,"output_tokens_per_second":104.4,"time_per_task_seconds":null,"ttfa_seconds":77.5,"ttft_seconds":77.5},"name":"GPT-6 Luna (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":34.5,"engineering":33.3,"finance_and_accounting":33.9,"healthcare_and_medical":34.8,"intelligence":27.9,"legal":32.2,"strategy_and_ops":43.2},"slug":"gpt-6-luna"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-opus","id":"4416ca93-fde6-4b7b-abbc-3a6be109cc3d","metrics":{"cost_per_task":0.9755,"output_tokens_per_second":103.93,"time_per_task_seconds":null,"ttfa_seconds":5.17,"ttft_seconds":5.17},"name":"Claude Opus 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":44.5,"engineering":43.2,"finance_and_accounting":42.2,"healthcare_and_medical":45.1,"intelligence":34.8,"legal":43.5,"strategy_and_ops":47.5},"slug":"claude-opus-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-opus","id":"ea9e0da6-169f-43c6-92f5-730a10d6ff8d","metrics":{"cost_per_task":2.4511,"output_tokens_per_second":105.91,"time_per_task_seconds":null,"ttfa_seconds":15.25,"ttft_seconds":15.25},"name":"Claude Opus 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":52.8,"engineering":53.7,"finance_and_accounting":50.7,"healthcare_and_medical":51.4,"intelligence":48.2,"legal":49.7,"strategy_and_ops":56},"slug":"claude-opus-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-opus","id":"f314eade-2232-44bf-a3ab-9b326bc67de6","metrics":{"cost_per_task":3.4647,"output_tokens_per_second":107.81,"time_per_task_seconds":null,"ttfa_seconds":26.64,"ttft_seconds":26.64},"name":"Claude Opus 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":55.3,"engineering":57.8,"finance_and_accounting":53.3,"healthcare_and_medical":52.5,"intelligence":51.8,"legal":52,"strategy_and_ops":57.6},"slug":"claude-opus-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-opus","id":"df5bf99d-d228-4715-b41b-19ca86118777","metrics":{"cost_per_task":6.0472,"output_tokens_per_second":109.94,"time_per_task_seconds":null,"ttfa_seconds":79.87,"ttft_seconds":79.87},"name":"Claude Opus 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":58.1,"engineering":62.9,"finance_and_accounting":55.7,"healthcare_and_medical":55.5,"intelligence":57.4,"legal":54.7,"strategy_and_ops":59},"slug":"claude-opus-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-opus","id":"2f3c4dc9-a450-4303-8697-0237257cf08f","metrics":{"cost_per_task":10.0364,"output_tokens_per_second":114.42,"time_per_task_seconds":null,"ttfa_seconds":371.5,"ttft_seconds":371.5},"name":"Claude Opus 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":60.3,"engineering":65.3,"finance_and_accounting":59.4,"healthcare_and_medical":57.9,"intelligence":59.1,"legal":58,"strategy_and_ops":61.4},"slug":"claude-opus-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-sonnet","id":"bbc2ffea-cf6b-43be-8c41-1769347e234d","metrics":{"cost_per_task":0.5113,"output_tokens_per_second":133.62,"time_per_task_seconds":null,"ttfa_seconds":2.42,"ttft_seconds":2.42},"name":"Claude Sonnet 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":34.7,"engineering":33.4,"finance_and_accounting":35.9,"healthcare_and_medical":37.3,"intelligence":25.6,"legal":36.9,"strategy_and_ops":41.7},"slug":"claude-sonnet-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-sonnet","id":"042e8a37-fcd0-40f4-8f41-99215fb68eda","metrics":{"cost_per_task":0.7807,"output_tokens_per_second":128.1,"time_per_task_seconds":null,"ttfa_seconds":4.36,"ttft_seconds":4.36},"name":"Claude Sonnet 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":39.2,"engineering":37.3,"finance_and_accounting":40.7,"healthcare_and_medical":40.2,"intelligence":30.8,"legal":38.8,"strategy_and_ops":46.7},"slug":"claude-sonnet-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-sonnet","id":"268525e2-f873-4178-bc07-e6a0ee1f002d","metrics":{"cost_per_task":1.6361,"output_tokens_per_second":140.69,"time_per_task_seconds":null,"ttfa_seconds":9.4,"ttft_seconds":9.4},"name":"Claude Sonnet 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":44.6,"engineering":46.2,"finance_and_accounting":44.5,"healthcare_and_medical":43.9,"intelligence":41.5,"legal":44.1,"strategy_and_ops":51.2},"slug":"claude-sonnet-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-sonnet","id":"975aeaef-50bd-4a65-9c73-f1015adcd4d4","metrics":{"cost_per_task":4.092,"output_tokens_per_second":141.39,"time_per_task_seconds":null,"ttfa_seconds":28.79,"ttft_seconds":28.79},"name":"Claude Sonnet 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":48.4,"engineering":53.8,"finance_and_accounting":48.5,"healthcare_and_medical":47.4,"intelligence":49.9,"legal":47.4,"strategy_and_ops":54.1},"slug":"claude-sonnet-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-sonnet","id":"b171d979-5ec1-45de-b8b9-db1ee65e77ec","metrics":{"cost_per_task":10.0206,"output_tokens_per_second":144,"time_per_task_seconds":null,"ttfa_seconds":280.63,"ttft_seconds":280.63},"name":"Claude Sonnet 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":54.1,"engineering":58.5,"finance_and_accounting":55.8,"healthcare_and_medical":54.2,"intelligence":54.5,"legal":52.2,"strategy_and_ops":58.1},"slug":"claude-sonnet-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-fable","id":"cfc7acb1-d903-4858-9b6c-6c7776caf8f9","metrics":{"cost_per_task":3.0972,"output_tokens_per_second":107.25,"time_per_task_seconds":null,"ttfa_seconds":7.71,"ttft_seconds":7.71},"name":"Claude Fable 5.2 (Low, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":58.5,"engineering":61.6,"finance_and_accounting":58.4,"healthcare_and_medical":null,"intelligence":53.9,"legal":57.2,"strategy_and_ops":61.3},"slug":"claude-fable-5-2-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-fable","id":"0c9b4e05-9259-42cc-b40e-d6acbbeaa7e8","metrics":{"cost_per_task":3.8026,"output_tokens_per_second":100.26,"time_per_task_seconds":null,"ttfa_seconds":9.65,"ttft_seconds":9.65},"name":"Claude Fable 5.2 (Medium, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":60.3,"engineering":64.8,"finance_and_accounting":60,"healthcare_and_medical":null,"intelligence":56.4,"legal":58.4,"strategy_and_ops":62.1},"slug":"claude-fable-5-2-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-fable","id":"fdc1913b-9497-45ef-83f7-17dae756f37e","metrics":{"cost_per_task":9.0784,"output_tokens_per_second":106.55,"time_per_task_seconds":null,"ttfa_seconds":25.77,"ttft_seconds":25.77},"name":"Claude Fable 5.2 (High, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":62.7,"engineering":69.6,"finance_and_accounting":62.7,"healthcare_and_medical":null,"intelligence":61.8,"legal":60.3,"strategy_and_ops":63.8},"slug":"claude-fable-5-2-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-fable","id":"76942526-cc96-46b0-bc27-29561c53ed70","metrics":{"cost_per_task":14.8286,"output_tokens_per_second":101.37,"time_per_task_seconds":null,"ttfa_seconds":76.84,"ttft_seconds":76.84},"name":"Claude Fable 5.2 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":64,"engineering":70.2,"finance_and_accounting":63.3,"healthcare_and_medical":null,"intelligence":62.2,"legal":61.8,"strategy_and_ops":65.4},"slug":"claude-fable-5-2-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-fable","id":"593f2d23-247b-41c9-a679-cebd225f0a9a","metrics":{"cost_per_task":26.5386,"output_tokens_per_second":103.32,"time_per_task_seconds":null,"ttfa_seconds":239.85,"ttft_seconds":239.85},"name":"Claude Fable 5.2 (Max, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":66.5,"engineering":72.6,"finance_and_accounting":64.7,"healthcare_and_medical":65.4,"intelligence":64.6,"legal":63.3,"strategy_and_ops":67.4},"slug":"claude-fable-5-2"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-haiku","id":"42908ae3-d3bd-4934-be19-fbff93d3fde8","metrics":{"cost_per_task":0.0438,"output_tokens_per_second":209.24,"time_per_task_seconds":null,"ttfa_seconds":6.3,"ttft_seconds":6.3},"name":"Claude Haiku 5.5 (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":28.6,"engineering":26.8,"finance_and_accounting":28.5,"healthcare_and_medical":24.8,"intelligence":18.6,"legal":27.1,"strategy_and_ops":27.3},"slug":"claude-haiku-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-haiku","id":"af26fff4-8120-41be-a5f0-86aaea023f20","metrics":{"cost_per_task":0.0918,"output_tokens_per_second":220.59,"time_per_task_seconds":null,"ttfa_seconds":11.18,"ttft_seconds":11.18},"name":"Claude Haiku 5.5 (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":34.1,"engineering":31.8,"finance_and_accounting":34.9,"healthcare_and_medical":30.7,"intelligence":24.6,"legal":32.6,"strategy_and_ops":33},"slug":"claude-haiku-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-haiku","id":"20829974-af06-497e-9f42-77fb958d43b9","metrics":{"cost_per_task":0.1586,"output_tokens_per_second":224.43,"time_per_task_seconds":null,"ttfa_seconds":21.09,"ttft_seconds":21.09},"name":"Claude Haiku 5.5 (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":37.9,"engineering":36.5,"finance_and_accounting":37.8,"healthcare_and_medical":32.2,"intelligence":29.9,"legal":35,"strategy_and_ops":37.1},"slug":"claude-haiku-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-haiku","id":"41b5bf5e-daf6-42d9-b8d1-60e340a3028d","metrics":{"cost_per_task":0.2484,"output_tokens_per_second":232.49,"time_per_task_seconds":null,"ttfa_seconds":54.38,"ttft_seconds":54.38},"name":"Claude Haiku 5.5 (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":41,"engineering":40.6,"finance_and_accounting":41.1,"healthcare_and_medical":34.1,"intelligence":34.6,"legal":37.1,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-haiku","id":"7d064a11-6e78-4030-b535-cdf940615041","metrics":{"cost_per_task":0.411,"output_tokens_per_second":257,"time_per_task_seconds":null,"ttfa_seconds":184.41,"ttft_seconds":184.41},"name":"Claude Haiku 5.5 (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":42.7,"engineering":42.5,"finance_and_accounting":43.6,"healthcare_and_medical":37.5,"intelligence":36.5,"legal":38.7,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5"},{"creator":"DeepSeek","effort":"Non-reasoning","effort_rank":0,"family_id":"deepseek-flash","id":"5720fd2f-873a-4765-8640-a153b38bd64d","metrics":{"cost_per_task":0.4254,"output_tokens_per_second":153.25,"time_per_task_seconds":null,"ttfa_seconds":1.3,"ttft_seconds":1.3},"name":"DeepSeek V4.1 Flash 1017 (Non-reasoning)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"economics":32.1,"engineering":25,"finance_and_accounting":37.2,"healthcare_and_medical":null,"intelligence":18.5,"legal":31.7,"strategy_and_ops":39.7},"slug":"deepseek-v4-1-flash-1017-non-reasoning"},{"creator":"DeepSeek","effort":"High","effort_rank":3,"family_id":"deepseek-flash","id":"c3b66080-fdcb-48e4-8ade-6baf77921c7c","metrics":{"cost_per_task":0.4562,"output_tokens_per_second":174.35,"time_per_task_seconds":null,"ttfa_seconds":20.39,"ttft_seconds":1.29},"name":"DeepSeek V4.1 Flash 1017 (High)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"economics":35.3,"engineering":34.4,"finance_and_accounting":39.5,"healthcare_and_medical":null,"intelligence":28.6,"legal":33.9,"strategy_and_ops":48.4},"slug":"deepseek-v4-1-flash-1017-high"},{"creator":"DeepSeek","effort":"Max","effort_rank":5,"family_id":"deepseek-flash","id":"f151fd0b-2139-40cf-a3ec-995e8cedc592","metrics":{"cost_per_task":0.6021,"output_tokens_per_second":173.3,"time_per_task_seconds":null,"ttfa_seconds":42.07,"ttft_seconds":1.26},"name":"DeepSeek V4.1 Flash 1017 (Max)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"economics":38.5,"engineering":37.6,"finance_and_accounting":42.2,"healthcare_and_medical":41.3,"intelligence":32.6,"legal":37.7,"strategy_and_ops":49.2},"slug":"deepseek-v4-1-flash-1017"},{"creator":"Reflection","effort":"Default","effort_rank":null,"family_id":"aa-542e715c1898a8c6bf6ce18b","id":"69468cce-7b5c-414a-b498-41df4c34df85","metrics":{"cost_per_task":0.2844,"output_tokens_per_second":276.64,"time_per_task_seconds":null,"ttfa_seconds":6.45,"ttft_seconds":0.75},"name":"Beam 1.0","pricing":{"cache_hit":0.04,"cache_write":null,"input":0.4,"output":1.2},"release_date":"2026-10-16","scores":{"economics":27.1,"engineering":25.2,"finance_and_accounting":30.2,"healthcare_and_medical":30.7,"intelligence":17.7,"legal":28.1,"strategy_and_ops":34.5},"slug":"reflection-beam"},{"creator":"Google","effort":"Default","effort_rank":null,"family_id":"aa-22cf3c042cb26a6b740507ce","id":"093b9df2-ebee-4309-943f-5a7e88360adf","metrics":{"cost_per_task":0.6929,"output_tokens_per_second":306.35,"time_per_task_seconds":null,"ttfa_seconds":4.91,"ttft_seconds":4.91},"name":"Gemini 3.5 Flash-Lite","pricing":{"cache_hit":0.03,"cache_write":null,"input":0.3,"output":2.5},"release_date":"2026-07-21","scores":{"economics":21.9,"engineering":21.2,"finance_and_accounting":23.3,"healthcare_and_medical":20.5,"intelligence":11.7,"legal":23.9,"strategy_and_ops":20.7},"slug":"gemini-3-5-flash-lite"},{"creator":"Google","effort":"Low","effort_rank":1,"family_id":"aa-7e07ff3daf35381fea519659","id":"b3866703-a9f7-4ea2-8f3f-b361c90aaf0e","metrics":{"cost_per_task":5.2214,"output_tokens_per_second":52.6,"time_per_task_seconds":null,"ttfa_seconds":10.87,"ttft_seconds":10.87},"name":"Gemini 4 Carbon (Low)","pricing":{"cache_hit":0.1,"cache_write":4,"input":2,"output":10},"release_date":"2026-10-28","scores":{"economics":55.2,"engineering":60.2,"finance_and_accounting":56,"healthcare_and_medical":null,"intelligence":54.2,"legal":54,"strategy_and_ops":53},"slug":"gemini-4-carbon-low"},{"creator":"Google","effort":"Medium","effort_rank":2,"family_id":"aa-7e07ff3daf35381fea519659","id":"0d3eaafd-54ed-4f78-bdd7-05a2db883986","metrics":{"cost_per_task":4.6777,"output_tokens_per_second":61.8,"time_per_task_seconds":null,"ttfa_seconds":23.26,"ttft_seconds":23.26},"name":"Gemini 4 Carbon (Medium)","pricing":{"cache_hit":0.1,"cache_write":4,"input":2,"output":10},"release_date":"2026-10-28","scores":{"economics":57.5,"engineering":63.9,"finance_and_accounting":59.6,"healthcare_and_medical":null,"intelligence":58.3,"legal":59.5,"strategy_and_ops":57.8},"slug":"gemini-4-carbon-medium"},{"creator":"Google","effort":"High","effort_rank":3,"family_id":"aa-7e07ff3daf35381fea519659","id":"909ed0ba-bcc5-4f38-8162-08a4e187a772","metrics":{"cost_per_task":5.4848,"output_tokens_per_second":64,"time_per_task_seconds":null,"ttfa_seconds":71.15,"ttft_seconds":71.15},"name":"Gemini 4 Carbon (High)","pricing":{"cache_hit":0.1,"cache_write":4,"input":2,"output":10},"release_date":"2026-10-28","scores":{"economics":59.6,"engineering":65.3,"finance_and_accounting":62.6,"healthcare_and_medical":56.8,"intelligence":60,"legal":62,"strategy_and_ops":60.9},"slug":"gemini-4-carbon"},{"creator":"Google","effort":"Low","effort_rank":1,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"88c68c50-03c1-458a-9292-bd398c27adc5","metrics":{"cost_per_task":0.2922,"output_tokens_per_second":163.98,"time_per_task_seconds":null,"ttfa_seconds":6.28,"ttft_seconds":6.28},"name":"Gemini 4 Hydrogen (Low)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":37.9,"engineering":36.3,"finance_and_accounting":41.2,"healthcare_and_medical":null,"intelligence":26.9,"legal":42.4,"strategy_and_ops":41.7},"slug":"gemini-4-hydrogen-low"},{"creator":"Google","effort":"Medium","effort_rank":2,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"f0537484-af30-4a8a-bf34-368c552e5cfd","metrics":{"cost_per_task":0.798,"output_tokens_per_second":171.63,"time_per_task_seconds":null,"ttfa_seconds":11.66,"ttft_seconds":11.66},"name":"Gemini 4 Hydrogen (Medium)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":48.4,"engineering":49.1,"finance_and_accounting":51.4,"healthcare_and_medical":null,"intelligence":41.2,"legal":51.4,"strategy_and_ops":51.8},"slug":"gemini-4-hydrogen-medium"},{"creator":"Google","effort":"High","effort_rank":3,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"dae0262d-26a4-44d1-925a-6f2731cbda6a","metrics":{"cost_per_task":1.8733,"output_tokens_per_second":170.25,"time_per_task_seconds":null,"ttfa_seconds":16.21,"ttft_seconds":16.21},"name":"Gemini 4 Hydrogen (High)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":53,"engineering":57,"finance_and_accounting":56.1,"healthcare_and_medical":null,"intelligence":50.8,"legal":54.8,"strategy_and_ops":55.4},"slug":"gemini-4-hydrogen-high"},{"creator":"Google","effort":"Xhigh","effort_rank":4,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"dad0e3b1-e3e7-477a-99f9-c14457a91114","metrics":{"cost_per_task":3.1602,"output_tokens_per_second":175.13,"time_per_task_seconds":null,"ttfa_seconds":42.26,"ttft_seconds":42.26},"name":"Gemini 4 Hydrogen (Xhigh)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":55,"engineering":60.1,"finance_and_accounting":58.1,"healthcare_and_medical":53.3,"intelligence":53.9,"legal":56.7,"strategy_and_ops":57.7},"slug":"gemini-4-hydrogen"},{"creator":"IBM","effort":"Default","effort_rank":null,"family_id":"aa-210a09036e2331a562064d32","id":"adfae555-f489-4f3e-9064-c6b7fcdd0783","metrics":{"cost_per_task":0.0405,"output_tokens_per_second":66.09,"time_per_task_seconds":null,"ttfa_seconds":59.7,"ttft_seconds":5.64},"name":"Granite 4.2 8B","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.06,"output":0.25},"release_date":"2026-08-25","scores":{"economics":14.6,"engineering":14.6,"finance_and_accounting":14.8,"healthcare_and_medical":null,"intelligence":5.1,"legal":14.6,"strategy_and_ops":6.9},"slug":"granite-4-2-8b"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-flash","id":"127de816-57d3-4037-8484-480a613cd413","metrics":{"cost_per_task":0.1285,"output_tokens_per_second":44.05,"time_per_task_seconds":null,"ttfa_seconds":37.26,"ttft_seconds":5.59},"name":"MiMo-V2.6-Flash","pricing":{"cache_hit":0.0028,"cache_write":null,"input":0.14,"output":0.28},"release_date":"2026-09-21","scores":{"economics":32.2,"engineering":31,"finance_and_accounting":36.9,"healthcare_and_medical":35.1,"intelligence":26.7,"legal":33.8,"strategy_and_ops":45.7},"slug":"mimo-v2-6-flash"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-pro","id":"24d8fdfe-6241-424e-b7b7-1b6efb06e4fb","metrics":{"cost_per_task":0.2572,"output_tokens_per_second":55.28,"time_per_task_seconds":null,"ttfa_seconds":41.58,"ttft_seconds":4.47},"name":"MiMo-V2.6-Pro","pricing":{"cache_hit":0.0036,"cache_write":null,"input":0.435,"output":0.87},"release_date":"2026-09-21","scores":{"economics":36.1,"engineering":34.3,"finance_and_accounting":38.9,"healthcare_and_medical":35.8,"intelligence":29.9,"legal":35,"strategy_and_ops":46.9},"slug":"mimo-v2-6-pro"},{"creator":"Mistral","effort":"Non-reasoning","effort_rank":0,"family_id":"aa-387b3b7bc83e6440246cc673","id":"12f6a061-0ab3-4c76-b225-49abee253651","metrics":{"cost_per_task":null,"output_tokens_per_second":118.43,"time_per_task_seconds":null,"ttfa_seconds":1.58,"ttft_seconds":1.58},"name":"Mistral Small 4 (Non-reasoning)","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.15,"output":0.6},"release_date":"2026-03-16","scores":{"economics":null,"engineering":null,"finance_and_accounting":null,"healthcare_and_medical":null,"intelligence":null,"legal":null,"strategy_and_ops":null},"slug":"mistral-small-4-non-reasoning"},{"creator":"Mistral","effort":"Reasoning","effort_rank":null,"family_id":"aa-387b3b7bc83e6440246cc673","id":"3fd96175-4ef1-434c-8795-f873aec2abc1","metrics":{"cost_per_task":0.0399,"output_tokens_per_second":143.46,"time_per_task_seconds":null,"ttfa_seconds":12.18,"ttft_seconds":1.52},"name":"Mistral Small 4 (Reasoning)","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.15,"output":0.6},"release_date":"2026-03-16","scores":{"economics":11.7,"engineering":13.3,"finance_and_accounting":11.6,"healthcare_and_medical":8.8,"intelligence":4.3,"legal":11.6,"strategy_and_ops":6.8},"slug":"mistral-small-4"},{"creator":"Meta","effort":"Xhigh","effort_rank":4,"family_id":"aa-d3ef5c943420021a818dda15","id":"7a64ffc4-36c3-4369-981e-73abdd6ff5e2","metrics":{"cost_per_task":0.1162,"output_tokens_per_second":416.21,"time_per_task_seconds":null,"ttfa_seconds":3.94,"ttft_seconds":3.94},"name":"Muse Ember (Xhigh)","pricing":{"cache_hit":0.004,"cache_write":null,"input":0.1,"output":0.5},"release_date":"2026-11-09","scores":{"economics":40.4,"engineering":40.9,"finance_and_accounting":43.6,"healthcare_and_medical":null,"intelligence":34.1,"legal":37.8,"strategy_and_ops":48.5},"slug":"muse-ember-xhigh"},{"creator":"Meta","effort":"Max","effort_rank":5,"family_id":"aa-d3ef5c943420021a818dda15","id":"dbf63365-127f-41ee-9e51-81173adb3502","metrics":{"cost_per_task":0.1359,"output_tokens_per_second":434.36,"time_per_task_seconds":null,"ttfa_seconds":5.13,"ttft_seconds":5.13},"name":"Muse Ember (Max)","pricing":{"cache_hit":0.004,"cache_write":null,"input":0.1,"output":0.5},"release_date":"2026-11-09","scores":{"economics":41,"engineering":41.8,"finance_and_accounting":44.6,"healthcare_and_medical":41.3,"intelligence":36,"legal":38.5,"strategy_and_ops":48.7},"slug":"muse-ember"}],"schema_version":1}</script>
+  <script id="aa-data" type="application/json">{"abilities":[{"description":"Artificial Analysis Intelligence Index composite.","id":"intelligence","label":"Intelligence","primary":true},{"description":"Artificial Analysis Economics Index.","id":"economics","label":"Economics","primary":false},{"description":"Artificial Analysis Finance and Accounting Index.","id":"finance_and_accounting","label":"Finance and accounting","primary":false},{"description":"Artificial Analysis Strategy and Operations Index.","id":"strategy_and_ops","label":"Strategy and operations","primary":false},{"description":"Artificial Analysis Legal Index.","id":"legal","label":"Legal","primary":false},{"description":"Artificial Analysis Healthcare and Medical Index.","id":"healthcare_and_medical","label":"Healthcare and medical","primary":false},{"description":"Artificial Analysis Engineering Index.","id":"engineering","label":"Engineering","primary":false}],"diagnostics":{"metric_coverage":{"cost_per_task":{"chart_eligible":60,"count":60,"missing":1,"nonpositive":0},"economics":{"count":60,"missing":1,"zero":0},"engineering":{"count":60,"missing":1,"zero":0},"finance_and_accounting":{"count":60,"missing":1,"zero":0},"healthcare_and_medical":{"count":42,"missing":19,"zero":0},"intelligence":{"count":60,"missing":1,"zero":0},"legal":{"count":60,"missing":1,"zero":0},"output_tokens_per_second":{"chart_eligible":61,"count":61,"missing":0,"nonpositive":0},"strategy_and_ops":{"count":60,"missing":1,"zero":0},"time_per_task_seconds":{"available":false,"chart_eligible":0,"count":0,"missing":61,"nonpositive":0,"note":"Task token counts are absent from the free endpoint; no time-per-task value is inferred."},"ttfa_seconds":{"chart_eligible":61,"count":61,"missing":0,"nonpositive":0},"ttft_seconds":{"chart_eligible":61,"count":61,"missing":0,"nonpositive":0}},"selection_warnings":[]},"families":[{"color":"#e2bd3f","default_hidden":false,"enabled":true,"id":"openai-sol","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"cost_per_task","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"e76e0fe5-93ca-4272-9359-2eb1740467d1"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a"}],"retained":false},"label":"Sol","model_base":"GPT-6.1 Sol","selected_release_date":"2026-09-29","shape":"diamond"},{"color":"#dd7395","default_hidden":false,"enabled":true,"id":"openai-terra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"b0c462cf-f2d0-4126-9434-28db9502219f"},{"dominator_model_ids":["a2e51d62-ea4e-4f15-8be0-be9dc1fb489d"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c441e158-a87d-4116-911b-93325e4b4f1c"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"c955b262-a17f-4f1a-b097-6860b866295b"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37"}],"retained":false},"label":"Terra","model_base":"GPT-6.1 Terra","selected_release_date":"2026-10-26","shape":"plus"},{"color":"#5aa8e6","default_hidden":false,"enabled":true,"id":"openai-astra","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["092a3b0e-c5c8-45dc-bf1b-53673c8ff352","b25ac058-1e33-4c31-bbc9-a20c3ad0717a"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"e97a4ef5-e817-480e-9595-12f81dc4974f"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"e05a4828-0536-4876-870d-a235023f992b"}],"retained":false},"label":"Astra","model_base":"GPT-6 Astra","selected_release_date":"2026-09-03","shape":"circle"},{"color":"#a48ce8","default_hidden":false,"enabled":true,"id":"openai-luna","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"7d1229bc-deea-4717-ba5b-f59a35d991e3"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"36667da0-9222-4967-adbb-f7efa15ad213"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"bf9708d8-933d-44f6-affa-b696a7a650c9"}],"retained":false},"label":"Luna","model_base":"GPT-6 Luna","selected_release_date":"2026-09-22","shape":"triangle"},{"color":"#e0663c","default_hidden":false,"enabled":true,"id":"anthropic-opus","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["0d3eaafd-54ed-4f78-bdd7-05a2db883986","909ed0ba-bcc5-4f38-8162-08a4e187a772"],"metric":"cost_per_task","removed_family_id":"aa-7e07ff3daf35381fea519659","type":"without_family","witness_model_id":"df5bf99d-d228-4715-b41b-19ca86118777"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"2f3c4dc9-a450-4303-8697-0237257cf08f"}],"retained":false},"label":"Opus","model_base":"Claude Opus 5.5","selected_release_date":"2026-09-22","shape":"square"},{"color":"#3fb59a","default_hidden":false,"enabled":true,"id":"anthropic-sonnet","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"b171d979-5ec1-45de-b8b9-db1ee65e77ec"}],"retained":false},"label":"Sonnet","model_base":"Claude Sonnet 5.5","selected_release_date":"2026-09-28","shape":"cross"},{"color":"#d9669c","default_hidden":false,"enabled":true,"id":"anthropic-fable","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["b25ac058-1e33-4c31-bbc9-a20c3ad0717a"],"metric":"cost_per_task","removed_family_id":"openai-sol","type":"without_family","witness_model_id":"cfc7acb1-d903-4858-9b6c-6c7776caf8f9"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"0c9b4e05-9259-42cc-b40e-d6acbbeaa7e8"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"593f2d23-247b-41c9-a679-cebd225f0a9a"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"76942526-cc96-46b0-bc27-29561c53ed70"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"fdc1913b-9497-45ef-83f7-17dae756f37e"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"593f2d23-247b-41c9-a679-cebd225f0a9a"}],"retained":false},"label":"Fable","model_base":"Claude Fable 5.2","selected_release_date":"2026-11-09","shape":"hex"},{"color":"#8fcf4a","default_hidden":false,"enabled":true,"id":"anthropic-haiku","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null},{"dominator_model_ids":["7a64ffc4-36c3-4369-981e-73abdd6ff5e2","dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"cost_per_task","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"20829974-af06-497e-9f42-77fb958d43b9"},{"dominator_model_ids":["c955b262-a17f-4f1a-b097-6860b866295b"],"metric":"cost_per_task","removed_family_id":"openai-terra","type":"without_family","witness_model_id":"af26fff4-8120-41be-a5f0-86aaea023f20"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"42908ae3-d3bd-4934-be19-fbff93d3fde8"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"7d064a11-6e78-4030-b535-cdf940615041"}],"retained":false},"label":"Haiku","model_base":"Claude Haiku 5.5","selected_release_date":"2026-10-07","shape":"plus"},{"color":"#e85a4f","default_hidden":false,"enabled":true,"id":"deepseek-flash","inclusion":{"pinned":true,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"pinned","witness_model_id":null}],"retained":false},"label":"DeepSeek Flash","model_base":"DeepSeek V4.1 Flash 1017","selected_release_date":"2026-10-17","shape":"ring"},{"color":"#76dd73","default_hidden":false,"enabled":true,"id":"aa-542e715c1898a8c6bf6ce18b","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["7a64ffc4-36c3-4369-981e-73abdd6ff5e2","dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"output_tokens_per_second","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"69468cce-7b5c-414a-b498-41df4c34df85"}],"retained":false},"label":"Beam 1.0","model_base":"Beam 1.0","selected_release_date":"2026-10-16","shape":"diamond"},{"color":"#ddca73","default_hidden":false,"enabled":true,"id":"aa-22cf3c042cb26a6b740507ce","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["7a64ffc4-36c3-4369-981e-73abdd6ff5e2","dbf63365-127f-41ee-9e51-81173adb3502"],"metric":"output_tokens_per_second","removed_family_id":"aa-d3ef5c943420021a818dda15","type":"without_family","witness_model_id":"093b9df2-ebee-4309-943f-5a7e88360adf"}],"retained":false},"label":"Gemini 3.5 Flash-Lite","model_base":"Gemini 3.5 Flash-Lite","selected_release_date":"2026-07-21","shape":"hex"},{"color":"#73ddd8","default_hidden":false,"enabled":true,"id":"aa-7e07ff3daf35381fea519659","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["593f2d23-247b-41c9-a679-cebd225f0a9a","76942526-cc96-46b0-bc27-29561c53ed70","fdc1913b-9497-45ef-83f7-17dae756f37e"],"metric":"output_tokens_per_second","removed_family_id":"anthropic-fable","type":"without_family","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"0d3eaafd-54ed-4f78-bdd7-05a2db883986"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"909ed0ba-bcc5-4f38-8162-08a4e187a772"}],"retained":false},"label":"Gemini 4 Carbon","model_base":"Gemini 4 Carbon","selected_release_date":"2026-10-28","shape":"ring"},{"color":"#73ddd1","default_hidden":false,"enabled":true,"id":"aa-7b1e720687ae65bf7ff832c9","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"dad0e3b1-e3e7-477a-99f9-c14457a91114"}],"retained":false},"label":"Gemini 4 Hydrogen","model_base":"Gemini 4 Hydrogen","selected_release_date":"2026-11-12","shape":"square"},{"color":"#ddc573","default_hidden":false,"enabled":true,"id":"aa-210a09036e2331a562064d32","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["bf9708d8-933d-44f6-affa-b696a7a650c9"],"metric":"cost_per_task","removed_family_id":"openai-luna","type":"without_family","witness_model_id":"adfae555-f489-4f3e-9064-c6b7fcdd0783"}],"retained":false},"label":"Granite 4.2 8B","model_base":"Granite 4.2 8B","selected_release_date":"2026-08-25","shape":"diamond"},{"color":"#cddd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-flash","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null}],"retained":true},"label":"MiMo Flash","model_base":"MiMo-V2.6-Flash","selected_release_date":"2026-09-21","shape":"hex"},{"color":"#84dd73","default_hidden":true,"enabled":true,"id":"xiaomi-mimo-pro","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":null,"removed_family_id":null,"type":"retained","witness_model_id":null}],"retained":true},"label":"MiMo Pro","model_base":"MiMo-V2.6-Pro","selected_release_date":"2026-09-21","shape":"triangle"},{"color":"#bbdd73","default_hidden":false,"enabled":true,"id":"aa-387b3b7bc83e6440246cc673","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":["bf9708d8-933d-44f6-affa-b696a7a650c9"],"metric":"cost_per_task","removed_family_id":"openai-luna","type":"without_family","witness_model_id":"3fd96175-4ef1-434c-8795-f873aec2abc1"}],"retained":false},"label":"Mistral Small 4","model_base":"Mistral Small 4","selected_release_date":"2026-03-16","shape":"triangle"},{"color":"#da73dd","default_hidden":false,"enabled":true,"id":"aa-d3ef5c943420021a818dda15","inclusion":{"pinned":false,"reasons":[{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"7a64ffc4-36c3-4369-981e-73abdd6ff5e2"},{"dominator_model_ids":[],"metric":"cost_per_task","removed_family_id":null,"type":"frontier","witness_model_id":"dbf63365-127f-41ee-9e51-81173adb3502"},{"dominator_model_ids":[],"metric":"output_tokens_per_second","removed_family_id":null,"type":"frontier","witness_model_id":"dbf63365-127f-41ee-9e51-81173adb3502"}],"retained":false},"label":"Muse Ember","model_base":"Muse Ember","selected_release_date":"2026-11-09","shape":"hex"}],"metadata":{"fetched_at_utc":"2026-11-16T01:42:28.041Z","index_version":5,"metric_notes":["Cost per task is AA's overall Intelligence Index workload, even when another ability is selected.","TTFT, TTFA and output speed are AA Performance v3 means over single-request and multi-turn agentic workloads in a trailing 5-day window; they are not measured time per task.","Task-time values are unavailable because the free endpoint does not return task token counts.","TTFT is the first token; first-answer time is kept separately as TTFA. Output speed is higher-is-better.","Prices are USD per million tokens; a zero is preserved as source data and is not proof of free access."],"selected_count":61,"selection":{"ability_id":"intelligence","automatic_family_count":7,"grouping_version":1,"metrics":["cost_per_task","output_tokens_per_second"],"pinned_family_count":9,"retained_family_count":2,"universe_family_count":526,"universe_model_count":741},"selection_as_of":"2026-11-16","source_url":"https://artificialanalysis.ai/api/v2/language/models/free","tier":"free","total_catalog_count":741},"models":[{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-sol","id":"e76e0fe5-93ca-4272-9359-2eb1740467d1","metrics":{"cost_per_task":0.1615,"output_tokens_per_second":51.5,"time_per_task_seconds":null,"ttfa_seconds":3.01,"ttft_seconds":3.01},"name":"GPT-6.1 Sol (Low)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":43.2,"engineering":42.6,"finance_and_accounting":44.3,"healthcare_and_medical":39.7,"intelligence":34.8,"legal":42.9,"strategy_and_ops":45.6},"slug":"gpt-6-1-sol-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-sol","id":"a2e51d62-ea4e-4f15-8be0-be9dc1fb489d","metrics":{"cost_per_task":0.3594,"output_tokens_per_second":51.74,"time_per_task_seconds":null,"ttfa_seconds":4.81,"ttft_seconds":4.81},"name":"GPT-6.1 Sol (Medium)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":49.6,"engineering":52.1,"finance_and_accounting":50.6,"healthcare_and_medical":45.8,"intelligence":46.3,"legal":49,"strategy_and_ops":53.3},"slug":"gpt-6-1-sol-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-sol","id":"3b84fee3-b70a-41bc-819e-5fbdef9a0042","metrics":{"cost_per_task":0.591,"output_tokens_per_second":49.68,"time_per_task_seconds":null,"ttfa_seconds":32.56,"ttft_seconds":32.56},"name":"GPT-6.1 Sol (High)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":52.8,"engineering":55.4,"finance_and_accounting":53.2,"healthcare_and_medical":48.8,"intelligence":50.3,"legal":51.8,"strategy_and_ops":55.4},"slug":"gpt-6-1-sol-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-sol","id":"092a3b0e-c5c8-45dc-bf1b-53673c8ff352","metrics":{"cost_per_task":0.764,"output_tokens_per_second":51.39,"time_per_task_seconds":null,"ttfa_seconds":68,"ttft_seconds":68},"name":"GPT-6.1 Sol (Xhigh)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":54.8,"engineering":57.5,"finance_and_accounting":55.2,"healthcare_and_medical":50.8,"intelligence":52.5,"legal":53.7,"strategy_and_ops":57.2},"slug":"gpt-6-1-sol-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-sol","id":"b25ac058-1e33-4c31-bbc9-a20c3ad0717a","metrics":{"cost_per_task":1.2721,"output_tokens_per_second":49.82,"time_per_task_seconds":null,"ttfa_seconds":166.7,"ttft_seconds":166.7},"name":"GPT-6.1 Sol (Max)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-29","scores":{"economics":56.3,"engineering":59.4,"finance_and_accounting":56.2,"healthcare_and_medical":52,"intelligence":54.6,"legal":53.7,"strategy_and_ops":57.6},"slug":"gpt-6-1-sol"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-terra","id":"0d3c777f-6817-42d7-9bb9-223314bc5a57","metrics":{"cost_per_task":0.2259,"output_tokens_per_second":66.6,"time_per_task_seconds":null,"ttfa_seconds":2.35,"ttft_seconds":2.35},"name":"GPT-6.1 Terra (Non-reasoning)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":31.9,"engineering":32.8,"finance_and_accounting":33.5,"healthcare_and_medical":null,"intelligence":30.5,"legal":28.2,"strategy_and_ops":40},"slug":"gpt-6-1-terra-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-terra","id":"c955b262-a17f-4f1a-b097-6860b866295b","metrics":{"cost_per_task":0.0713,"output_tokens_per_second":64.41,"time_per_task_seconds":null,"ttfa_seconds":2.71,"ttft_seconds":2.71},"name":"GPT-6.1 Terra (Low)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":36,"engineering":35.2,"finance_and_accounting":37.9,"healthcare_and_medical":null,"intelligence":29.4,"legal":37.3,"strategy_and_ops":42.2},"slug":"gpt-6-1-terra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-terra","id":"c441e158-a87d-4116-911b-93325e4b4f1c","metrics":{"cost_per_task":0.1688,"output_tokens_per_second":65.03,"time_per_task_seconds":null,"ttfa_seconds":4.52,"ttft_seconds":4.52},"name":"GPT-6.1 Terra (Medium)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":40.8,"engineering":42.6,"finance_and_accounting":42.5,"healthcare_and_medical":null,"intelligence":38.2,"legal":40.5,"strategy_and_ops":45.4},"slug":"gpt-6-1-terra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-terra","id":"ea3e1f50-f62d-41d2-849a-9af0413e4d37","metrics":{"cost_per_task":0.2593,"output_tokens_per_second":68.13,"time_per_task_seconds":null,"ttfa_seconds":10.34,"ttft_seconds":10.34},"name":"GPT-6.1 Terra (High)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":43.1,"engineering":46.4,"finance_and_accounting":44.2,"healthcare_and_medical":null,"intelligence":42.4,"legal":42.5,"strategy_and_ops":47.4},"slug":"gpt-6-1-terra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-terra","id":"e8d443ba-8aca-4830-a186-ae869bb9c6fe","metrics":{"cost_per_task":0.4007,"output_tokens_per_second":69.67,"time_per_task_seconds":null,"ttfa_seconds":29.62,"ttft_seconds":29.62},"name":"GPT-6.1 Terra (Xhigh)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":46,"engineering":49.4,"finance_and_accounting":47.6,"healthcare_and_medical":null,"intelligence":45.3,"legal":43.8,"strategy_and_ops":48.7},"slug":"gpt-6-1-terra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-terra","id":"b0c462cf-f2d0-4126-9434-28db9502219f","metrics":{"cost_per_task":0.9611,"output_tokens_per_second":72.31,"time_per_task_seconds":null,"ttfa_seconds":150.94,"ttft_seconds":150.94},"name":"GPT-6.1 Terra (Max)","pricing":{"cache_hit":0.05,"cache_write":1.25,"input":1,"output":5},"release_date":"2026-10-26","scores":{"economics":48.5,"engineering":54.7,"finance_and_accounting":49,"healthcare_and_medical":44.7,"intelligence":51.3,"legal":46.4,"strategy_and_ops":50},"slug":"gpt-6-1-terra"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-astra","id":"a3f8100d-e38f-408b-b0fa-0085dae18dc1","metrics":{"cost_per_task":1.4237,"output_tokens_per_second":44.75,"time_per_task_seconds":null,"ttfa_seconds":3.59,"ttft_seconds":3.59},"name":"GPT-6 Astra (Low)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":47.4,"engineering":49.8,"finance_and_accounting":48.1,"healthcare_and_medical":45,"intelligence":43.3,"legal":47.7,"strategy_and_ops":49.9},"slug":"gpt-6-astra-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-astra","id":"e97a4ef5-e817-480e-9595-12f81dc4974f","metrics":{"cost_per_task":2.7324,"output_tokens_per_second":43.35,"time_per_task_seconds":null,"ttfa_seconds":6.25,"ttft_seconds":6.25},"name":"GPT-6 Astra (Medium)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":53,"engineering":56.8,"finance_and_accounting":53.7,"healthcare_and_medical":49.6,"intelligence":51.6,"legal":51.8,"strategy_and_ops":55.7},"slug":"gpt-6-astra-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-astra","id":"e05a4828-0536-4876-870d-a235023f992b","metrics":{"cost_per_task":3.2386,"output_tokens_per_second":42.17,"time_per_task_seconds":null,"ttfa_seconds":48.93,"ttft_seconds":48.93},"name":"GPT-6 Astra (High)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":55.7,"engineering":60,"finance_and_accounting":56.1,"healthcare_and_medical":51.6,"intelligence":54.8,"legal":55.1,"strategy_and_ops":57.2},"slug":"gpt-6-astra-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-astra","id":"1f541ef3-913f-4eb2-9d07-0e93c7a9a5e3","metrics":{"cost_per_task":3.6589,"output_tokens_per_second":39.18,"time_per_task_seconds":null,"ttfa_seconds":86.55,"ttft_seconds":86.55},"name":"GPT-6 Astra (Xhigh)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":56.8,"engineering":60.4,"finance_and_accounting":56.8,"healthcare_and_medical":52.7,"intelligence":55.3,"legal":55.7,"strategy_and_ops":57.9},"slug":"gpt-6-astra-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-astra","id":"2f339a97-9a0d-499a-9cb5-e0db665bfa25","metrics":{"cost_per_task":6.2447,"output_tokens_per_second":41.31,"time_per_task_seconds":null,"ttfa_seconds":198.38,"ttft_seconds":198.38},"name":"GPT-6 Astra (Max)","pricing":{"cache_hit":1,"cache_write":12.5,"input":10,"output":50},"release_date":"2026-09-03","scores":{"economics":57.2,"engineering":61.8,"finance_and_accounting":57.4,"healthcare_and_medical":53.7,"intelligence":56.9,"legal":55.6,"strategy_and_ops":58},"slug":"gpt-6-astra"},{"creator":"OpenAI","effort":"Non-reasoning","effort_rank":0,"family_id":"openai-luna","id":"63cb48ea-0b0c-4e07-8ded-6d28dec4fa28","metrics":{"cost_per_task":0.0714,"output_tokens_per_second":90.22,"time_per_task_seconds":null,"ttfa_seconds":1.55,"ttft_seconds":1.55},"name":"GPT-6 Luna (Non-reasoning)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":19.3,"engineering":16.6,"finance_and_accounting":19,"healthcare_and_medical":15.7,"intelligence":9.4,"legal":16.6,"strategy_and_ops":17},"slug":"gpt-6-luna-non-reasoning"},{"creator":"OpenAI","effort":"Low","effort_rank":1,"family_id":"openai-luna","id":"bf9708d8-933d-44f6-affa-b696a7a650c9","metrics":{"cost_per_task":0.0051,"output_tokens_per_second":89.72,"time_per_task_seconds":null,"ttfa_seconds":2.74,"ttft_seconds":2.74},"name":"GPT-6 Luna (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":18.6,"engineering":18.7,"finance_and_accounting":17.2,"healthcare_and_medical":16.2,"intelligence":9.7,"legal":16.3,"strategy_and_ops":16.8},"slug":"gpt-6-luna-low"},{"creator":"OpenAI","effort":"Medium","effort_rank":2,"family_id":"openai-luna","id":"36667da0-9222-4967-adbb-f7efa15ad213","metrics":{"cost_per_task":0.0422,"output_tokens_per_second":94.9,"time_per_task_seconds":null,"ttfa_seconds":4.94,"ttft_seconds":4.94},"name":"GPT-6 Luna (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":26.7,"engineering":24.9,"finance_and_accounting":26.3,"healthcare_and_medical":27.4,"intelligence":18.5,"legal":24.5,"strategy_and_ops":33.8},"slug":"gpt-6-luna-medium"},{"creator":"OpenAI","effort":"High","effort_rank":3,"family_id":"openai-luna","id":"7d1229bc-deea-4717-ba5b-f59a35d991e3","metrics":{"cost_per_task":0.0729,"output_tokens_per_second":95.64,"time_per_task_seconds":null,"ttfa_seconds":9.89,"ttft_seconds":9.89},"name":"GPT-6 Luna (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":29,"engineering":27.3,"finance_and_accounting":29.3,"healthcare_and_medical":29.2,"intelligence":21.4,"legal":26.7,"strategy_and_ops":37.8},"slug":"gpt-6-luna-high"},{"creator":"OpenAI","effort":"Xhigh","effort_rank":4,"family_id":"openai-luna","id":"19813eb2-460a-475c-af65-810bb8660fec","metrics":{"cost_per_task":0.1041,"output_tokens_per_second":100.01,"time_per_task_seconds":null,"ttfa_seconds":16.85,"ttft_seconds":16.85},"name":"GPT-6 Luna (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":31.2,"engineering":29,"finance_and_accounting":30.6,"healthcare_and_medical":30.5,"intelligence":23.5,"legal":28.4,"strategy_and_ops":39.4},"slug":"gpt-6-luna-xhigh"},{"creator":"OpenAI","effort":"Max","effort_rank":5,"family_id":"openai-luna","id":"6fb13851-40ce-4bda-ad3f-6b38e0c5daa7","metrics":{"cost_per_task":0.152,"output_tokens_per_second":103.47,"time_per_task_seconds":null,"ttfa_seconds":73.94,"ttft_seconds":73.94},"name":"GPT-6 Luna (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-09-22","scores":{"economics":34.5,"engineering":33.3,"finance_and_accounting":33.9,"healthcare_and_medical":34.8,"intelligence":27.9,"legal":32.2,"strategy_and_ops":43.2},"slug":"gpt-6-luna"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-opus","id":"4416ca93-fde6-4b7b-abbc-3a6be109cc3d","metrics":{"cost_per_task":0.9755,"output_tokens_per_second":104.67,"time_per_task_seconds":null,"ttfa_seconds":4.59,"ttft_seconds":4.59},"name":"Claude Opus 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":44.5,"engineering":43.2,"finance_and_accounting":42.2,"healthcare_and_medical":45.1,"intelligence":34.8,"legal":43.5,"strategy_and_ops":47.5},"slug":"claude-opus-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-opus","id":"ea9e0da6-169f-43c6-92f5-730a10d6ff8d","metrics":{"cost_per_task":2.4511,"output_tokens_per_second":106.46,"time_per_task_seconds":null,"ttfa_seconds":14.99,"ttft_seconds":14.99},"name":"Claude Opus 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":52.8,"engineering":53.7,"finance_and_accounting":50.7,"healthcare_and_medical":51.4,"intelligence":48.2,"legal":49.7,"strategy_and_ops":56},"slug":"claude-opus-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-opus","id":"f314eade-2232-44bf-a3ab-9b326bc67de6","metrics":{"cost_per_task":3.4647,"output_tokens_per_second":108.1,"time_per_task_seconds":null,"ttfa_seconds":25.54,"ttft_seconds":25.54},"name":"Claude Opus 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":55.3,"engineering":57.8,"finance_and_accounting":53.3,"healthcare_and_medical":52.5,"intelligence":51.8,"legal":52,"strategy_and_ops":57.6},"slug":"claude-opus-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-opus","id":"df5bf99d-d228-4715-b41b-19ca86118777","metrics":{"cost_per_task":6.0472,"output_tokens_per_second":110.55,"time_per_task_seconds":null,"ttfa_seconds":77.94,"ttft_seconds":77.94},"name":"Claude Opus 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":58.1,"engineering":62.9,"finance_and_accounting":55.7,"healthcare_and_medical":55.5,"intelligence":57.4,"legal":54.7,"strategy_and_ops":59},"slug":"claude-opus-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-opus","id":"2f3c4dc9-a450-4303-8697-0237257cf08f","metrics":{"cost_per_task":10.0364,"output_tokens_per_second":116.17,"time_per_task_seconds":null,"ttfa_seconds":380.2,"ttft_seconds":380.2},"name":"Claude Opus 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":5,"input":4,"output":20},"release_date":"2026-09-22","scores":{"economics":60.3,"engineering":65.3,"finance_and_accounting":59.4,"healthcare_and_medical":57.9,"intelligence":59.1,"legal":58,"strategy_and_ops":61.4},"slug":"claude-opus-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-sonnet","id":"bbc2ffea-cf6b-43be-8c41-1769347e234d","metrics":{"cost_per_task":0.5113,"output_tokens_per_second":134.5,"time_per_task_seconds":null,"ttfa_seconds":2.42,"ttft_seconds":2.42},"name":"Claude Sonnet 5.5 (Low, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":34.7,"engineering":33.4,"finance_and_accounting":35.9,"healthcare_and_medical":37.3,"intelligence":25.6,"legal":36.9,"strategy_and_ops":41.7},"slug":"claude-sonnet-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-sonnet","id":"042e8a37-fcd0-40f4-8f41-99215fb68eda","metrics":{"cost_per_task":0.7807,"output_tokens_per_second":126.51,"time_per_task_seconds":null,"ttfa_seconds":3.76,"ttft_seconds":3.76},"name":"Claude Sonnet 5.5 (Medium, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":39.2,"engineering":37.3,"finance_and_accounting":40.7,"healthcare_and_medical":40.2,"intelligence":30.8,"legal":38.8,"strategy_and_ops":46.7},"slug":"claude-sonnet-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-sonnet","id":"268525e2-f873-4178-bc07-e6a0ee1f002d","metrics":{"cost_per_task":1.6361,"output_tokens_per_second":141.83,"time_per_task_seconds":null,"ttfa_seconds":8.57,"ttft_seconds":8.57},"name":"Claude Sonnet 5.5 (High, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":44.6,"engineering":46.2,"finance_and_accounting":44.5,"healthcare_and_medical":43.9,"intelligence":41.5,"legal":44.1,"strategy_and_ops":51.2},"slug":"claude-sonnet-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-sonnet","id":"975aeaef-50bd-4a65-9c73-f1015adcd4d4","metrics":{"cost_per_task":4.092,"output_tokens_per_second":143.3,"time_per_task_seconds":null,"ttfa_seconds":27.18,"ttft_seconds":27.18},"name":"Claude Sonnet 5.5 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":48.4,"engineering":53.8,"finance_and_accounting":48.5,"healthcare_and_medical":47.4,"intelligence":49.9,"legal":47.4,"strategy_and_ops":54.1},"slug":"claude-sonnet-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-sonnet","id":"b171d979-5ec1-45de-b8b9-db1ee65e77ec","metrics":{"cost_per_task":10.0206,"output_tokens_per_second":152.2,"time_per_task_seconds":null,"ttfa_seconds":290.5,"ttft_seconds":290.5},"name":"Claude Sonnet 5.5 (Max, Default Fallback)","pricing":{"cache_hit":0.1,"cache_write":2.5,"input":2,"output":10},"release_date":"2026-09-28","scores":{"economics":54.1,"engineering":58.5,"finance_and_accounting":55.8,"healthcare_and_medical":54.2,"intelligence":54.5,"legal":52.2,"strategy_and_ops":58.1},"slug":"claude-sonnet-5-5"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-fable","id":"cfc7acb1-d903-4858-9b6c-6c7776caf8f9","metrics":{"cost_per_task":3.0972,"output_tokens_per_second":108.29,"time_per_task_seconds":null,"ttfa_seconds":7.16,"ttft_seconds":7.16},"name":"Claude Fable 5.2 (Low, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":58.5,"engineering":61.6,"finance_and_accounting":58.4,"healthcare_and_medical":null,"intelligence":53.9,"legal":57.2,"strategy_and_ops":61.3},"slug":"claude-fable-5-2-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-fable","id":"0c9b4e05-9259-42cc-b40e-d6acbbeaa7e8","metrics":{"cost_per_task":3.8026,"output_tokens_per_second":101.93,"time_per_task_seconds":null,"ttfa_seconds":9.46,"ttft_seconds":9.46},"name":"Claude Fable 5.2 (Medium, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":60.3,"engineering":64.8,"finance_and_accounting":60,"healthcare_and_medical":null,"intelligence":56.4,"legal":58.4,"strategy_and_ops":62.1},"slug":"claude-fable-5-2-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-fable","id":"fdc1913b-9497-45ef-83f7-17dae756f37e","metrics":{"cost_per_task":9.0784,"output_tokens_per_second":106.66,"time_per_task_seconds":null,"ttfa_seconds":27.15,"ttft_seconds":27.15},"name":"Claude Fable 5.2 (High, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":62.7,"engineering":69.6,"finance_and_accounting":62.7,"healthcare_and_medical":null,"intelligence":61.8,"legal":60.3,"strategy_and_ops":63.8},"slug":"claude-fable-5-2-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-fable","id":"76942526-cc96-46b0-bc27-29561c53ed70","metrics":{"cost_per_task":14.8286,"output_tokens_per_second":101.38,"time_per_task_seconds":null,"ttfa_seconds":73.08,"ttft_seconds":73.08},"name":"Claude Fable 5.2 (Xhigh, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":64,"engineering":70.2,"finance_and_accounting":63.3,"healthcare_and_medical":null,"intelligence":62.2,"legal":61.8,"strategy_and_ops":65.4},"slug":"claude-fable-5-2-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-fable","id":"593f2d23-247b-41c9-a679-cebd225f0a9a","metrics":{"cost_per_task":26.5386,"output_tokens_per_second":109.49,"time_per_task_seconds":null,"ttfa_seconds":232.13,"ttft_seconds":232.13},"name":"Claude Fable 5.2 (Max, Default Fallback)","pricing":{"cache_hit":0.2,"cache_write":10,"input":8,"output":40},"release_date":"2026-11-09","scores":{"economics":66.5,"engineering":72.6,"finance_and_accounting":64.7,"healthcare_and_medical":65.4,"intelligence":64.6,"legal":63.3,"strategy_and_ops":67.4},"slug":"claude-fable-5-2"},{"creator":"Anthropic","effort":"Low","effort_rank":1,"family_id":"anthropic-haiku","id":"42908ae3-d3bd-4934-be19-fbff93d3fde8","metrics":{"cost_per_task":0.0438,"output_tokens_per_second":207.64,"time_per_task_seconds":null,"ttfa_seconds":4.99,"ttft_seconds":4.99},"name":"Claude Haiku 5.5 (Low)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":28.6,"engineering":26.8,"finance_and_accounting":28.5,"healthcare_and_medical":24.8,"intelligence":18.6,"legal":27.1,"strategy_and_ops":27.3},"slug":"claude-haiku-5-5-low"},{"creator":"Anthropic","effort":"Medium","effort_rank":2,"family_id":"anthropic-haiku","id":"af26fff4-8120-41be-a5f0-86aaea023f20","metrics":{"cost_per_task":0.0918,"output_tokens_per_second":220.45,"time_per_task_seconds":null,"ttfa_seconds":9.89,"ttft_seconds":9.89},"name":"Claude Haiku 5.5 (Medium)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":34.1,"engineering":31.8,"finance_and_accounting":34.9,"healthcare_and_medical":30.7,"intelligence":24.6,"legal":32.6,"strategy_and_ops":33},"slug":"claude-haiku-5-5-medium"},{"creator":"Anthropic","effort":"High","effort_rank":3,"family_id":"anthropic-haiku","id":"20829974-af06-497e-9f42-77fb958d43b9","metrics":{"cost_per_task":0.1586,"output_tokens_per_second":224.53,"time_per_task_seconds":null,"ttfa_seconds":18.3,"ttft_seconds":18.3},"name":"Claude Haiku 5.5 (High)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":37.9,"engineering":36.5,"finance_and_accounting":37.8,"healthcare_and_medical":32.2,"intelligence":29.9,"legal":35,"strategy_and_ops":37.1},"slug":"claude-haiku-5-5-high"},{"creator":"Anthropic","effort":"Xhigh","effort_rank":4,"family_id":"anthropic-haiku","id":"41b5bf5e-daf6-42d9-b8d1-60e340a3028d","metrics":{"cost_per_task":0.2484,"output_tokens_per_second":231.12,"time_per_task_seconds":null,"ttfa_seconds":50.45,"ttft_seconds":50.45},"name":"Claude Haiku 5.5 (Xhigh)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":41,"engineering":40.6,"finance_and_accounting":41.1,"healthcare_and_medical":34.1,"intelligence":34.6,"legal":37.1,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5-xhigh"},{"creator":"Anthropic","effort":"Max","effort_rank":5,"family_id":"anthropic-haiku","id":"7d064a11-6e78-4030-b535-cdf940615041","metrics":{"cost_per_task":0.411,"output_tokens_per_second":257.16,"time_per_task_seconds":null,"ttfa_seconds":185.18,"ttft_seconds":185.18},"name":"Claude Haiku 5.5 (Max)","pricing":{"cache_hit":0.01,"cache_write":0.125,"input":0.1,"output":0.5},"release_date":"2026-10-07","scores":{"economics":42.7,"engineering":42.5,"finance_and_accounting":43.6,"healthcare_and_medical":37.5,"intelligence":36.5,"legal":38.7,"strategy_and_ops":39.1},"slug":"claude-haiku-5-5"},{"creator":"DeepSeek","effort":"Non-reasoning","effort_rank":0,"family_id":"deepseek-flash","id":"5720fd2f-873a-4765-8640-a153b38bd64d","metrics":{"cost_per_task":0.4254,"output_tokens_per_second":152.85,"time_per_task_seconds":null,"ttfa_seconds":1.28,"ttft_seconds":1.28},"name":"DeepSeek V4.1 Flash 1017 (Non-reasoning)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"economics":32.1,"engineering":25,"finance_and_accounting":37.2,"healthcare_and_medical":null,"intelligence":18.5,"legal":31.7,"strategy_and_ops":39.7},"slug":"deepseek-v4-1-flash-1017-non-reasoning"},{"creator":"DeepSeek","effort":"High","effort_rank":3,"family_id":"deepseek-flash","id":"c3b66080-fdcb-48e4-8ade-6baf77921c7c","metrics":{"cost_per_task":0.4562,"output_tokens_per_second":174.64,"time_per_task_seconds":null,"ttfa_seconds":19.75,"ttft_seconds":1.27},"name":"DeepSeek V4.1 Flash 1017 (High)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"economics":35.3,"engineering":34.4,"finance_and_accounting":39.5,"healthcare_and_medical":null,"intelligence":28.6,"legal":33.9,"strategy_and_ops":48.4},"slug":"deepseek-v4-1-flash-1017-high"},{"creator":"DeepSeek","effort":"Max","effort_rank":5,"family_id":"deepseek-flash","id":"f151fd0b-2139-40cf-a3ec-995e8cedc592","metrics":{"cost_per_task":0.6021,"output_tokens_per_second":174.35,"time_per_task_seconds":null,"ttfa_seconds":39.74,"ttft_seconds":1.26},"name":"DeepSeek V4.1 Flash 1017 (Max)","pricing":{"cache_hit":0.006,"cache_write":null,"input":0.3,"output":1.2},"release_date":"2026-10-17","scores":{"economics":38.5,"engineering":37.6,"finance_and_accounting":42.2,"healthcare_and_medical":41.3,"intelligence":32.6,"legal":37.7,"strategy_and_ops":49.2},"slug":"deepseek-v4-1-flash-1017"},{"creator":"Reflection","effort":"Default","effort_rank":null,"family_id":"aa-542e715c1898a8c6bf6ce18b","id":"69468cce-7b5c-414a-b498-41df4c34df85","metrics":{"cost_per_task":0.2844,"output_tokens_per_second":287.62,"time_per_task_seconds":null,"ttfa_seconds":5.42,"ttft_seconds":0.74},"name":"Beam 1.0","pricing":{"cache_hit":0.04,"cache_write":null,"input":0.4,"output":1.2},"release_date":"2026-10-16","scores":{"economics":27.1,"engineering":25.2,"finance_and_accounting":30.2,"healthcare_and_medical":30.7,"intelligence":17.7,"legal":28.1,"strategy_and_ops":34.5},"slug":"reflection-beam"},{"creator":"Google","effort":"Default","effort_rank":null,"family_id":"aa-22cf3c042cb26a6b740507ce","id":"093b9df2-ebee-4309-943f-5a7e88360adf","metrics":{"cost_per_task":0.6929,"output_tokens_per_second":307.54,"time_per_task_seconds":null,"ttfa_seconds":4.71,"ttft_seconds":4.71},"name":"Gemini 3.5 Flash-Lite","pricing":{"cache_hit":0.03,"cache_write":null,"input":0.3,"output":2.5},"release_date":"2026-07-21","scores":{"economics":21.9,"engineering":21.2,"finance_and_accounting":23.3,"healthcare_and_medical":20.5,"intelligence":11.7,"legal":23.9,"strategy_and_ops":20.7},"slug":"gemini-3-5-flash-lite"},{"creator":"Google","effort":"Low","effort_rank":1,"family_id":"aa-7e07ff3daf35381fea519659","id":"b3866703-a9f7-4ea2-8f3f-b361c90aaf0e","metrics":{"cost_per_task":5.2214,"output_tokens_per_second":55.53,"time_per_task_seconds":null,"ttfa_seconds":10.9,"ttft_seconds":10.9},"name":"Gemini 4 Carbon (Low)","pricing":{"cache_hit":0.1,"cache_write":4,"input":2,"output":10},"release_date":"2026-10-28","scores":{"economics":55.2,"engineering":60.2,"finance_and_accounting":56,"healthcare_and_medical":null,"intelligence":54.2,"legal":54,"strategy_and_ops":53},"slug":"gemini-4-carbon-low"},{"creator":"Google","effort":"Medium","effort_rank":2,"family_id":"aa-7e07ff3daf35381fea519659","id":"0d3eaafd-54ed-4f78-bdd7-05a2db883986","metrics":{"cost_per_task":4.6777,"output_tokens_per_second":61.24,"time_per_task_seconds":null,"ttfa_seconds":20.89,"ttft_seconds":20.89},"name":"Gemini 4 Carbon (Medium)","pricing":{"cache_hit":0.1,"cache_write":4,"input":2,"output":10},"release_date":"2026-10-28","scores":{"economics":57.5,"engineering":63.9,"finance_and_accounting":59.6,"healthcare_and_medical":null,"intelligence":58.3,"legal":59.5,"strategy_and_ops":57.8},"slug":"gemini-4-carbon-medium"},{"creator":"Google","effort":"High","effort_rank":3,"family_id":"aa-7e07ff3daf35381fea519659","id":"909ed0ba-bcc5-4f38-8162-08a4e187a772","metrics":{"cost_per_task":5.4848,"output_tokens_per_second":63.7,"time_per_task_seconds":null,"ttfa_seconds":73.49,"ttft_seconds":73.49},"name":"Gemini 4 Carbon (High)","pricing":{"cache_hit":0.1,"cache_write":4,"input":2,"output":10},"release_date":"2026-10-28","scores":{"economics":59.6,"engineering":65.3,"finance_and_accounting":62.6,"healthcare_and_medical":56.8,"intelligence":60,"legal":62,"strategy_and_ops":60.9},"slug":"gemini-4-carbon"},{"creator":"Google","effort":"Low","effort_rank":1,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"88c68c50-03c1-458a-9292-bd398c27adc5","metrics":{"cost_per_task":0.2922,"output_tokens_per_second":163.98,"time_per_task_seconds":null,"ttfa_seconds":6.28,"ttft_seconds":6.28},"name":"Gemini 4 Hydrogen (Low)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":37.9,"engineering":36.3,"finance_and_accounting":41.2,"healthcare_and_medical":null,"intelligence":26.9,"legal":42.4,"strategy_and_ops":41.7},"slug":"gemini-4-hydrogen-low"},{"creator":"Google","effort":"Medium","effort_rank":2,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"f0537484-af30-4a8a-bf34-368c552e5cfd","metrics":{"cost_per_task":0.798,"output_tokens_per_second":171.63,"time_per_task_seconds":null,"ttfa_seconds":11.66,"ttft_seconds":11.66},"name":"Gemini 4 Hydrogen (Medium)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":48.4,"engineering":49.1,"finance_and_accounting":51.4,"healthcare_and_medical":null,"intelligence":41.2,"legal":51.4,"strategy_and_ops":51.8},"slug":"gemini-4-hydrogen-medium"},{"creator":"Google","effort":"High","effort_rank":3,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"dae0262d-26a4-44d1-925a-6f2731cbda6a","metrics":{"cost_per_task":1.8733,"output_tokens_per_second":170.25,"time_per_task_seconds":null,"ttfa_seconds":16.21,"ttft_seconds":16.21},"name":"Gemini 4 Hydrogen (High)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":53,"engineering":57,"finance_and_accounting":56.1,"healthcare_and_medical":null,"intelligence":50.8,"legal":54.8,"strategy_and_ops":55.4},"slug":"gemini-4-hydrogen-high"},{"creator":"Google","effort":"Xhigh","effort_rank":4,"family_id":"aa-7b1e720687ae65bf7ff832c9","id":"dad0e3b1-e3e7-477a-99f9-c14457a91114","metrics":{"cost_per_task":3.1602,"output_tokens_per_second":175.13,"time_per_task_seconds":null,"ttfa_seconds":42.26,"ttft_seconds":42.26},"name":"Gemini 4 Hydrogen (Xhigh)","pricing":{"cache_hit":0.075,"cache_write":null,"input":1.5,"output":7.5},"release_date":"2026-11-12","scores":{"economics":55,"engineering":60.1,"finance_and_accounting":58.1,"healthcare_and_medical":53.3,"intelligence":53.9,"legal":56.7,"strategy_and_ops":57.7},"slug":"gemini-4-hydrogen"},{"creator":"IBM","effort":"Default","effort_rank":null,"family_id":"aa-210a09036e2331a562064d32","id":"adfae555-f489-4f3e-9064-c6b7fcdd0783","metrics":{"cost_per_task":0.0405,"output_tokens_per_second":53.91,"time_per_task_seconds":null,"ttfa_seconds":64.77,"ttft_seconds":6.57},"name":"Granite 4.2 8B","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.06,"output":0.25},"release_date":"2026-08-25","scores":{"economics":14.6,"engineering":14.6,"finance_and_accounting":14.8,"healthcare_and_medical":null,"intelligence":5.1,"legal":14.6,"strategy_and_ops":6.9},"slug":"granite-4-2-8b"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-flash","id":"127de816-57d3-4037-8484-480a613cd413","metrics":{"cost_per_task":0.1285,"output_tokens_per_second":44.37,"time_per_task_seconds":null,"ttfa_seconds":31.81,"ttft_seconds":5.64},"name":"MiMo-V2.6-Flash","pricing":{"cache_hit":0.0028,"cache_write":null,"input":0.14,"output":0.28},"release_date":"2026-09-21","scores":{"economics":32.2,"engineering":31,"finance_and_accounting":36.9,"healthcare_and_medical":35.1,"intelligence":26.7,"legal":33.8,"strategy_and_ops":45.7},"slug":"mimo-v2-6-flash"},{"creator":"Xiaomi","effort":"Default","effort_rank":null,"family_id":"xiaomi-mimo-pro","id":"24d8fdfe-6241-424e-b7b7-1b6efb06e4fb","metrics":{"cost_per_task":0.2572,"output_tokens_per_second":53.78,"time_per_task_seconds":null,"ttfa_seconds":42.28,"ttft_seconds":4.17},"name":"MiMo-V2.6-Pro","pricing":{"cache_hit":0.0036,"cache_write":null,"input":0.435,"output":0.87},"release_date":"2026-09-21","scores":{"economics":36.1,"engineering":34.3,"finance_and_accounting":38.9,"healthcare_and_medical":35.8,"intelligence":29.9,"legal":35,"strategy_and_ops":46.9},"slug":"mimo-v2-6-pro"},{"creator":"Mistral","effort":"Non-reasoning","effort_rank":0,"family_id":"aa-387b3b7bc83e6440246cc673","id":"12f6a061-0ab3-4c76-b225-49abee253651","metrics":{"cost_per_task":null,"output_tokens_per_second":119.77,"time_per_task_seconds":null,"ttfa_seconds":1.59,"ttft_seconds":1.59},"name":"Mistral Small 4 (Non-reasoning)","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.15,"output":0.6},"release_date":"2026-03-16","scores":{"economics":null,"engineering":null,"finance_and_accounting":null,"healthcare_and_medical":null,"intelligence":null,"legal":null,"strategy_and_ops":null},"slug":"mistral-small-4-non-reasoning"},{"creator":"Mistral","effort":"Reasoning","effort_rank":null,"family_id":"aa-387b3b7bc83e6440246cc673","id":"3fd96175-4ef1-434c-8795-f873aec2abc1","metrics":{"cost_per_task":0.0399,"output_tokens_per_second":144.12,"time_per_task_seconds":null,"ttfa_seconds":13.16,"ttft_seconds":1.51},"name":"Mistral Small 4 (Reasoning)","pricing":{"cache_hit":0.015,"cache_write":null,"input":0.15,"output":0.6},"release_date":"2026-03-16","scores":{"economics":11.7,"engineering":13.3,"finance_and_accounting":11.6,"healthcare_and_medical":8.8,"intelligence":4.3,"legal":11.6,"strategy_and_ops":6.8},"slug":"mistral-small-4"},{"creator":"Meta","effort":"Xhigh","effort_rank":4,"family_id":"aa-d3ef5c943420021a818dda15","id":"7a64ffc4-36c3-4369-981e-73abdd6ff5e2","metrics":{"cost_per_task":0.1162,"output_tokens_per_second":412.75,"time_per_task_seconds":null,"ttfa_seconds":3.81,"ttft_seconds":3.81},"name":"Muse Ember (Xhigh)","pricing":{"cache_hit":0.004,"cache_write":null,"input":0.1,"output":0.5},"release_date":"2026-11-09","scores":{"economics":40.4,"engineering":40.9,"finance_and_accounting":43.6,"healthcare_and_medical":null,"intelligence":34.1,"legal":37.8,"strategy_and_ops":48.5},"slug":"muse-ember-xhigh"},{"creator":"Meta","effort":"Max","effort_rank":5,"family_id":"aa-d3ef5c943420021a818dda15","id":"dbf63365-127f-41ee-9e51-81173adb3502","metrics":{"cost_per_task":0.1359,"output_tokens_per_second":436.69,"time_per_task_seconds":null,"ttfa_seconds":4.96,"ttft_seconds":4.96},"name":"Muse Ember (Max)","pricing":{"cache_hit":0.004,"cache_write":null,"input":0.1,"output":0.5},"release_date":"2026-11-09","scores":{"economics":41,"engineering":41.8,"finance_and_accounting":44.6,"healthcare_and_medical":41.3,"intelligence":36,"legal":38.5,"strategy_and_ops":48.7},"slug":"muse-ember"}],"schema_version":1}</script>
   <script>(function (root, factory) {
   if (typeof module === "object" && module.exports) {
     module.exports = factory();
@@ -1835,6 +1882,15 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   var RESPONSE_COST_BASIS_KEYS = ["historical_api_equivalent", "deepseek_reference_schedule"];
   var RESPONSE_COST_SCENARIO_KEYS = ["deepseek_tier_absent", "deepseek_tier_auto", "deepseek_tier_default", "deepseek_tier_standard"];
   var RESPONSE_COST_UNSUPPORTED_KEYS = ["deepseek_checkpoint_identity_unresolved"];
+  var RESPONSE_SPEED_PATH = "response-speed.json";
+  var RESPONSE_SPEED_MAX_BYTES = 512 * 1024;
+  var RESPONSE_SPEED_TIMEOUT_MS = 7000;
+  var RESPONSE_SPEED_METHOD = "observed-output-speed-1";
+  var RESPONSE_SPEED_KEYS = ["schema_version", "method_version", "dataset_id", "cutoff_utc", "window", "thresholds", "cohorts"];
+  var RESPONSE_SPEED_CELL_KEYS = ["cell_id", "aa_model_id", "creator", "base_slug", "release_date", "effort", "responses", "roots", "utc_dates", "median_output_tokens_per_second"];
+  var RESPONSE_SPEED_COHORTS = ["main", "subagent"];
+  var RESPONSE_SPEED_SOURCES = ["aa", "main", "subagent"];
+  var OUTPUT_SPEED_METRIC = "output_tokens_per_second";
 
   function subscriptionModels(models, enabled, plans) {
     if (!enabled) return models;
@@ -1860,6 +1916,42 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     if (typeof value !== "string" || !/Z$/.test(value)) return null;
     var date = new Date(value);
     return Number.isFinite(date.getTime()) ? date : null;
+  }
+
+  function validateResponseSpeedIndex(data) {
+    function fail(message) { return { ok: false, error: message }; }
+    if (!exactKeys(data, RESPONSE_SPEED_KEYS)) return fail("The observed output-speed index has an unexpected field set.");
+    if (data.schema_version !== 1 || data.method_version !== RESPONSE_SPEED_METHOD) return fail("The observed output-speed index version is unsupported.");
+    if (typeof data.dataset_id !== "string" || !/^[a-f0-9]{64}$/.test(data.dataset_id)) return fail("The observed output-speed dataset identity is invalid.");
+    var cutoff = validUtc(data.cutoff_utc);
+    if (!cutoff) return fail("The observed output-speed cutoff is invalid.");
+    if (cutoff.getTime() > Date.now() + 5 * 60 * 1000) return fail("The observed output-speed cutoff is in the future.");
+    if (!exactKeys(data.window, ["start_utc", "cutoff_utc", "days"])) return fail("The observed output-speed window is malformed.");
+    var start = validUtc(data.window.start_utc), windowCutoff = validUtc(data.window.cutoff_utc);
+    if (!start || !windowCutoff || data.window.days !== 30 || start.getTime() > cutoff.getTime() || windowCutoff.getTime() !== cutoff.getTime()) return fail("The observed output-speed window is inconsistent.");
+    // A trailing 30-day UTC date window may touch 31 calendar dates.
+    if (cutoff.getTime() - start.getTime() !== 30 * 86400000) return fail("The observed output-speed window is inconsistent.");
+    if (!exactKeys(data.thresholds, ["responses", "roots", "utc_dates"]) || data.thresholds.responses !== 100 || data.thresholds.roots !== 8 || data.thresholds.utc_dates !== 8) return fail("The observed output-speed thresholds are unsupported.");
+    if (!exactKeys(data.cohorts, RESPONSE_SPEED_COHORTS)) return fail("The observed output-speed populations are malformed.");
+    for (var cohort of RESPONSE_SPEED_COHORTS) {
+      var population = data.cohorts[cohort];
+      if (!exactKeys(population, ["cells"]) || !Array.isArray(population.cells)) return fail("An observed output-speed population is malformed.");
+      var ids = new Set(), aaIds = new Set(), identities = new Set();
+      for (var index = 0; index < population.cells.length; index += 1) {
+        var cell = population.cells[index];
+        if (!exactKeys(cell, RESPONSE_SPEED_CELL_KEYS)) return fail("An observed output-speed cell has an unexpected field set.");
+        for (var key of ["cell_id", "aa_model_id", "creator", "base_slug", "release_date", "effort"]) {
+          if (typeof cell[key] !== "string" || !cell[key]) return fail("An observed output-speed cell identity is malformed.");
+        }
+        if (!["low", "medium", "high", "xhigh", "max"].includes(cell.effort) || cell.cell_id !== [cell.creator.toLowerCase(), cell.base_slug, cell.release_date, cell.effort].join("/")) return fail("An observed output-speed cell identity is noncanonical.");
+        if (!["responses", "roots", "utc_dates"].every(function (key, i) { return Number.isInteger(cell[key]) && cell[key] >= [100, 8, 8][i]; }) || cell.roots > cell.responses || cell.utc_dates > cell.responses || cell.utc_dates > 31) return fail("An observed output-speed cell does not meet the reviewed coverage.");
+        if (!Number.isFinite(cell.median_output_tokens_per_second) || cell.median_output_tokens_per_second <= 0) return fail("An observed output-speed value is invalid.");
+        var identity = cell.creator + "|" + cell.base_slug + "|" + cell.release_date + "|" + cell.effort;
+        if (ids.has(cell.cell_id) || aaIds.has(cell.aa_model_id) || identities.has(identity)) return fail("An observed output-speed population has duplicate cells.");
+        ids.add(cell.cell_id); aaIds.add(cell.aa_model_id); identities.add(identity);
+      }
+    }
+    return { ok: true, data: data };
   }
 
   function validateResponseCostPopulation(data, effort) {
@@ -2068,6 +2160,157 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       comparisonLabel: "Cost per overall Intelligence Index task", comparisonBasis: "cost", subtitle: null,
     });
   }
+
+  function speedSourceLabel(source) {
+    return source === "main" ? "Our Main agent" : source === "subagent" ? "Our Subagent" : "AA benchmark";
+  }
+
+  function speedSourceEnabled() {
+    return state.timePanelVisible && state.timeMetricId === OUTPUT_SPEED_METRIC;
+  }
+
+  function applyRememberedSpeedSource() {
+    if (!speedSourceEnabled() || !state.responseSpeedIndex || state.responseSpeedStatus !== "loaded") return;
+    if (state.requestedSpeedSource === "aa" || state.requestedSpeedSource === state.speedSource) return;
+    state.speedSource = state.requestedSpeedSource;
+  }
+
+  function selectedSpeedSource() {
+    return speedSourceEnabled() ? state.speedSource : "aa";
+  }
+
+  function requestedSpeedSource() {
+    return speedSourceEnabled() ? state.requestedSpeedSource : "aa";
+  }
+
+  function unprojectedModelById(id) {
+    return (state.data && state.data.models || []).find(function (model) { return model.id === id; }) || null;
+  }
+
+  function responseSpeedPopulation(data, cohort) {
+    var population = data && data.cohorts && data.cohorts[cohort];
+    return population && Array.isArray(population.cells) ? population : null;
+  }
+
+  function responseSpeedCellFor(model, data, cohort) {
+    if (!model || !model.id || !data) return null;
+    var population = responseSpeedPopulation(data, cohort);
+    if (!population) return null;
+    var cell = population.cells.find(function (candidate) { return candidate.aa_model_id === model.id; });
+    if (!cell || cell.creator !== model.creator || cell.release_date !== model.release_date ||
+        String(model.effort || "").toLowerCase() !== cell.effort) return null;
+    var slug = String(model.slug || "").replace(/-(?:non-reasoning|low|medium|high|xhigh|max)$/, "");
+    return slug === cell.base_slug ? cell : null;
+  }
+
+  // This overlay is local to the Output-speed chart. Shared AA models retain
+  // their benchmark speed for pair tables, profiles and details.
+  function responseSpeedModels(models, data, cohort) {
+    return models.map(function (model) {
+      var cell = responseSpeedCellFor(model, data, cohort);
+      return Object.assign({}, model, {
+        speed_observation: cell || null,
+        metrics: Object.assign({}, model.metrics || {}, { output_tokens_per_second: cell ? cell.median_output_tokens_per_second : null })
+      });
+    });
+  }
+
+  function speedChartModels() {
+    var source = selectedSpeedSource();
+    if (source === "aa") return state.data.models;
+    var data = state.responseSpeedIndex, cache = speedChartModels.cache;
+    if (cache && cache.models === state.data.models && cache.data === data && cache.source === source) return cache.output;
+    var output = responseSpeedModels(state.data.models, data, source);
+    speedChartModels.cache = { models: state.data.models, data: data, source: source, output: output };
+    return output;
+  }
+
+  function responseSpeedCellCoverageText(cell) {
+    return formatInteger(cell.responses) + " responses · " + formatInteger(cell.roots) + " roots · " +
+      formatInteger(cell.utc_dates) + " UTC dates";
+  }
+
+  function responseSpeedCoverageText(data, source) {
+    var label = speedSourceLabel(source);
+    if (!data) return label + " output speed is not loaded.";
+    var population = responseSpeedPopulation(data, source);
+    if (!population) return label + " output speed is unavailable in this aggregate.";
+    var cutoff = validUtc(data.cutoff_utc);
+    var ageDays = cutoff ? Math.max(0, Math.floor((Date.now() - cutoff.getTime()) / 86400000)) : null;
+    return label + " · " + population.cells.length + " exact " + (population.cells.length === 1 ? "setting" : "settings") + " · " + data.window.days + "-day UTC window through " + formatSnapshot(data.cutoff_utc) + ". " + (ageDays !== null && ageDays > 7 ? "Measurement age: the input cutoff is " + ageDays + " days old. " : "") + "Median measured response rate; workloads differ from AA.";
+  }
+
+  function speedStatusPresentation() {
+    var source = state.speedSource, requested = requestedSpeedSource();
+    var status = state.responseSpeedStatus;
+    var pending = requested !== source;
+    var failure = state.responseSpeedFailure || "Observed output speed is unavailable. AA benchmark remains available.";
+    if (pending && status === "loading") return {
+      text: speedSourceLabel(requested) + " requested; " + speedSourceLabel(source) + " remains plotted until the aggregate loads.",
+      error: false, retry: false
+    };
+    if (pending && status === "unavailable") return {
+      text: failure + " " + speedSourceLabel(source) + " remains plotted. Use Retry " + speedSourceLabel(requested) + ".",
+      error: true, retry: true
+    };
+    if (pending) return {
+      text: speedSourceLabel(requested) + " requested; " + speedSourceLabel(source) + " remains plotted.",
+      error: false, retry: false
+    };
+    // AA is a complete independent view. A request started earlier cannot
+    // replace or invalidate this copy when it settles after AA is reselected.
+    if (source === "aa") return {
+      text: "AA benchmark selected · Performance v3 mean, trailing 5 days. " + (state.responseSpeedIndex ? "Observed aggregates are loaded and selectable." : "Our exact-setting sources are selectable."),
+      error: false, retry: false
+    };
+    if (status === "loading") return {
+      text: "Loading " + speedSourceLabel(source) + " observed output speed. AA benchmark remains available.",
+      error: false, retry: false
+    };
+    if (status === "unavailable") return { text: failure, error: true, retry: false };
+    if (state.responseSpeedIndex) {
+      var text = responseSpeedCoverageText(state.responseSpeedIndex, source);
+      var empty = responseSpeedEmptyMessage(state.responseSpeedIndex, source);
+      if (empty) text += " " + empty;
+      return { text: text, error: false, retry: false };
+    }
+    return { text: speedSourceLabel(source) + " is not loaded.", error: false, retry: false };
+  }
+
+  function updateSpeedSourceUi() {
+    var outputSpeed = speedSourceEnabled();
+    var requested = requestedSpeedSource();
+    var row = byId("speed-source-row"), control = byId("speed-source-control");
+    row.hidden = !outputSpeed;
+    var context = byId("speed-source-context");
+    if (outputSpeed) {
+      control.querySelectorAll('input[name="speed-source"]').forEach(function (input) {
+        input.checked = input.value === requested;
+        input.setAttribute("aria-checked", String(input.value === requested));
+        // AA is never blocked by a pending optional request. Observed options
+        // stay clickable so they can share or retry that request deliberately.
+        input.disabled = false;
+      });
+      var status = byId("speed-source-status");
+      var retryButton = byId("speed-source-retry");
+      var presentation = speedStatusPresentation();
+      var retryAvailable = presentation.retry;
+      retryButton.hidden = !retryAvailable;
+      retryButton.style.display = retryAvailable ? "" : "none";
+      retryButton.tabIndex = retryAvailable ? 0 : -1;
+      retryButton.textContent = "Retry " + speedSourceLabel(requested);
+      retryButton.setAttribute("aria-label", "Retry loading " + speedSourceLabel(requested) + " observed output speed");
+      retryButton.disabled = !retryAvailable;
+      status.textContent = presentation.text;
+      status.classList.toggle("is-error", presentation.error);
+      byId("observed-speed-method-coverage").textContent = presentation.text;
+      context.hidden = false;
+      context.textContent = presentation.text;
+      context.classList.toggle("is-error", presentation.error);
+    } else {
+      context.hidden = true;
+    }
+  }
   var METRICS = [
     { key: "cost_per_task", container: "cost-chart", note: "cost-note",
       shortAxis: "Cost per overall Intelligence Index task", unit: "cost",
@@ -2103,6 +2346,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     // AZ-66: the time chart is hidden by default and both view states reset on page load (no browser storage).
     // timeMetricId always names a valid metric; the flag alone says whether the panel shows.
     timeMetricId: DEFAULT_TIME_METRIC_ID, timePanelVisible: false,
+    speedSource: "aa", requestedSpeedSource: "aa", responseSpeedIndex: null, responseSpeedStatus: "idle", responseSpeedRequest: 0, responseSpeedPromise: null, responseSpeedFailure: null,
     hiddenLayers: { frontier: false, effort: false, shading: false },
     subscriptionCosts: false, responseCosts: false, responseCostIndex: null,
     responseCostCohort: "main", responseCostRawIndices: { main: {}, subagent: {} }, responseCostStatus: "loading",
@@ -2254,10 +2498,14 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       notices.push("No " + abilityId.replace(/_/g, " ") + " score; not plotted on " + (shown.length > 1 ? "either chart" : "the chart") + ".");
     }
     shown.forEach(function (metric) {
-      var value = finiteValue(model.metrics && model.metrics[metric.key]);
-      if (value === null) notices.push("No " + metric.tooltipLabel + " measurement; absent from that chart.");
+      var observedSpeed = metric.key === OUTPUT_SPEED_METRIC && selectedSpeedSource() !== "aa" && timePanelVisible !== false;
+      var observedModel = observedSpeed ? responseSpeedModels([model], state.responseSpeedIndex, selectedSpeedSource())[0] : model;
+      var value = finiteValue(observedModel.metrics && observedModel.metrics[metric.key]);
+      var label = observedSpeed ? "Output speed · " + speedSourceLabel(selectedSpeedSource()) : metric.tooltipLabel;
+      if (value === null) notices.push("No " + label + " measurement; absent from that chart.");
       else if (value <= 0) notices.push("Nonpositive " + metric.tooltipLabel + "; excluded from its log axis.");
     });
+    if (timePanelVisible !== false && timeMetricId === OUTPUT_SPEED_METRIC) notices.push("Pair table, profile and details remain labelled AA Performance v3 output speed.");
     return notices;
   }
 
@@ -2293,18 +2541,20 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     buttons.forEach(function(button){button.addEventListener('click',function(){
       if(button.dataset.timeMetric==='off'){
         if(!state.timePanelVisible)return;
-        state.timePanelVisible=false;update();onChange(null);return;
+        state.timePanelVisible=false;update();updateSpeedSourceUi();onChange(null);return;
       }
       var key=activeChartMetrics(button.dataset.timeMetric)[1].key;
       // The same metric still has to show the panel when it is hidden (TTFA is the default metric).
-      if(state.timePanelVisible&&key===state.timeMetricId)return;
-      state.timeMetricId=key;state.timePanelVisible=true;update();onChange(key);
+      if(state.timePanelVisible&&key===state.timeMetricId){updateSpeedSourceUi();return;}
+      state.timeMetricId=key;state.timePanelVisible=true;update();applyRememberedSpeedSource();updateSpeedSourceUi();onChange(key);
+      if(key===OUTPUT_SPEED_METRIC && state.speedSource!=="aa") refreshSpeedPresentation();
     });});update();
   }
 
   function timePanelStatus() {
     if (!state.timePanelVisible) return "Speed chart hidden. The cost chart uses the full width.";
-    return "Speed chart shown: " + ({ ttft_seconds: "first-token latency", ttfa_seconds: "first-answer latency", output_tokens_per_second: "output speed" }[state.timeMetricId] || "first-answer latency") + ".";
+    return "Speed chart shown: " + ({ ttft_seconds: "first-token latency", ttfa_seconds: "first-answer latency", output_tokens_per_second: "output speed" }[state.timeMetricId] || "first-answer latency") + "." +
+      (state.timeMetricId === OUTPUT_SPEED_METRIC ? " Source: " + speedSourceLabel(selectedSpeedSource()) + "." : "");
   }
 
   // Visible charts only: a hidden host reports width 0 and must never reach comparisonGeometry.
@@ -3295,7 +3545,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
   function bindInspectorDismissal(target, tip, close, dismiss) {
     close.addEventListener("click", dismiss);
     target.addEventListener("pointerdown", function (event) {
-      if (tip.hidden || tip.contains(event.target) || event.target.closest(".setting-target")) return;
+      if (tip.hidden || tip.contains(event.target) || event.target.closest(".setting-target, #speed-source-control, #speed-source-retry")) return;
       dismiss();
     }, true); // Clear old inspection before the target records its pointer/focus origin.
   }
@@ -3385,15 +3635,18 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       tip.hidden = true;
       return;
     }
-    var tooltipKey=state.abilityId+"|"+point.model.id+"|"+String(state.pinned)+"|"+String(state.responseCosts)+"|"+String(state.subscriptionCosts)+"|"+state.responseCostCohort+"|"+(state.responseCostIndex && (state.responseCostIndex.dataset_id || state.responseCostIndex.cutoff_utc))+"|"+JSON.stringify(selectedRawIndices());
+    var context=point.chartContext||chartSpeedContext({});
+    var tooltipKey=state.abilityId+"|"+point.model.id+"|"+String(state.pinned)+"|"+String(state.responseCosts)+"|"+String(state.subscriptionCosts)+"|"+state.responseCostCohort+"|"+(state.responseCostIndex && (state.responseCostIndex.dataset_id || state.responseCostIndex.cutoff_utc))+"|"+JSON.stringify(selectedRawIndices())+"|"+context.source+"|"+context.datasetId+"|"+context.cutoffUtc;
     if(tip._contentKey!==tooltipKey){
-      byId("tooltip-content").innerHTML=tooltipMarkup(point.model);
+      byId("tooltip-content").innerHTML=tooltipMarkup(point.model,context);
       tip._contentKey=tooltipKey;tip._dimensions=tip._dimensionCache&&tip._dimensionCache.get(tooltipKey);
     }
     tip.classList.toggle("is-pinned", state.pinned);
     tip.hidden = false;
     placeTooltip(state.activeOwner === "hover" ? event : null, point.node);
-    setDetails(point.model);
+    // Shared details remain on the unprojected AA basis. Exact IDs prevent a
+    // chart-local observed overlay from being relabelled as an AA measurement.
+    setDetails(unprojectedModelById(point.model.id) || point.model);
   }
 
   var INCLUSION_VISIBILITY_GROUPS = [
@@ -3801,13 +4054,17 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     document.querySelectorAll(".frontier-svg").forEach(function(svg){if(svg.refreshAttachedLabels)svg.refreshAttachedLabels();});
     document.querySelectorAll(".setting-target[data-model-id]").forEach(function (node) {
       var index = ids.indexOf(node.dataset.modelId);
-      var presentationKey=String(state.compareMode)+":"+index;
+      // The same exact setting can appear in both charts with different plotted
+      // speed sources. Pair membership and accessible labels must reflect this
+      // chart's own plotted data.
+      var context = node.chartContext || chartSpeedContext({});
+      var presentationKey=String(state.compareMode)+":"+index+":"+context.source+":"+context.datasetId+":"+context.cutoffUtc+":"+node.dataset.pointLabel;
       if(node.pairPresentationKey===presentationKey)return;
       node.pairPresentationKey=presentationKey;
       node.setAttribute("role", "button");
       if (state.compareMode) node.setAttribute("aria-pressed", String(index !== -1));
       else node.removeAttribute("aria-pressed");
-      node.setAttribute("aria-label", node.dataset.pointLabel +
+      node.setAttribute("aria-label", node.dataset.pointLabel + (context.source === "aa" ? "" : ", source " + context.label) +
         (index === -1 ? "" : ", comparison setting " + (index === 0 ? "A" : "B")));
       node.classList.toggle("is-pair-selected", index !== -1);
       node.classList.toggle("is-pair-b", index === 1);
@@ -3846,17 +4103,21 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     details.innerHTML = '<p class="muted">Select a point or label to inspect a setting.</p>';
   }
 
-  function tooltipMarkup(model) {
+  function tooltipMarkup(model, chartContext) {
     var family = familyFor(model);
     var ability = abilityById(state.abilityId);
     var metrics = model.metrics || {};
     var cost = costPresentation(state.responseCosts, state.subscriptionCosts, state.responseCostCohort);
+    var plotted = chartContext && chartContext.source && chartContext.source !== "aa";
     var rows = [
       [ability.label, formatScore(core.scoreFor(model, ability.id))],
       [cost.detailLabel, formatMetric(metrics.cost_per_task, cost.unit)],
       ["First token (TTFT) · AA v3 mean", formatMetric(metrics.ttft_seconds, "seconds")],
       ["First answer (TTFA) · AA v3 mean", formatMetric(metrics.ttfa_seconds, "seconds")],
-      ["Output speed · AA v3 mean", formatMetric(metrics.output_tokens_per_second, "speed")]
+      plotted ? ["Output speed · " + chartContext.label, formatMetric(metrics.output_tokens_per_second, "speed")] :
+        ["Output speed · AA v3 mean", formatMetric(metrics.output_tokens_per_second, "speed")],
+      plotted && model.speed_observation ? ["Observed cohort & coverage", chartContext.label + " · " + responseSpeedCellCoverageText(model.speed_observation)] :
+        ["Output-speed source", chartContext && chartContext.label || "AA benchmark"]
     ];
     return '<div class="tooltip-family"><span class="family-swatch" style="--family-color:' +
       escapeHtml(family.color || "#9b8a75") + ';background:' + escapeHtml(family.color || "#9b8a75") +
@@ -3918,8 +4179,19 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     else flush();
   }
 
+  function chartSpeedContext(spec) {
+    var observed = spec && spec.key === OUTPUT_SPEED_METRIC && selectedSpeedSource() !== "aa" && state.timePanelVisible;
+    if (!observed) return { source: "aa", label: "AA benchmark", datasetId: null, cutoffUtc: null };
+    var data = state.responseSpeedIndex;
+    return {
+      source: selectedSpeedSource(), label: speedSourceLabel(selectedSpeedSource()),
+      datasetId: data ? data.dataset_id : null, cutoffUtc: data ? data.cutoff_utc : null,
+      window: data ? data.window : null
+    };
+  }
+
   function interactionEntry(node, model) {
-    return { node: node, model: model, familyId: model.family_id };
+    return { node: node, model: model, familyId: model.family_id, chartId: node.chartId || null, chartContext: node.chartContext || model.chart_context || chartSpeedContext({}) };
   }
 
   function attachPointEvents(node, model) {
@@ -3983,24 +4255,45 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
   function setEmptyPlot(svg, plot, message, detail) {
     svgText(svg, plot.x + plot.w / 2, plot.y + plot.h / 2 - 8, message, "empty-plot empty-plot--title");
-    svgText(svg, plot.x + plot.w / 2, plot.y + plot.h / 2 + 18, detail, "empty-plot");
+    var detailNode = svgText(svg, plot.x + plot.w / 2, plot.y + plot.h / 2 + 18, detail, "empty-plot");
+    // SVG text does not wrap automatically. Split long availability reasons
+    // into bounded lines so the explanation remains visible on mobile.
+    var words = String(detail).split(/\s+/), lines = [], current = "";
+    words.forEach(function (word) {
+      if (current && current.length + word.length + 1 > 46) { lines.push(current); current = word; }
+      else current = current ? current + " " + word : word;
+    });
+    if (current) lines.push(current);
+    if (lines.length > 1) {
+      detailNode.textContent = lines[0];
+      lines.slice(1).forEach(function (line, index) {
+        svgText(svg, plot.x + plot.w / 2, plot.y + plot.h / 2 + 36 + index * 15, line, "empty-plot");
+      });
+    }
   }
 
-  function chartCoverageNote(chart, ability, plottedPoints) {
+  function chartCoverageNote(chart, ability, plottedPoints, chartContext) {
     var c = chart.coverage;
     var pieces = [];
+    var observed = chartContext && chartContext.source && chartContext.source !== "aa";
+    var emptyExplanation = observed ? responseSpeedEmptyMessage(state.responseSpeedIndex, chartContext.source) : null;
     if (!c.selected) {
       pieces.push("All model lines are hidden.");
+    } else if (emptyExplanation) {
+      pieces.push(emptyExplanation);
     } else {
       var plotted = plottedPoints ? plottedPoints.length : c.eligible;
       pieces.push(plotted + " of " + c.selected + " shown settings plotted; " +
         chart.frontier.length + " nondominated in the full shown data.");
       if (plotted < c.eligible) pieces.push((c.eligible - plotted) + " measured settings below Intelligence 20 are outside the plotted range; retained in the data and frontier calculation.");
       if (c.missingScore) pieces.push(c.missingScore + " lack a " + ability.label + " score.");
-      if (c.missingMetric) pieces.push(c.missingMetric + " lack this measurement.");
+      if (c.missingMetric) pieces.push(c.missingMetric + (observed ? " in visible families lack a comparable exact-setting observed measurement." : " lack this measurement."));
       if (c.nonpositiveMetric) {
         pieces.push(c.nonpositiveMetric + " have a nonpositive value and are excluded from the log axis.");
       }
+    }
+    if (observed) {
+      pieces.push("Source: " + chartContext.label + " measured response rate; omitted settings lack comparable exact-setting observations that meet the coverage thresholds. Workloads differ from AA.");
     }
     return pieces.join(" ");
   }
@@ -4016,6 +4309,89 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       if(record.visible){record.layer.style.display="none";record.visible=false;}
       if(invalidateGeometry)record.screen=null;
     });
+  }
+
+  function chartInteractionSnapshot(chartId) {
+    var snapshot = { hover: null, focus: null, pin: null, pinned: false, activeOwner: state.activeOwner, pointerFocus: state.pointerFocus };
+    function capture(key) {
+      var entry = state[key];
+      if (!entry || entry.chartId !== chartId) return null;
+      return { modelId: entry.model.id, chartContext: entry.chartContext };
+    }
+    snapshot.hover = capture("hoveredPoint");
+    snapshot.focus = capture("focusedPoint");
+    // Replacing the SVG drops browser focus from its old node before we restore it.
+    snapshot.heldDomFocus = Boolean(snapshot.focus && document.activeElement === state.focusedPoint.node);
+    snapshot.pin = capture("pinnedPoint");
+    snapshot.pinned = Boolean(snapshot.pin && state.pinned);
+    return snapshot;
+  }
+
+  function interactionForChartPoint(snapshot, chartId) {
+    if (!snapshot) return null;
+    var host = byId(chartId);
+    var node = Array.from((host || document).querySelectorAll(".data-point[data-model-id]")).find(function (candidate) {
+      return candidate.dataset.modelId === snapshot.modelId;
+    });
+    if (!node) return null;
+    // The replacement node belongs to the projected chart. Preserve its exact
+    // observed model so tooltip rate and coverage match the plotted point.
+    // Shared Setting details resolve the unprojected AA model separately.
+    return interactionEntry(node, node.model || unprojectedModelById(snapshot.modelId) || { id: snapshot.modelId, family_id: null });
+  }
+
+  function restoreChartInteraction(snapshot, chartId) {
+    if (!snapshot) return false;
+    var hover = interactionForChartPoint(snapshot.hover, chartId);
+    var focus = interactionForChartPoint(snapshot.focus, chartId);
+    var pin = interactionForChartPoint(snapshot.pin, chartId);
+    function restore(key, value) {
+      if (!state[key] || state[key].chartId === chartId) state[key] = value;
+    }
+    restore("hoveredPoint", hover);
+    restore("focusedPoint", focus);
+    if (!focus && (!state.focusedPoint || state.focusedPoint.chartId === chartId)) state.focusedPoint = null;
+    if (snapshot.pinned || (state.pinnedPoint && state.pinnedPoint.chartId === chartId)) {
+      restore("pinnedPoint", pin);
+      if (snapshot.pinned) state.pinned = Boolean(pin);
+    }
+    var active = activeInteractionPoint(state);
+    if (active) state.activeOwner = state.hoveredPoint && state.hoveredPoint === active ? "hover" : "focus";
+    if (state.focusedPoint && state.focusedPoint.chartId === chartId) state.pointerFocus = snapshot.pointerFocus;
+    state.visualOwner = active ? "point" : state.visualOwner;
+    if (focus && snapshot.heldDomFocus && document.activeElement !== focus.node) {
+      state.transferringLabelFocus = true;
+      try { focus.node.focus({ preventScroll: true }); } finally { state.transferringLabelFocus = false; }
+    }
+    return Boolean(hover || focus || pin);
+  }
+
+  function refreshSpeedPresentation() {
+    if (!(state.timePanelVisible && state.timeMetricId === OUTPUT_SPEED_METRIC)) {
+      updateSpeedSourceUi();
+      return;
+    }
+    var snapshot = chartInteractionSnapshot("time-chart");
+    var specs = activeChartMetrics(state.timeMetricId);
+    var time = specs[1];
+    var source = selectedSpeedSource();
+    var pendingSource = requestedSpeedSource();
+    updateSpeedSourceUi();
+    byId("time-title").textContent = time.displayTitle || time.title;
+    var subtitle = pendingSource !== source ?
+      "Requested: " + speedSourceLabel(pendingSource) + ". Plotted: " + speedSourceLabel(source) + " · AA Performance v3 mean, trailing 5 days." : source === "aa" ? time.subtitle :
+      "Median measured response rate for qualifying recorded " + (source === "main" ? "Main agent" : "Subagent") + " responses, exact model release and effort. Workloads differ from AA.";
+    byId("time-subtitle").textContent = subtitle;
+    byId("time-axis-badge").textContent = "Tokens per second · reversed log scale";
+    var context = byId("speed-source-context");
+    context.textContent = speedStatusPresentation().text;
+    var geometry = comparisonGeometry(chartHostWidth(), costChartIsSolo());
+    renderChart(time, state.yDomain, geometry);
+    if (snapshot) {
+      restoreChartInteraction(snapshot, "time-chart");
+    }
+    updatePairPresentation();
+    syncInteraction();
   }
 
   function guideScreenPoint(record, event) {
@@ -4113,19 +4489,23 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
   function renderChart(spec, yDomain, geometry) {
     var existing=byId(spec.container).querySelector('.frontier-svg');
-    var renderKey=JSON.stringify([state.abilityId,spec.key,Array.from(visibleFamilyIds()).sort(),yDomain,geometry,state.compareMode,state.fontRevision||0]);
-    if(existing && existing.renderKey===renderKey && existing.renderModels===state.data.models)return;
+    var chartContext=chartSpeedContext(spec);
+    var chartModels=spec.key===OUTPUT_SPEED_METRIC ? speedChartModels() : state.data.models;
+    // The visible note is part of the rendered source state. Include it so a
+    // source change cannot reuse an SVG from a different plotted basis.
+    var renderKey=JSON.stringify([state.abilityId,spec.key,Array.from(visibleFamilyIds()).sort(),yDomain,geometry,state.compareMode,state.fontRevision||0,chartContext.source,chartContext.datasetId,chartContext.cutoffUtc,byId(spec.note).textContent,byId(spec.note).classList.contains("is-error")]);
+    if(existing && existing.renderKey===renderKey && existing.renderModels===chartModels)return;
     chartGuides.records.delete(spec.container);
     applyFamilyHighlight.lastKey=null;
     var container = byId(spec.container);
     var ability = abilityById(state.abilityId);
-    var chart = core.buildChart(state.data.models, ability.id, spec.key, Array.from(visibleFamilyIds()));
+    var chart = core.buildChart(chartModels, ability.id, spec.key, Array.from(visibleFamilyIds()));
     // The floor is presentation only: chart vertices, trajectories and frontier
     // membership still come from every eligible setting in the visible families.
     var hasIntelligenceFloor = ability.id === "intelligence";
     var plottedPoints = chart.eligible.filter(function(point) { return !hasIntelligenceFloor || point.y >= 20; });
     var plottedFrontier = chart.frontier.filter(function(point) { return !hasIntelligenceFloor || point.y >= 20; });
-    var domains = core.buildDomains(state.data.models, ability.id, spec.key);
+    var domains = core.buildDomains(chartModels, ability.id, spec.key);
     var xDomain = domains.x;
     var W = geometry.width;
     var H = geometry.height;
@@ -4162,13 +4542,24 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     var plotClip = { "clip-path": "url(#" + clipId + ")" };
 
     if (!xDomain || !yDomain) {
+      var emptyContext = chartContext && chartContext.source !== "aa" ? responseSpeedEmptyMessage(state.responseSpeedIndex, chartContext.source) : null;
       setEmptyPlot(svg, plot, "No chartable measurements",
-        "The selected snapshot has no positive values for this axis.");
-      svg.renderKey=renderKey;svg.renderModels=state.data.models;
+        emptyContext || "The selected snapshot has no positive values for this axis.");
+      svg.renderKey=renderKey;svg.renderModels=chartModels;
     container.replaceChildren(svg);
     applyFamilyHighlight.groups=null;applyFamilyHighlight.lastKey=null;
-      byId(spec.note).textContent = chartCoverageNote(chart, ability, plottedPoints);
+      byId(spec.note).textContent = chartCoverageNote(chart, ability, plottedPoints, chartContext);
       return;
+    }
+    if (chartContext && chartContext.source !== "aa") {
+      var speedAvailability = responseSpeedEmptyMessage(state.responseSpeedIndex, chartContext.source);
+      if (speedAvailability) {
+        setEmptyPlot(svg, plot, "No comparable observed-speed points", speedAvailability);
+        svg.renderKey=renderKey;svg.renderModels=chartModels;
+        container.replaceChildren(svg);
+        byId(spec.note).textContent = speedAvailability;
+        return;
+      }
     }
 
     // Higher-is-better metrics (output speed) run on a reversed log axis, so faster is on the left and
@@ -4268,17 +4659,21 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       var x = xPosition(point.x);
       var y = yPosition(point.y);
       var isFrontier = chart.frontierIds.has(point.id);
+      var pointMetricLabel = chartContext && chartContext.source !== "aa" ? "Output speed · " + chartContext.label : spec.tooltipLabel;
       var node = svgElement("g", {
         class: "data-point setting-target family-visual" + (isFrontier ? " is-frontier" : ""),
         "data-family": family.id,
         tabindex: "0",
         role: "img",
         "aria-label": point.model.name + ", " + family.label + ", " + effortText(point.model) +
-          ", " + ability.label + " " + formatScore(point.y) + ", " + spec.tooltipLabel + " " +
+          ", " + ability.label + " " + formatScore(point.y) + ", " + pointMetricLabel + " " +
           formatMetric(point.x, spec.unit)
       });
       node.dataset.modelId = point.id;
       node.dataset.pointLabel = node.getAttribute("aria-label");
+      node.model = point.model;
+      node.chartId = spec.container;
+      node.chartContext = chartContext;
       if (isFrontier) {
         node.appendChild(svgElement("circle", { cx: x, cy: y, r: 11, class: "frontier-ring" }));
       }
@@ -4423,6 +4818,9 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           });
           group.dataset.modelId = point.id;
           group.dataset.pointLabel = pointNode.dataset.pointLabel;
+          group.model = point.model;
+          group.chartId = spec.container;
+          group.chartContext = chartContext;
           group.setAttribute("aria-label", group.dataset.pointLabel);
           attachPointEvents(group, point.model);
           record = { group: group, leader: leader, pointNode: pointNode, model: point.model };
@@ -4463,7 +4861,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
       var viewBox='0 0 '+W+' '+svg.requiredHeight;
       if(svg.getAttribute('viewBox')!==viewBox)svg.setAttribute('viewBox',viewBox);
       applyFamilyHighlight.lastKey = null;
-      byId(spec.note).textContent = chartCoverageNote(chart, ability, plottedPoints) + (state.compareMode ?
+      byId(spec.note).textContent = chartCoverageNote(chart, ability, plottedPoints, chartContext) + (state.compareMode ?
         ' Only selected A/B settings are labeled ('+annotationCount+' plotted here).' : ' All '+plottedFrontier.length+' in-range frontier settings are labeled.' + (inspectedFamily ? ' Highlighted family: all '+plottedPoints.filter(function(p){return p.model.family_id===inspectedFamily;}).length+' plotted settings are also labeled.' : '')) +
         (boxes.some(function(box){return box.overflow;}) ? ' Crowded labels continue below the plot with leaders.' : '');
       return true;
@@ -4471,13 +4869,14 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     svg.refreshAttachedLabels();
 
     if (!chart.coverage.selected || !plottedPoints.length) {
+      var emptyMessage = chartContext && chartContext.source !== "aa" ? responseSpeedEmptyMessage(state.responseSpeedIndex, chartContext.source) : null;
       setEmptyPlot(svg, plot,
-        !chart.coverage.selected ? "All model lines are hidden" : chart.eligible.length ? "No settings at Intelligence 20 or above" : "No scored points in this view",
+        !chart.coverage.selected ? "All model lines are hidden" : emptyMessage ? (emptyMessage.indexOf("no qualifying exact settings") !== -1 ? "No observed-speed coverage" : emptyMessage.indexOf("visible model families") !== -1 ? "No matches in visible model families" : emptyMessage.indexOf("none match this AA snapshot") !== -1 ? "No exact snapshot matches" : emptyMessage.indexOf("Intelligence 20") !== -1 ? "Matches below the plot floor" : "No comparable observed-speed points") : chart.eligible.length ? "No settings at Intelligence 20 or above" : "No scored points in this view",
         !chart.coverage.selected ? "Show a group or model line." : chart.eligible.length ?
-          "Lower-scoring settings remain in the data." : "Missing ability scores and measurements are not replaced.");
+          (emptyMessage || "Lower-scoring settings remain in the data.") : "Missing ability scores and measurements are not replaced.");
     }
 
-    svg.renderKey=renderKey;svg.renderModels=state.data.models;
+    svg.renderKey=renderKey;svg.renderModels=chartModels;
     container.replaceChildren(svg);
     applyFamilyHighlight.groups=null;applyFamilyHighlight.lastKey=null;
 
@@ -4487,13 +4886,25 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     clearInteractionState(true);
     var specs = activeChartMetrics(state.timeMetricId);
     var time = specs[1];
+    if (time.key === OUTPUT_SPEED_METRIC) applyRememberedSpeedSource();
     byId("time-title").textContent = time.displayTitle || time.title;
-    byId("time-subtitle").textContent = time.subtitle;
+    var source = time.key === OUTPUT_SPEED_METRIC ? selectedSpeedSource() : "aa";
+    byId("time-subtitle").textContent = source === "aa" ? time.subtitle : "Median measured response rate for qualifying recorded " + (source === "main" ? "Main agent" : "Subagent") + " responses, exact model release and effort. Workloads differ from AA.";
     byId("time-axis-badge").textContent = time.unit === "speed" ? "Tokens per second · reversed log scale" : "Seconds · log scale";
     // Show or hide the time card first: the cost host's width depends on it.
     syncChartView();
     var geometry = comparisonGeometry(chartHostWidth(), costChartIsSolo());
+    var context = byId("speed-source-context");
+    context.hidden = !(time.key === OUTPUT_SPEED_METRIC);
+    if (!context.hidden) {
+      var requested = requestedSpeedSource();
+      context.textContent = requested !== source ? "Requested: " + speedSourceLabel(requested) + ". Plotted: " + speedSourceLabel(source) + " · AA Performance v3 mean, trailing 5 days." : source === "aa" ? "Source: AA benchmark · Performance v3 mean · trailing 5 days." :
+        (state.responseSpeedIndex ? responseSpeedCoverageText(state.responseSpeedIndex, source) : "Our " + (source === "main" ? "Main agent" : "Subagent") + " aggregate is not loaded; AA benchmark remains available.");
+      byId("time-subtitle").textContent = requested !== source ? "Requested: " + speedSourceLabel(requested) + ". Plotted: " + speedSourceLabel(source) + " · AA Performance v3 mean, trailing 5 days." : byId("time-subtitle").textContent;
+    }
+    updateSpeedSourceUi();
     (state.timePanelVisible ? specs : specs.slice(0, 1)).forEach(function (spec) { renderChart(spec, state.yDomain, geometry); });
+    if (state.timePanelVisible && state.timeMetricId === OUTPUT_SPEED_METRIC) updateSpeedSourceUi();
     updatePairPresentation();
     resetDetails();
   }
@@ -4771,6 +5182,211 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     });
   }
 
+  function responseSpeedError(code, message) {
+    var error = new Error(message);
+    error.code = code;
+    return error;
+  }
+
+  function fetchResponseSpeedIndex(fetchImpl, locationLike) {
+    var locationValue = locationLike || window.location;
+    if (!locationValue || typeof locationValue.protocol !== "string" || typeof locationValue.href !== "string") return Promise.reject(responseSpeedError("fetch", "Observed output speed is unavailable without a page location."));
+    if (locationValue.protocol === "file:") return Promise.reject(responseSpeedError("preview", "Observed output speed is unavailable from a local file preview."));
+    if (typeof fetchImpl !== "function" || typeof AbortController === "undefined") return Promise.reject(responseSpeedError("fetch", "This browser cannot load observed output speed."));
+    var controller = new AbortController();
+    var timer = window.setTimeout(function () { controller.abort(); }, RESPONSE_SPEED_TIMEOUT_MS);
+    var url = new URL(RESPONSE_SPEED_PATH, locationValue.href).toString();
+    return fetchImpl(url, { cache: "no-store", credentials: "same-origin", signal: controller.signal }).then(function (response) {
+      if (!response || !response.ok) throw responseSpeedError("fetch", "Observed-speed fetch returned HTTP " + (response && response.status || "error") + ".");
+      var length = response.headers && response.headers.get ? Number(response.headers.get("content-length")) : NaN;
+      if (Number.isFinite(length) && length > RESPONSE_SPEED_MAX_BYTES) throw responseSpeedError("safety", "Observed-speed data exceeds the size bound.");
+      return response.text();
+    }).then(function (text) {
+      window.clearTimeout(timer);
+      var bytes = typeof TextEncoder !== "undefined" ? new TextEncoder().encode(text).length : text.length;
+      if (bytes > RESPONSE_SPEED_MAX_BYTES) throw responseSpeedError("safety", "Observed-speed data exceeds the size bound.");
+      var parsed;
+      try { parsed = JSON.parse(text); } catch (error) { throw responseSpeedError("schema", "Observed-speed data is not valid JSON."); }
+      var checked = validateResponseSpeedIndex(parsed);
+      if (!checked.ok) throw responseSpeedError("schema", checked.error);
+      return checked.data;
+    }).catch(function (error) {
+      window.clearTimeout(timer);
+      if (error && error.name === "AbortError") throw responseSpeedError("timeout", "Observed-speed loading timed out.");
+      throw error;
+    });
+  }
+
+  function responseSpeedFailureMessage(error) {
+    var code = error && error.code;
+    var pending = state.requestedSpeedSource !== "aa" && state.requestedSpeedSource !== state.speedSource;
+    var retry = pending ? " Use Retry " + speedSourceLabel(state.requestedSpeedSource) + "." : "";
+    if (code === "schema") return "Observed output speed could not be validated. AA benchmark is still available." + retry;
+    if (code === "timeout") return "Loading observed output speed timed out. AA benchmark is still available." + retry;
+    if (code === "preview") return "Observed output speed is unavailable in a local file preview. AA benchmark is still available.";
+    if (code === "safety") return "Observed-speed data failed its safety check. AA benchmark is still available.";
+    return "Observed output speed is unavailable. AA benchmark is still available." + retry;
+  }
+
+  function responseSpeedEmptyMessage(data, source) {
+    if (!data) return "The observed output-speed aggregate is unavailable; AA benchmark remains available.";
+    var population = responseSpeedPopulation(data, source);
+    if (!population) return speedSourceLabel(source) + " is unavailable in this aggregate; AA benchmark remains available.";
+    if (!population.cells.length) return speedSourceLabel(source) + " has no qualifying exact settings in the published window; stale points are cleared. AA benchmark remains available.";
+    var snapshotMatches = state.data ? state.data.models.filter(function (model) { return Boolean(responseSpeedCellFor(model, data, source)); }) : [];
+    if (!snapshotMatches.length) return speedSourceLabel(source) + " has " + population.cells.length + " exact settings, but none match this AA snapshot. Missing matches are not inferred. AA benchmark remains available.";
+    var shown = new Set(visibleFamilyIds());
+    var visibleMatches = snapshotMatches.filter(function (model) { return shown.has(model.family_id); });
+    if (!visibleMatches.length) return speedSourceLabel(source) + " has " + population.cells.length + " exact published settings, but none match the visible model families. Show a covered family or choose AA benchmark.";
+    var scored = visibleMatches.filter(function (model) { return core.scoreFor(model, abilityById(state.abilityId).id) !== null; });
+    if (!scored.length) return speedSourceLabel(source) + " has exact matches in visible families, but all lack a " + abilityById(state.abilityId).label + " score. Choose another ability or source.";
+    if (state.abilityId === "intelligence" && !scored.some(function (model) { var score = core.scoreFor(model, state.abilityId); return score !== null && score >= 20; })) {
+      return speedSourceLabel(source) + " has exact matches in visible families, but every match is below the Intelligence 20 plotted floor. The measurements remain in the source.";
+    }
+    return null;
+  }
+
+  function showResponseSpeedFailure(error) {
+    var message = responseSpeedFailureMessage(error);
+    state.responseSpeedFailure = message;
+    updateSpeedSourceUi();
+  }
+
+  function ensureResponseSpeedData(forceRetry) {
+    if (state.responseSpeedPromise) return state.responseSpeedPromise;
+    if (state.responseSpeedIndex) return Promise.resolve(state.responseSpeedIndex);
+    if (state.responseSpeedStatus === "unavailable" && !forceRetry) return Promise.resolve(null);
+    state.responseSpeedStatus = "loading";
+    state.responseSpeedFailure = null;
+    var request = ++state.responseSpeedRequest;
+    updateSpeedSourceUi();
+    state.responseSpeedPromise = fetchResponseSpeedIndex(window.fetch, window.location).then(function (data) {
+      if (request !== state.responseSpeedRequest) return null;
+      state.responseSpeedIndex = data;
+      state.responseSpeedStatus = "loaded";
+      state.responseSpeedPromise = null;
+      state.responseSpeedFailure = null;
+      if (state.speedSource !== "aa") refreshSpeedPresentation(); else updateSpeedSourceUi();
+      return data;
+    }).catch(function (error) {
+      if (request !== state.responseSpeedRequest) return null;
+      state.responseSpeedIndex = null;
+      state.responseSpeedStatus = "unavailable";
+      state.responseSpeedPromise = null;
+      // The plotted source stays fully represented by the UI. A requested
+      // observed source remains pending so a deliberate retry can succeed.
+      refreshSpeedPresentation();
+      showResponseSpeedFailure(error);
+      return null;
+    });
+    return state.responseSpeedPromise;
+  }
+
+  function loadResponseSpeedIndex(fetchImpl, locationLike) {
+    var request = ++state.responseSpeedRequest;
+    state.responseSpeedStatus = "loading";
+    state.responseSpeedFailure = null;
+    state.responseSpeedPromise = fetchResponseSpeedIndex(fetchImpl || window.fetch, locationLike || window.location).then(function (data) {
+      if (request !== state.responseSpeedRequest) return null;
+      state.responseSpeedIndex = data;
+      state.responseSpeedStatus = "loaded";
+      state.responseSpeedPromise = null;
+      state.responseSpeedFailure = null;
+      if (state.timeMetricId === OUTPUT_SPEED_METRIC && state.timePanelVisible) refreshSpeedPresentation(); else updateSpeedSourceUi();
+      return data;
+    }).catch(function (error) {
+      if (request !== state.responseSpeedRequest) return null;
+      state.responseSpeedIndex = null;
+      state.responseSpeedStatus = "unavailable";
+      state.responseSpeedPromise = null;
+      refreshSpeedPresentation();
+      showResponseSpeedFailure(error);
+      return null;
+    });
+    return state.responseSpeedPromise;
+  }
+
+  function selectSpeedSource(source) {
+    if (RESPONSE_SPEED_SOURCES.indexOf(source) === -1) return Promise.resolve(false);
+    if (source === "aa") {
+      state.requestedSpeedSource = "aa";
+      // AA is an immediate complete switch. A slower prior request remains
+      // only a background result and cannot replace this plotted basis.
+      state.speedSource = "aa";
+      updateSpeedSourceUi();
+      refreshSpeedPresentation();
+      byId("global-status").textContent = "Output-speed source: AA benchmark. Frontier and domains redrawn for that chart.";
+      return Promise.resolve(true);
+    }
+    if (source !== "aa" && !state.responseSpeedIndex) {
+      state.requestedSpeedSource = source;
+      return selectObservedSpeedSource(source);
+    }
+    state.requestedSpeedSource = source;
+    byId("speed-source-retry").hidden = true;
+    byId("speed-source-retry").style.display = "none";
+    byId("speed-source-retry").tabIndex = -1;
+    state.speedSource = source;
+    refreshSpeedPresentation();
+    byId("global-status").textContent = "Output-speed source: " + speedSourceLabel(source) + ". Frontier and domains redrawn for that chart.";
+    return Promise.resolve(true);
+  }
+
+  function selectObservedSpeedSource(source) {
+    state.requestedSpeedSource = source;
+    refreshSpeedPresentation();
+    var retry = state.responseSpeedStatus === "unavailable";
+    return ensureResponseSpeedData(retry).then(function (data) {
+      if (!data || state.requestedSpeedSource !== source) return false;
+      state.speedSource = source;
+      if (state.timePanelVisible && state.timeMetricId === OUTPUT_SPEED_METRIC) {
+        refreshSpeedPresentation();
+        byId("global-status").textContent = "Output-speed source: " + speedSourceLabel(source) + ". Frontier and domains redrawn for that chart.";
+      } else updateSpeedSourceUi();
+      return true;
+    });
+  }
+
+  function bindSpeedSourceControls() {
+    function choose(input, event) {
+      if (!input || input.name !== "speed-source" || !input.checked) return;
+      if (RESPONSE_SPEED_SOURCES.indexOf(input.value) === -1) return;
+      // `change` reflects the browser's committed choice. A click on a different
+      // radio is completed by that change event, so only a repeated click on the
+      // already checked failed option is handled here.
+      if (event && event.type === "click" && input.value !== state.requestedSpeedSource) return;
+      // A checked native radio does not fire change when clicked again. That
+      // click is still a deliberate retry after an ordinary failure.
+      if (input.value === state.requestedSpeedSource && state.requestedSpeedSource !== state.speedSource && state.responseSpeedStatus === "unavailable" && event && event.type === "click") {
+        byId("speed-source-status").classList.remove("is-error");
+        selectObservedSpeedSource(input.value);
+        return;
+      }
+      // A real click on a different radio follows the browser's checked-state
+      // transition and then fires change; a click on the already checked radio
+      // reaches the branch above without either behavior.
+      byId("speed-source-status").classList.remove("is-error");
+      selectSpeedSource(input.value);
+    }
+    // Native radios are bound directly so a repeated click on the already
+    // checked option can be treated as a retry, as it does in real Chromium.
+    byId("speed-source-options").querySelectorAll('input[name="speed-source"]').forEach(function (input) {
+      input.addEventListener("change", function () { choose(input); });
+      input.addEventListener("click", function (event) { choose(input, event); });
+    });
+    byId("speed-source-retry").addEventListener("click", function () {
+      var source = requestedSpeedSource();
+      if (source !== "aa" && !byId("speed-source-retry").hidden) selectObservedSpeedSource(source);
+    });
+  }
+
+  function setSpeedSourceForReview(source) {
+    if (RESPONSE_SPEED_SOURCES.indexOf(source) === -1) return;
+    state.speedSource = source;
+    state.requestedSpeedSource = source;
+    refreshSpeedPresentation();
+  }
+
   function initialiseResponseCostData(fetchImpl, locationLike) {
     return fetchResponseCostIndex(fetchImpl || window.fetch, locationLike || window.location).then(function (data) {
       state.responseCostIndex = data;
@@ -4894,6 +5510,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     state.initiallyHidden = new Set(state.data.families.filter(function(f){return f.default_hidden;}).map(function(f){return f.id;}));
     initialiseHeader();
     initialiseAbilityOptions();
+    bindSpeedSourceControls();
     bindResponseCostControls();
     byId("subscription-toggle").addEventListener("click", function () {
       setSubscriptionCosts(!state.subscriptionCosts);
@@ -4968,7 +5585,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () { measureLabelText.cache=null;measureLabelText.font=null;measureLabelText.fonts=null;comparisonAnnotations.cache=null;northwestAnnotations.cache=null;state.fontRevision=(state.fontRevision||0)+1;renderComparison(); });
     }
-    return initialiseResponseCostData();
+    var costReady = initialiseResponseCostData();
+    return costReady;
   }
 
   if (typeof document === "undefined") {
@@ -4999,6 +5617,21 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         validateResponseCostIndex: validateResponseCostIndex,
         parseResponseCostOverrides: parseResponseCostOverrides,
         fetchResponseCostIndex: fetchResponseCostIndex,
+        fetchResponseSpeedIndex: fetchResponseSpeedIndex,
+        loadResponseSpeedIndex: loadResponseSpeedIndex,
+        validateResponseSpeedIndex: validateResponseSpeedIndex,
+        ensureResponseSpeedData: ensureResponseSpeedData,
+        selectSpeedSource: selectSpeedSource,
+        bindSpeedSourceControls: bindSpeedSourceControls,
+        setSpeedSourceForReview: setSpeedSourceForReview,
+        responseSpeedModels: responseSpeedModels,
+        responseSpeedEmptyMessage: responseSpeedEmptyMessage,
+        responseSpeedCellFor: responseSpeedCellFor,
+        responseSpeedCoverageText: responseSpeedCoverageText,
+        speedSourceLabel: speedSourceLabel,
+        speedChartModels: speedChartModels,
+        chartSpeedContext: chartSpeedContext,
+        tooltipMarkup: tooltipMarkup,
         initialiseResponseCostData: initialiseResponseCostData,
         formatMetric: formatMetric,
         formatIndex: formatIndex,
