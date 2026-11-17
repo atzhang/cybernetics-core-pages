@@ -1,10 +1,10 @@
 {
-  "capture_utc": "2026-11-16T15:14:21.013Z",
-  "capture_version": "20261116T151421013Z",
-  "html_bytes": 654554,
-  "html_sha256": "3ec59648a33f1257e32373d9ab70d3dad1714bff939d9f2fbe3c5f1d24d16800",
+  "capture_utc": "2026-11-17T08:44:57.798Z",
+  "capture_version": "20261117T084457798Z",
+  "html_bytes": 654656,
+  "html_sha256": "08a948d9f8367baebbcb951c9594e0ee04aee54d6a32f91ae3b44a34b07607d6",
   "index_version": 5,
-  "public_payload_sha256": "114115361124af8696c25800141d392b509d468173851a107225188041424d4c",
+  "public_payload_sha256": "0ecce066fca8ec781774376d19a162211a723aa7c92fa29725a0b2eb185395fa",
   "schema_version": 1,
   "selected_count": 62
 }
